@@ -1,0 +1,20 @@
+/* Oraciones V3 LAB - configuración global */
+
+let categoryListActive=false;
+
+let sentListActive=false;
+
+const STORAGE_KEY="oraciones_full_numeracion_v1";
+const AUTO_BACKUP_KEY="oraciones_full_numeracion_auto_backup_v1";
+const THEME_KEY="oraciones_full_numeracion_theme_v1";
+const SIZE_KEY="oraciones_full_numeracion_reader_size_v1";
+const INSTALL_DISMISSED_KEY="oraciones_install_dismiss_v92f";
+let deferredPrompt=null;
+let readerSize=parseInt(localStorage.getItem(SIZE_KEY)||"24",10);
+let returnToSentList=false;
+let section="prayers";
+let state={"section":"prayers","currentPrayerId":null,"currentNoteId":null,"prayers":[],"notes":[],"trashPrayers":[],"trashNotes":[],"guides":[],"trashGuides":[],"currentGuideId":null,"verses":[],"trashVerses":[],"currentVerseId":null};
+let isDirty=false;
+let autosaveTimer=null;
+const seedPrayer="\ud83c\udf05 \u271d\ufe0f Oraci\u00f3n diaria completa\n\nSe\u00f1or Dios Todopoderoso,\ndamos gracias por este nuevo d\u00eda que me concede.\n\nDamos gracias por la vida que me ha dado,\npor el regalo de la vida, desde la creaci\u00f3n y el nacimiento,\nhasta el regalo de la vida eterna.\n\nPor ser el centro de mi vida,\npor llevar las riendas de mi vida\ny darle sentido.\n";
+const seedNote="Aqu\u00ed puedes guardar ideas, reflexiones, vers\u00edculos sueltos o recordatorios.";

@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - parches visuales finales */
+/* Oraciones V3 LAB - Paso 16: parches visuales finales separados. */
 /* ===== v90-20-7-fin-lectura-redisenyo-js ===== */
 
 /* v90.20.7 - Pulido del texto de fin de lectura, sin tocar navegación */

@@ -1,4 +1,3 @@
-/* Oraciones V3 LAB - historial reciente */
 /* v46 Base Recientes */
 
 

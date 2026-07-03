@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - utilidades de versículos */
+/* Oraciones V3 LAB - versiculos.js paso 17
    Módulo de constantes, normalización e importación/exportación de versículos.
    Separado sin cambiar comportamiento. */
 

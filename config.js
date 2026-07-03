@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - configuración global */
+/* Oraciones V3 LAB - config.js paso 19: configuración global separada */
 
 let categoryListActive=false;
 

@@ -1,4 +1,3 @@
-/* Oraciones V3 LAB - portada e inicio */
 (function(){
   /* ============================================================
      ORACIONES V3 LAB - WELCOME.JS

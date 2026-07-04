@@ -128,7 +128,7 @@
   setTimeout(applyHomeSkyV902035, 120);
 })();
 
-/* ===== v3.1.10 - Arco iris inferior real desde patches.js =====
+/* ===== v3.1.11 - Arco iris horizonte abierto desde patches.js =====
    Este era el punto que realmente mandaba sobre el fondo: patches.js inyectaba
    el CSS anterior al final del <head>. Por eso los cambios en themes.css apenas
    se notaban. Ahora el arco se define aquí, más bajo y sin cierre central. */
@@ -139,16 +139,16 @@
 body.dark .home-card-v9019.home-sky-morning,
 body.dark .home-card-v9019.home-sky-day{
   background:
-    radial-gradient(ellipse 150% 82% at 50% 124%,
+    radial-gradient(ellipse 220% 38% at 50% 122%,
       transparent 0%,
       transparent 50.0%,
-      rgba(255, 112, 112, .050) 51.0%,
-      rgba(255, 176,  92, .046) 52.4%,
-      rgba(255, 235, 130, .041) 53.8%,
-      rgba(132, 218, 146, .038) 55.2%,
-      rgba(103, 195, 236, .041) 56.6%,
-      rgba(128, 151, 236, .036) 58.0%,
-      rgba(181, 133, 224, .031) 59.4%,
+      rgba(255, 112, 112, .060) 51.0%,
+      rgba(255, 176,  92, .055) 52.4%,
+      rgba(255, 235, 130, .049) 53.8%,
+      rgba(132, 218, 146, .046) 55.2%,
+      rgba(103, 195, 236, .050) 56.6%,
+      rgba(128, 151, 236, .044) 58.0%,
+      rgba(181, 133, 224, .038) 59.4%,
       transparent 62.4%),
     radial-gradient(circle at 7% 13%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.58) 5%, rgba(255,246,198,.34) 14%, rgba(255,232,138,.18) 27%, rgba(255,232,138,0) 49%),
     radial-gradient(ellipse at 35% 16%, rgba(255,255,255,.42) 0%, rgba(255,255,255,.16) 21%, rgba(255,255,255,0) 49%),
@@ -168,16 +168,16 @@ body.dark .home-card-v9019.home-sky-day::before{
 body.dark .home-card-v9019.home-sky-sunset{
   border-color:rgba(246,184,126,.32)!important;
   background:
-    radial-gradient(ellipse 150% 82% at 50% 124%,
+    radial-gradient(ellipse 220% 38% at 50% 122%,
       transparent 0%,
       transparent 50.0%,
-      rgba(255, 112, 112, .034) 51.0%,
-      rgba(255, 176,  92, .031) 52.4%,
-      rgba(255, 235, 130, .028) 53.8%,
-      rgba(132, 218, 146, .026) 55.2%,
-      rgba(103, 195, 236, .029) 56.6%,
-      rgba(128, 151, 236, .025) 58.0%,
-      rgba(181, 133, 224, .022) 59.4%,
+      rgba(255, 112, 112, .042) 51.0%,
+      rgba(255, 176,  92, .038) 52.4%,
+      rgba(255, 235, 130, .035) 53.8%,
+      rgba(132, 218, 146, .033) 55.2%,
+      rgba(103, 195, 236, .036) 56.6%,
+      rgba(128, 151, 236, .032) 58.0%,
+      rgba(181, 133, 224, .029) 59.4%,
       transparent 62.4%),
     radial-gradient(circle at 7% 14%, rgba(255,255,255,.86) 0%, rgba(255,240,204,.50) 8%, rgba(255,205,150,.22) 21%, rgba(239,148,92,.075) 36%, rgba(239,148,92,0) 60%),
     radial-gradient(ellipse at 0% 48%, rgba(255,184,120,.18) 0%, rgba(255,214,168,.09) 36%, rgba(255,214,168,0) 72%),
@@ -202,7 +202,7 @@ body.dark .home-card-v9019.home-sky-sunset::after{
 }`;
   const old = document.getElementById('v3-1-4-rainbow-covenant-css');
   if (old) old.remove();
-  const id = 'v3-1-10-rainbow-bottom-real-css';
+  const id = 'v3-1-11-rainbow-horizon-css';
   const existing = document.getElementById(id);
   if (existing) existing.remove();
   const style = document.createElement('style');

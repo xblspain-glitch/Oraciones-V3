@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - app.js paso 32: limpieza segura de navegación superior */
+/* Oraciones V3 LAB - app.js paso 38: limpieza segura de importación/exportación */
 
 /* ===== PWA / INSTALACIÓN ===== */
 function buildInitialState(){
@@ -3195,8 +3195,55 @@ body.dark .home-card-v9019.home-sky-sunset .home-line-v9019{
 </style>
 
 </body></html>`}
-async function exportCurrentHTML(){setActiveView("export");const item=currentItem();if(!item) return;const label=section==="prayers"?"Oración":"Nota";const html=buildReadingHTML(item,label,getCurrentCode());const filename=slugify(item.title)+".html";downloadBlob(filename, new Blob([html],{type:"text/html;charset=utf-8"}));if(navigator.share){try{const file=new File([html], filename, {type:"text/html"});await navigator.share({title:item.title, files:[file]})}catch(e){}}toast("Lectura exportada")}
-async function exportAllZip(){if(typeof JSZip==="undefined"){alert("No se pudo cargar el exportador ZIP.");return}const zip=new JSZip();const payload={"exportedAt":new Date().toISOString(),...state};zip.file("backup.json", JSON.stringify(payload,null,2));const folders=[["oraciones", state.prayers, "Oración","O"],["notas", state.notes, "Nota","N"],["papelera/oraciones", state.trashPrayers, "Oración eliminada","O"],["papelera/notas", state.trashNotes, "Nota eliminada","N"]];folders.forEach(([folder, items, label, prefix])=>{items.forEach((item, idx)=>{const code=prefix+(idx+1);const name=(code+"-"+slugify(item.title))+".html";zip.folder(folder).file(name, buildReadingHTML(item,label,code))})});const blob=await zip.generateAsync({type:"blob"});downloadBlob("exportacion_oraciones_notas.zip", blob);toast("ZIP exportado")}
+async function exportCurrentHTML(){
+  setActiveView("export");
+  const item = currentItem();
+  if(!item) return;
+
+  const label = section === "prayers" ? "Oración" : "Nota";
+  const html = buildReadingHTML(item, label, getCurrentCode());
+  const filename = slugify(item.title) + ".html";
+
+  downloadBlob(filename, new Blob([html], {type:"text/html;charset=utf-8"}));
+
+  if(navigator.share){
+    try{
+      const file = new File([html], filename, {type:"text/html"});
+      await navigator.share({title:item.title, files:[file]});
+    }catch(e){}
+  }
+
+  toast("Lectura exportada");
+}
+async function exportAllZip(){
+  if(typeof JSZip === "undefined"){
+    alert("No se pudo cargar el exportador ZIP.");
+    return;
+  }
+
+  const zip = new JSZip();
+  const payload = {"exportedAt":new Date().toISOString(), ...state};
+  zip.file("backup.json", JSON.stringify(payload, null, 2));
+
+  const folders = [
+    ["oraciones", state.prayers, "Oración", "O"],
+    ["notas", state.notes, "Nota", "N"],
+    ["papelera/oraciones", state.trashPrayers, "Oración eliminada", "O"],
+    ["papelera/notas", state.trashNotes, "Nota eliminada", "N"]
+  ];
+
+  folders.forEach(([folder, items, label, prefix]) => {
+    items.forEach((item, idx) => {
+      const code = prefix + (idx + 1);
+      const name = (code + "-" + slugify(item.title)) + ".html";
+      zip.folder(folder).file(name, buildReadingHTML(item, label, code));
+    });
+  });
+
+  const blob = await zip.generateAsync({type:"blob"});
+  downloadBlob("exportacion_oraciones_notas.zip", blob);
+  toast("ZIP exportado");
+}
 function buildBackupText(){
   const payload={"exportedAt":new Date().toISOString(),...state};
   const text=JSON.stringify(payload,null,2);
@@ -3280,8 +3327,32 @@ function applyImportedData(parsed){
   openReader();
   toast("Backup importado")
 }
-function importBackupFromText(){const text=document.getElementById("backupText").value.trim();if(!text) return alert("Pega primero una copia.");try{applyImportedData(JSON.parse(text))}catch(e){alert("La copia no es válida.")}}
-function importBackupFromFile(file){const reader=new FileReader();reader.onload=()=>{try{const text=String(reader.result||"");document.getElementById("backupText").value=text;applyImportedData(JSON.parse(text))}catch(e){alert("El archivo no es un JSON válido.")}};reader.onerror=()=>alert("No se pudo leer el archivo.");reader.readAsText(file, "utf-8")}
+function importBackupFromText(){
+  const text = document.getElementById("backupText").value.trim();
+  if(!text) return alert("Pega primero una copia.");
+
+  try{
+    applyImportedData(JSON.parse(text));
+  }catch(e){
+    alert("La copia no es válida.");
+  }
+}
+function importBackupFromFile(file){
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try{
+      const text = String(reader.result || "");
+      document.getElementById("backupText").value = text;
+      applyImportedData(JSON.parse(text));
+    }catch(e){
+      alert("El archivo no es un JSON válido.");
+    }
+  };
+
+  reader.onerror = () => alert("No se pudo leer el archivo.");
+  reader.readAsText(file, "utf-8");
+}
 function dismissInstall(){localStorage.setItem(INSTALL_DISMISSED_KEY,"1");document.getElementById("installBanner").classList.add("hidden")}
 function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(INSTALL_DISMISSED_KEY)==="1") return;document.getElementById("installBanner").classList.remove("hidden");const help=document.getElementById("installHelp");if(deferredPrompt) help.textContent="Pulsa Instalar. Si no te deja, usa el menú del navegador y elige Añadir a pantalla de inicio.";else help.textContent="Si no aparece el instalador automático, usa el menú del navegador y elige Añadir a pantalla de inicio."}
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})

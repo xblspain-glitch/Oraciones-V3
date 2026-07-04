@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - app.js paso 30: limpieza segura de restauración automática */
+/* Oraciones V3 LAB - app.js paso 32: limpieza segura de navegación superior */
 
 /* ===== PWA / INSTALACIÓN ===== */
 function buildInitialState(){
@@ -108,30 +108,44 @@ function restoreAutoBackup(){
   }
 }
 function getDisplayCode(idx, kind){
-  return (kind==="prayers"?"O":kind==="notes"?"N":kind==="guides"?"G":"V")+(idx+1)
+  const prefix = kind==="prayers" ? "O" : kind==="notes" ? "N" : kind==="guides" ? "G" : "V";
+  return prefix + (idx + 1);
 }
+
 function getCurrentCode(){
-  const items=section==="prayers"?state.prayers:section==="notes"?state.notes:section==="guides"?state.guides:state.verses;
-  const id=section==="prayers"?state.currentPrayerId:section==="notes"?state.currentNoteId:section==="guides"?state.currentGuideId:state.currentVerseId;
-  const idx=items.findIndex(x=>x.id===id);
-  return idx>=0?getDisplayCode(idx, section):"";
+  const items = section==="prayers" ? state.prayers : section==="notes" ? state.notes : section==="guides" ? state.guides : state.verses;
+  const id = section==="prayers" ? state.currentPrayerId : section==="notes" ? state.currentNoteId : section==="guides" ? state.currentGuideId : state.currentVerseId;
+  const idx = items.findIndex(x=>x.id===id);
+  return idx>=0 ? getDisplayCode(idx, section) : "";
 }
 
 function setSearchVisibleV26(show){
-  const s=document.getElementById("search");
+  const s = document.getElementById("search");
   if(s) s.classList.toggle("hidden", !show);
 }
+
 function updateSearchForReaderV26(){
   setSearchVisibleV26(!(section==="prayers" || section==="notes" || section==="guides"));
 }
 
 function syncTabs(){
-  document.getElementById("tabPrayers").classList.toggle("active",section==="prayers");
-  document.getElementById("tabNotes").classList.toggle("active",section==="notes");
-  const guideTab=document.getElementById("tabGuides");if(guideTab)guideTab.classList.toggle("active",section==="guides");
-  const verseTab=document.getElementById("tabVerses");if(verseTab)verseTab.classList.toggle("active",section==="verses");
-  document.getElementById("search").placeholder=section==="prayers"?"Buscar oración o código (ej. O3)":section==="notes"?"Buscar nota o código (ej. N2)":section==="guides"?"Buscar guía o código (ej. G1)":"Buscar versículo, referencia o palabra";
-  document.getElementById("counterInfo").textContent=`📖 ${state.prayers.length} | 📝 ${state.notes.length} | 📜 ${state.guides?state.guides.length:0} | ❤️ ${state.verses?state.verses.length:0}`;
+  document.getElementById("tabPrayers").classList.toggle("active", section==="prayers");
+  document.getElementById("tabNotes").classList.toggle("active", section==="notes");
+
+  const guideTab = document.getElementById("tabGuides");
+  if(guideTab) guideTab.classList.toggle("active", section==="guides");
+
+  const verseTab = document.getElementById("tabVerses");
+  if(verseTab) verseTab.classList.toggle("active", section==="verses");
+
+  document.getElementById("search").placeholder =
+    section==="prayers" ? "Buscar oración o código (ej. O3)" :
+    section==="notes" ? "Buscar nota o código (ej. N2)" :
+    section==="guides" ? "Buscar guía o código (ej. G1)" :
+    "Buscar versículo, referencia o palabra";
+
+  document.getElementById("counterInfo").textContent =
+    `📖 ${state.prayers.length} | 📝 ${state.notes.length} | 📜 ${state.guides?state.guides.length:0} | ❤️ ${state.verses?state.verses.length:0}`;
 }
 
 function setActiveView(view){

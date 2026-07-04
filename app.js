@@ -131,22 +131,31 @@ function switchSectionAndReadV90187(s){
   }
 }
 function getItems(){
-  return section==="prayers"?state.prayers:section==="notes"?state.notes:section==="guides"?state.guides:state.verses
+  if(section === "prayers") return state.prayers;
+  if(section === "notes") return state.notes;
+  if(section === "guides") return state.guides;
+  return state.verses;
 }
+
 function setItems(items){
-  if(section==="prayers") state.prayers=items;
-  else if(section==="notes") state.notes=items;
-  else if(section==="guides") state.guides=items;
-  else state.verses=items;
+  if(section === "prayers") state.prayers = items;
+  else if(section === "notes") state.notes = items;
+  else if(section === "guides") state.guides = items;
+  else state.verses = items;
 }
+
 function getTrash(){
-  return section==="prayers"?state.trashPrayers:section==="notes"?state.trashNotes:section==="guides"?state.trashGuides:state.trashVerses
+  if(section === "prayers") return state.trashPrayers;
+  if(section === "notes") return state.trashNotes;
+  if(section === "guides") return state.trashGuides;
+  return state.trashVerses;
 }
+
 function setTrash(items){
-  if(section==="prayers") state.trashPrayers=items;
-  else if(section==="notes") state.trashNotes=items;
-  else if(section==="guides") state.trashGuides=items;
-  else state.trashVerses=items;
+  if(section === "prayers") state.trashPrayers = items;
+  else if(section === "notes") state.trashNotes = items;
+  else if(section === "guides") state.trashGuides = items;
+  else state.trashVerses = items;
 }
 function currentItem(){
   normalizeGuides();
@@ -2066,7 +2075,16 @@ function openBackup(){
   var vc=document.getElementById("verseCategoriesView");if(vc)vc.classList.add("hidden");
   var cal=document.getElementById("calendarView");if(cal)cal.classList.add("hidden");
 }
-function downloadBlob(filename, blob){const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function downloadBlob(filename, blob){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
 function buildReadingHTML(item, folderLabel, code){const title=item.favorite?'⭐ '+item.title:item.title;const bg=document.body.classList.contains("dark") ? "#111111" : "#f8f6f1";const card=document.body.classList.contains("dark") ? "#1a1a1a" : "#ffffff";const text=document.body.classList.contains("dark") ? "#f2eee7" : "#181818";return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>${escapeHtml(item.title)}</title><style>body{margin:0;background:${bg};color:${text};font-family:Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:24px}.card{background:${card};border-radius:20px;padding:24px}.badge{font-size:13px;opacity:.7;margin-bottom:10px}h1{font-size:24px;margin:0 0 18px 0}.content{white-space:pre-wrap;font-size:${readerSize}px;line-height:2.05}body.dark .segment button{color:var(--text)}body.dark .segment button.active{color:var(--text)}
 .category-grid{padding:12px;display:flex;flex-direction:column;gap:10px}
 .category-card{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;font-weight:bold}

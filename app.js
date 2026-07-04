@@ -263,42 +263,86 @@ function displayItemSub(item){
 
 function renderList(){
   const titlesVisible = !document.getElementById("titlesView")?.classList.contains("hidden");
-  const q=(titlesVisible
+  const q = (titlesVisible
     ? (document.getElementById("titlesSearch")?.value || "")
     : (document.getElementById("search")?.value || "")
   ).trim().toLowerCase();
-  const list=document.getElementById("list");
+
+  const list = document.getElementById("list");
   if(!list) return;
-  list.innerHTML="";
-  let items=[...getItems()].map((item, idx)=>({...item,__idx:idx,__code:getDisplayCode(idx, section)}));
-  items=items.filter(item=>{
+
+  list.innerHTML = "";
+
+  let items = [...getItems()].map((item, idx) => ({
+    ...item,
+    __idx: idx,
+    __code: getDisplayCode(idx, section)
+  }));
+
+  items = items.filter(item => {
     if(!q) return true;
-    const hay=[
+
+    const hay = [
       item.title,
       item.content,
       item.reference,
       item.category,
       item.__code
     ].filter(Boolean).join(" ").toLowerCase();
+
     return hay.includes(q);
   });
-  items.sort((a,b)=>(b.favorite===true)-(a.favorite===true)||(b.updatedAt||0)-(a.updatedAt||0));
-  if(!items.length){list.innerHTML='<div class="empty">No hay elementos.</div>';return}
-  const current=currentItem();
-  items.forEach(item=>{
-    const div=document.createElement("div");
-    div.className="item"+(current&&item.id===current.id?" active":"");
-    const preview=String(item.content||"").trim().replace(/\n+/g," ").slice(0,70)||"Sin contenido";
-    div.innerHTML='<div class="item-code">'+escapeHtml(item.__code)+'</div><div class="item-title-row"><div class="item-title">'+escapeHtml(item.reference||item.title||"Sin título")+'</div><div class="fav">'+(item.favorite?'⭐':'')+'</div></div><div class="item-sub">'+escapeHtml(preview)+'</div>';
-    div.onclick=()=>{
-      if(!document.getElementById("editorView").classList.contains("hidden")) saveCurrent(false,true);
-      specialVerseMode=null;
+
+  items.sort((a, b) =>
+    (b.favorite === true) - (a.favorite === true)
+    || (b.updatedAt || 0) - (a.updatedAt || 0)
+  );
+
+  if(!items.length){
+    list.innerHTML = '<div class="empty">No hay elementos.</div>';
+    return;
+  }
+
+  const current = currentItem();
+
+  items.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item" + (current && item.id === current.id ? " active" : "");
+
+    const preview = String(item.content || "")
+      .trim()
+      .replace(/\n+/g, " ")
+      .slice(0, 70) || "Sin contenido";
+
+    div.innerHTML = '<div class="item-code">' + escapeHtml(item.__code) + '</div>'
+      + '<div class="item-title-row"><div class="item-title">'
+      + escapeHtml(item.reference || item.title || "Sin título")
+      + '</div><div class="fav">'
+      + (item.favorite ? '⭐' : '')
+      + '</div></div><div class="item-sub">'
+      + escapeHtml(preview)
+      + '</div>';
+
+    div.onclick = () => {
+      if(!document.getElementById("editorView").classList.contains("hidden")){
+        saveCurrent(false, true);
+      }
+
+      specialVerseMode = null;
       setCurrentId(item.id);
-      if(section==="verses"){currentVerseCategory=item.category||currentVerseCategory||"fe";verseNavigationMode="verse";}
-      renderList();renderReader();openReader()
+
+      if(section === "verses"){
+        currentVerseCategory = item.category || currentVerseCategory || "fe";
+        verseNavigationMode = "verse";
+      }
+
+      renderList();
+      renderReader();
+      openReader();
     };
-    list.appendChild(div)
-  })
+
+    list.appendChild(div);
+  });
 }
 
 function applyReaderFont(){

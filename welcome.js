@@ -31,7 +31,9 @@
     'Entra con calma, ora con fe y guarda aquello que fortalece tu corazón.',
     'Un espacio para volver a Dios en medio del día y recordar sus promesas.'
   ];
-  function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+  function pick(arr){
+    return arr[Math.floor(Math.random()*arr.length)];
+  }
   function todayKey(){
     var d=new Date();
     return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -51,7 +53,11 @@
     var cut=txt.slice(0,max).replace(/\s+\S*$/,'').trim();
     return (cut||txt.slice(0,max).trim())+'...';
   }
-  function escapeHtml(text){return String(text).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c;});}
+  function escapeHtml(text){
+    return String(text).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]||c;
+    });
+  }
   function getDailyIntroVerse(){
     try{
       var raw=localStorage.getItem(STORAGE_KEY);

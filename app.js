@@ -1314,42 +1314,46 @@ function closeSendStatsPanel(){
   const p = document.getElementById("sendStatsPanel");
   if(p) p.remove();
 }
+
 function openNeverSentStatsMenu(){
   try{
     closeSendStatsPanel();
 
     if(!state || !Array.isArray(state.verses)) return;
 
-    if(typeof ensureVerseCategories==="function") ensureVerseCategories();
-    const cats=(state.verseCategories && state.verseCategories.length)
+    if(typeof ensureVerseCategories === "function") ensureVerseCategories();
+
+    const cats = (state.verseCategories && state.verseCategories.length)
       ? state.verseCategories
-      : (typeof VERSE_CATEGORIES!=="undefined" ? VERSE_CATEGORIES : []);
+      : (typeof VERSE_CATEGORIES !== "undefined" ? VERSE_CATEGORIES : []);
 
-    const total=state.verses.length;
-    const sentTotal=state.verses.filter(v=>!!v.lastCardSentAt).length;
-    const pendingTotal=total-sentTotal;
+    const total = state.verses.length;
+    const sentTotal = state.verses.filter(v => !!v.lastCardSentAt).length;
+    const pendingTotal = total - sentTotal;
 
-    const panel=document.createElement("div");
-    panel.id="sendStatsPanel";
-    panel.className="send-stats-panel";
+    const panel = document.createElement("div");
+    panel.id = "sendStatsPanel";
+    panel.className = "send-stats-panel";
 
     let html =
       '<div class="send-stats-head"><span>📤 Resumen de envíos</span><button class="send-stats-close" type="button" onclick="closeSendStatsPanel()">×</button></div>' +
-      '<div class="send-stats-summary">📥 Pendientes: '+pendingTotal+' · 📋 Enviados: '+sentTotal+' · 📚 Total: '+total+'</div>';
+      '<div class="send-stats-summary">📥 Pendientes: ' + pendingTotal + ' · 📋 Enviados: ' + sentTotal + ' · 📚 Total: ' + total + '</div>';
 
-    cats.forEach(cat=>{
-      const verses=state.verses.filter(v=>(v.category||"sin_categoria")===cat.id);
+    cats.forEach(cat => {
+      const verses = state.verses.filter(v => (v.category || "sin_categoria") === cat.id);
       if(!verses.length) return;
-      const sent=verses.filter(v=>!!v.lastCardSentAt).length;
-      const pending=verses.length-sent;
+
+      const sent = verses.filter(v => !!v.lastCardSentAt).length;
+      const pending = verses.length - sent;
+
       html +=
         '<div class="send-stats-row">' +
-          '<div class="send-stats-cat">'+escapeHtml(cat.label||cat.id)+'</div>' +
-          '<div class="send-stats-counts">📥 '+pending+' · 📋 '+sent+'</div>' +
+          '<div class="send-stats-cat">' + escapeHtml(cat.label || cat.id) + '</div>' +
+          '<div class="send-stats-counts">📥 ' + pending + ' · 📋 ' + sent + '</div>' +
         '</div>';
     });
 
-    panel.innerHTML=html;
+    panel.innerHTML = html;
     document.body.appendChild(panel);
   }catch(e){
     console.error("openNeverSentStatsMenu", e);
@@ -1361,13 +1365,16 @@ function openMoreMenu(ev){
   try{
     if(ev) ev.stopPropagation();
 
-    const existing=document.getElementById("moreDropdown");
-    if(existing){ closeMoreMenu(); return; }
+    const existing = document.getElementById("moreDropdown");
+    if(existing){
+      closeMoreMenu();
+      return;
+    }
 
     const btn = ev && ev.currentTarget ? ev.currentTarget : null;
-    const menu=document.createElement("div");
-    menu.id="moreDropdown";
-    menu.className="more-dropdown";
+    const menu = document.createElement("div");
+    menu.id = "moreDropdown";
+    menu.className = "more-dropdown";
     menu.innerHTML =
       '<button type="button" onclick="closeMoreMenu(); openDailyVerse()">🌅 Hoy</button>' +
       '<button type="button" onclick="closeMoreMenu(); openRandomVerse()">🌿 Versículo al azar</button>' +
@@ -1379,21 +1386,23 @@ function openMoreMenu(ev){
 
     document.body.appendChild(menu);
 
-    let left=12, top=120;
+    let left = 12;
+    let top = 120;
+
     if(btn){
-      const r=btn.getBoundingClientRect();
-      left=r.left;
-      top=r.bottom+6;
+      const r = btn.getBoundingClientRect();
+      left = r.left;
+      top = r.bottom + 6;
     }
 
-    const maxLeft=window.innerWidth - menu.offsetWidth - 8;
+    const maxLeft = window.innerWidth - menu.offsetWidth - 8;
     if(left > maxLeft) left = Math.max(8, maxLeft);
     if(left < 8) left = 8;
 
     menu.style.left = left + "px";
     menu.style.top = top + "px";
 
-    setTimeout(()=>document.addEventListener("click", closeMoreMenuOutside, true),0);
+    setTimeout(() => document.addEventListener("click", closeMoreMenuOutside, true), 0);
   }catch(e){
     console.error("openMoreMenu", e);
   }

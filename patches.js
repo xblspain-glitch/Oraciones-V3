@@ -465,3 +465,67 @@ body.dark .home-card-v9019.home-sky-night{
   document.head.appendChild(style);
 })();
 
+
+/* ===== V3.1.24 ajustes finales Versículo del día =====
+   Ajuste visual pequeño y reversible: fecha ligeramente más alta, referencia con más aire,
+   frase inferior subida, márgenes equilibrados y encuadre mínimo del fondo de día. */
+(function(){
+  var old = document.getElementById('v3-1-24-daily-final-spacing-css');
+  if(old) old.remove();
+
+  var style = document.createElement('style');
+  style.id = 'v3-1-24-daily-final-spacing-css';
+  style.textContent = `
+.home-card-v9019{
+  padding-top:30px!important;
+  padding-bottom:26px!important;
+}
+.home-card-v9019 .home-kicker-v9019{
+  margin-bottom:11px!important;
+}
+.home-card-v9019 .home-date-v9019{
+  margin-top:-3px!important;
+  margin-bottom:31px!important;
+}
+.home-card-v9019 .home-ref-v9019{
+  margin-top:0!important;
+  margin-bottom:24px!important;
+}
+.home-card-v9019 .home-text-v9019{
+  margin-left:auto!important;
+  margin-right:auto!important;
+  padding-left:2px!important;
+  padding-right:2px!important;
+}
+.home-card-v9019 .home-phrase-v9019{
+  margin-top:12px!important;
+  margin-bottom:0!important;
+}
+.home-card-v9019.home-sky-day,
+body.dark .home-card-v9019.home-sky-day{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07) 0%, rgba(255,255,255,.015) 46%, rgba(255,255,255,.07) 100%),
+    url("bg-day.webp") 50% 48% / cover no-repeat!important;
+}
+@media(max-width:420px){
+  .home-card-v9019{
+    padding-top:29px!important;
+    padding-bottom:25px!important;
+  }
+  .home-card-v9019 .home-kicker-v9019{
+    margin-bottom:10px!important;
+  }
+  .home-card-v9019 .home-date-v9019{
+    margin-top:-4px!important;
+    margin-bottom:29px!important;
+  }
+  .home-card-v9019 .home-ref-v9019{
+    margin-bottom:23px!important;
+  }
+  .home-card-v9019 .home-phrase-v9019{
+    margin-top:11px!important;
+  }
+}
+`;
+  document.head.appendChild(style);
+})();

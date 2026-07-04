@@ -3,7 +3,9 @@
 // Mantiene las funciones globales applyTheme() y toggleTheme() para no cambiar el comportamiento.
 
 function applyTheme(){
-  if(localStorage.getItem(THEME_KEY)==="dark") document.body.classList.add("dark");
+  if(localStorage.getItem(THEME_KEY)==="dark"){
+    document.body.classList.add("dark");
+  }
 }
 
 function toggleTheme(){

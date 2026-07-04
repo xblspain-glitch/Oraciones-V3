@@ -1,7 +1,37 @@
-/* Oraciones V3 LAB - app.js paso 24: cache busting unificado */
+/* Oraciones V3 LAB - app.js paso 26: limpieza segura de legibilidad */
 
 /* ===== PWA / INSTALACIÓN ===== */
-  function buildInitialState(){const prayerId=uid(),noteId=uid();return {"section":"prayers","currentPrayerId":prayerId,"currentNoteId":noteId,"prayers":[{"id":prayerId,"title":"🌅 ✝️ Oración diaria completa","content":seedPrayer,"updatedAt":Date.now(),"favorite":true}],"notes":[{"id":noteId,"title":"📝 Mi primera nota","content":seedNote,"updatedAt":Date.now(),"favorite":false}],"trashPrayers":[],"trashNotes":[],"guides":[],"trashGuides":[],"currentGuideId":null,"verses":[],"trashVerses":[],"currentVerseId":null}}
+function buildInitialState(){
+  const prayerId = uid();
+  const noteId = uid();
+  return {
+    "section": "prayers",
+    "currentPrayerId": prayerId,
+    "currentNoteId": noteId,
+    "prayers": [{
+      "id": prayerId,
+      "title": "🌅 ✝️ Oración diaria completa",
+      "content": seedPrayer,
+      "updatedAt": Date.now(),
+      "favorite": true
+    }],
+    "notes": [{
+      "id": noteId,
+      "title": "📝 Mi primera nota",
+      "content": seedNote,
+      "updatedAt": Date.now(),
+      "favorite": false
+    }],
+    "trashPrayers": [],
+    "trashNotes": [],
+    "guides": [],
+    "trashGuides": [],
+    "currentGuideId": null,
+    "verses": [],
+    "trashVerses": [],
+    "currentVerseId": null
+  };
+}
 
 function normalizeGuides(){
   if(!Array.isArray(state.guides)) state.guides=[];
@@ -11,8 +41,29 @@ function normalizeGuides(){
 }
 
 function saveState(){
- cleanAllVerseBreaks();localStorage.setItem(STORAGE_KEY, JSON.stringify(state));const backup={"exportedAt":new Date().toISOString(),...state};localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify(backup))}
-function loadState(){const raw=localStorage.getItem(STORAGE_KEY);if(raw){try{state=JSON.parse(raw);if(!state||!Array.isArray(state.prayers)||!Array.isArray(state.notes)) throw new Error("bad")}catch(e){state=buildInitialState();saveState()}}else{state=buildInitialState();saveState()}section=state.section||"prayers";normalizeGuides()}
+  cleanAllVerseBreaks();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const backup = {"exportedAt": new Date().toISOString(), ...state};
+  localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify(backup));
+}
+
+function loadState(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{
+      state = JSON.parse(raw);
+      if(!state || !Array.isArray(state.prayers) || !Array.isArray(state.notes)) throw new Error("bad");
+    }catch(e){
+      state = buildInitialState();
+      saveState();
+    }
+  }else{
+    state = buildInitialState();
+    saveState();
+  }
+  section = state.section || "prayers";
+  normalizeGuides();
+}
 
 function openBackupFilePicker(){
   const input=document.getElementById("jsonFileInput");

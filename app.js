@@ -7105,14 +7105,20 @@ setInterval(updateVersePositionCounter, 1000);
 
 /* V3 paso 16: parches visuales finales movidos a patches.js. */
 
-/* ===== V3.1.2 - Volver desde Títulos a su sección de origen ===== */
+/* v3.1.3 - Arreglo real: Volver desde Títulos regresa a la botonera interna de sección */
 (function(){
-  if(window.__v312TitlesBackToSection) return;
-  window.__v312TitlesBackToSection = true;
+  if(window.__v313TitlesBackToSectionToolbarFix) return;
+  window.__v313TitlesBackToSectionToolbarFix = true;
 
-  var previousSmartBackV312 = window.smartBack || (typeof smartBack !== "undefined" ? smartBack : null);
+  function isSectionWithInternalToolbarV313(){
+    try{
+      return ["prayers", "notes", "guides", "parables"].indexOf(section) !== -1;
+    }catch(e){
+      return false;
+    }
+  }
 
-  function isTitlesViewVisibleV312(){
+  function titlesViewVisibleV313(){
     try{
       var titles = document.getElementById("titlesView");
       return !!(titles && !titles.classList.contains("hidden"));
@@ -7121,57 +7127,47 @@ setInterval(updateVersePositionCounter, 1000);
     }
   }
 
-  function isMainTextSectionV312(s){
-    return s === "prayers" || s === "notes" || s === "guides" || s === "parables";
+  function hideHomeV313(){
+    try{
+      document.body.classList.remove("home-active-v9019");
+      var home = document.getElementById("homeView");
+      if(home) home.classList.add("hidden");
+    }catch(e){}
   }
 
-  window.backFromTitlesToSectionV312 = function(){
+  function scrollToSectionToolbarV313(){
     try{
-      var target = section || (state && state.section) || "prayers";
-      if(!isMainTextSectionV312(target)) target = "prayers";
-
-      section = target;
-      if(state) state.section = target;
-
-      var titles = document.getElementById("titlesView");
-      if(titles) titles.classList.add("hidden");
-
-      document.body.classList.remove(
-        "titles-only",
-        "titles-fullscreen-v72",
-        "fullscreen-reading",
-        "hide-reading-ui",
-        "special-view-only",
-        "backup-only",
-        "sent-fullscreen-v76"
-      );
-
-      if(typeof saveState === "function") saveState();
-      if(typeof syncTabs === "function") syncTabs();
-      if(typeof renderList === "function") renderList();
-      if(typeof renderReader === "function") renderReader();
-      if(typeof openReader === "function") openReader();
-
-      setTimeout(function(){
-        try{ window.scrollTo({top: 0, behavior: "auto"}); }catch(e){}
-      }, 0);
+      var reader = document.getElementById("readerView");
+      if(reader && !reader.classList.contains("hidden")){
+        reader.scrollIntoView({block:"start", behavior:"auto"});
+      }
     }catch(e){
-      console.error("backFromTitlesToSectionV312", e);
       try{
-        if(typeof openReader === "function") openReader();
+        var top = document.getElementById("readerView");
+        if(top) window.scrollTo(0, top.offsetTop || 0);
       }catch(_e){}
     }
-  };
+  }
+
+  var previousSmartBackV313 = window.smartBack || (typeof smartBack !== "undefined" ? smartBack : null);
 
   window.smartBack = function(){
     try{
-      if(isTitlesViewVisibleV312() && isMainTextSectionV312(section)){
-        return window.backFromTitlesToSectionV312();
+      if(titlesViewVisibleV313() && isSectionWithInternalToolbarV313()){
+        hideHomeV313();
+        if(typeof renderList === "function") renderList();
+        if(typeof renderReader === "function") renderReader();
+        if(typeof openReader === "function") openReader();
+        hideHomeV313();
+        setTimeout(scrollToSectionToolbarV313, 40);
+        return;
       }
-    }catch(e){}
+    }catch(e){
+      console.warn("v3.1.3 titles back fix skipped", e);
+    }
 
-    if(typeof previousSmartBackV312 === "function"){
-      return previousSmartBackV312.apply(this, arguments);
+    if(typeof previousSmartBackV313 === "function"){
+      return previousSmartBackV313.apply(this, arguments);
     }
   };
 

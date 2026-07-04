@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - app.js paso 38: limpieza segura de importación/exportación */
+/* Oraciones V3 LAB - app.js paso 45: limpieza render de versículos */
 
 /* ===== PWA / INSTALACIÓN ===== */
 function buildInitialState(){
@@ -1684,80 +1684,134 @@ function moveVerseToCategory(){
 }
 
 function renderVerseCategories(){
-  const box=document.getElementById("verseCategoriesList");if(!box)return;
-  box.innerHTML="";
+  const box = document.getElementById("verseCategoriesList");
+  if(!box) return;
+
+  box.innerHTML = "";
+
   const titlesVisible = !document.getElementById("titlesView")?.classList.contains("hidden");
-  const q=(titlesVisible
-    ? (document.getElementById("titlesSearch")?.value || "")
-    : (document.getElementById("search")?.value || "")
-  ).trim().toLowerCase();
+  const searchInput = titlesVisible
+    ? document.getElementById("titlesSearch")
+    : document.getElementById("search");
+  const q = (searchInput?.value || "").trim().toLowerCase();
 
   if(q){
-    const cats=(state.verseCategories&&state.verseCategories.length?state.verseCategories:VERSE_CATEGORIES);
-    const catLabel=(id)=>{const c=cats.find(x=>x.id===id);return c?c.label:id;};
-    const verses=state.verses.filter(v=>{
-      const hay=[
+    const cats = state.verseCategories && state.verseCategories.length
+      ? state.verseCategories
+      : VERSE_CATEGORIES;
+    const catLabel = (id)=>{
+      const c = cats.find(x=>x.id===id);
+      return c ? c.label : id;
+    };
+
+    const verses = state.verses.filter(v=>{
+      const hay = [
         v.reference,
         v.title,
         v.content,
         v.category,
         catLabel(v.category)
       ].filter(Boolean).join(" ").toLowerCase();
+
       return hay.includes(q);
     });
 
     if(!verses.length){
-      box.innerHTML='<div class="empty">No hay resultados.</div>';
+      box.innerHTML = '<div class="empty">No hay resultados.</div>';
       return;
     }
 
-    verses.forEach((v,idx)=>{
-      const div=document.createElement("div");
-      div.className="category-card";
-      const preview=String(v.content||"").replace(/\n+/g," ").slice(0,95);
-      div.innerHTML='<div><strong>'+escapeHtml(v.reference||v.title||"Sin referencia")+'</strong></div><div class="category-count">'+escapeHtml(catLabel(v.category))+(preview?' · '+escapeHtml(preview):'')+'</div>';
-      div.onclick=()=>{verseNavigationMode="verse";currentVerseCategory=v.category||currentVerseCategory||"fe";section="verses";state.section="verses";setCurrentId(v.id);renderList();renderReader();applyReaderFont();enterFullscreenReading();};
+    verses.forEach((v)=>{
+      const div = document.createElement("div");
+      const preview = String(v.content || "").replace(/\n+/g, " ").slice(0, 95);
+
+      div.className = "category-card";
+      div.innerHTML = '<div><strong>' + escapeHtml(v.reference || v.title || "Sin referencia") + '</strong></div><div class="category-count">' + escapeHtml(catLabel(v.category)) + (preview ? ' · ' + escapeHtml(preview) : '') + '</div>';
+      div.onclick = ()=>{
+        verseNavigationMode = "verse";
+        currentVerseCategory = v.category || currentVerseCategory || "fe";
+        section = "verses";
+        state.section = "verses";
+        setCurrentId(v.id);
+        renderList();
+        renderReader();
+        applyReaderFont();
+        enterFullscreenReading();
+      };
+
       box.appendChild(div);
     });
+
     return;
   }
 
-  (state.verseCategories&&state.verseCategories.length?state.verseCategories:VERSE_CATEGORIES).forEach(cat=>{
-    const count=state.verses.filter(v=>v.category===cat.id).length;
-    const div=document.createElement("div");
-    div.className="category-card";
-    div.innerHTML='<div>'+escapeHtml(cat.label)+'</div><div class="category-count">'+count+' versículos</div>';
-    div.onclick=()=>openVerseCategory(cat.id);
+  const cats = state.verseCategories && state.verseCategories.length
+    ? state.verseCategories
+    : VERSE_CATEGORIES;
+
+  cats.forEach(cat=>{
+    const count = state.verses.filter(v=>v.category===cat.id).length;
+    const div = document.createElement("div");
+
+    div.className = "category-card";
+    div.innerHTML = '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
+    div.onclick = ()=>openVerseCategory(cat.id);
+
     box.appendChild(div);
   });
 }
 function openVerseCategory(catId){
   document.body.classList.add("reading-mobile");
-  categoryListActive=false;
-  specialVerseMode=null;
-  verseNavigationMode="category";
-  currentVerseCategory=catId||"fe";
-  section="verses";state.section="verses";saveState();syncTabs();
-  const first=state.verses.find(v=>v.category===catId);
+
+  categoryListActive = false;
+  specialVerseMode = null;
+  verseNavigationMode = "category";
+  currentVerseCategory = catId || "fe";
+  section = "verses";
+  state.section = "verses";
+
+  saveState();
+  syncTabs();
+
+  const first = state.verses.find(v=>v.category===catId);
   if(first) setCurrentId(first.id);
+
   renderVerseReferenceList(catId);
 }
 function renderVerseReferenceList(catId){
-  const box=document.getElementById("titlesList");if(!box)return;
+  const box = document.getElementById("titlesList");
+  if(!box) return;
+
   document.getElementById("titlesView").classList.remove("hidden");
   document.getElementById("verseCategoriesView").classList.add("hidden");
   document.getElementById("readerView").classList.add("hidden");
   document.getElementById("editorView").classList.add("hidden");
   document.getElementById("backupView").classList.add("hidden");
   document.getElementById("trashView").classList.add("hidden");
-  const verses=state.verses.filter(v=>v.category===catId);
-  box.innerHTML="";
-  if(!verses.length){box.innerHTML='<div class="empty">No hay versículos en esta categoría.</div>';return;}
-  verses.forEach((v,idx)=>{
-    const div=document.createElement("div");
-    div.className="title-row"+(state.currentVerseId===v.id?" active":"");
-    div.innerHTML='<div class="title-code">V'+(idx+1)+'</div><div class="title-name">'+escapeHtml((v.shared?'✓ ':'')+(v.favorite?'⭐ ':'')+(v.reference||v.title||"Sin referencia"))+'</div>';
-    div.onclick=()=>{verseNavigationMode="verse";currentVerseCategory=v.category||currentVerseCategory||"fe";setCurrentId(v.id);renderList();renderReader();applyReaderFont();enterFullscreenReading();};
+
+  const verses = state.verses.filter(v=>v.category===catId);
+
+  box.innerHTML = "";
+  if(!verses.length){
+    box.innerHTML = '<div class="empty">No hay versículos en esta categoría.</div>';
+    return;
+  }
+
+  verses.forEach((v, idx)=>{
+    const div = document.createElement("div");
+
+    div.className = "title-row" + (state.currentVerseId===v.id ? " active" : "");
+    div.innerHTML = '<div class="title-code">V' + (idx + 1) + '</div><div class="title-name">' + escapeHtml((v.shared ? '✓ ' : '') + (v.favorite ? '⭐ ' : '') + (v.reference || v.title || "Sin referencia")) + '</div>';
+    div.onclick = ()=>{
+      verseNavigationMode = "verse";
+      currentVerseCategory = v.category || currentVerseCategory || "fe";
+      setCurrentId(v.id);
+      renderList();
+      renderReader();
+      applyReaderFont();
+      enterFullscreenReading();
+    };
+
     box.appendChild(div);
   });
 }

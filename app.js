@@ -2160,12 +2160,50 @@ const FESTIVITY_LIBRARY_V44 = [
 let currentFestivityIdV44=null;
 let currentFestivityPassageRefV44=null;
 let currentFestivityNotesEditingV44=false;
-function getFestivityNotesStore(){try{return JSON.parse(localStorage.getItem("oraciones_festivity_notes_v44")||"{}")}catch(e){return {}}}
-function saveFestivityNotesStore(store){localStorage.setItem("oraciones_festivity_notes_v44",JSON.stringify(store||{}))}
-function openFestivityLibrary(){const modal=document.getElementById("festivityModal");if(!modal)return;modal.classList.remove("hidden");backToFestivityList()}
-function closeFestivityModal(){const modal=document.getElementById("festivityModal");if(modal)modal.classList.add("hidden")}
-function backToFestivityList(){currentFestivityIdV44=null;document.getElementById("festivityListView")?.classList.remove("hidden");document.getElementById("festivityDetailView")?.classList.add("hidden");renderFestivityLibraryList()}
-function renderFestivityLibraryList(){const box=document.getElementById("festivityLibraryList");if(!box)return;box.innerHTML="";FESTIVITY_LIBRARY_V44.forEach(f=>{const div=document.createElement("div");div.className="festivity-row";div.innerHTML='<div class="festivity-row-title">'+escapeHtml(f.title)+'</div><div class="festivity-row-date">'+escapeHtml(f.date)+'</div>';div.onclick=()=>openFestivityDetail(f.id);box.appendChild(div)})}
+function getFestivityNotesStore(){
+  try{
+    return JSON.parse(localStorage.getItem("oraciones_festivity_notes_v44")||"{}");
+  }catch(e){
+    return {};
+  }
+}
+
+function saveFestivityNotesStore(store){
+  localStorage.setItem("oraciones_festivity_notes_v44",JSON.stringify(store||{}));
+}
+
+function openFestivityLibrary(){
+  const modal=document.getElementById("festivityModal");
+  if(!modal)return;
+  modal.classList.remove("hidden");
+  backToFestivityList();
+}
+
+function closeFestivityModal(){
+  const modal=document.getElementById("festivityModal");
+  if(modal)modal.classList.add("hidden");
+}
+
+function backToFestivityList(){
+  currentFestivityIdV44=null;
+  document.getElementById("festivityListView")?.classList.remove("hidden");
+  document.getElementById("festivityDetailView")?.classList.add("hidden");
+  renderFestivityLibraryList();
+}
+
+function renderFestivityLibraryList(){
+  const box=document.getElementById("festivityLibraryList");
+  if(!box)return;
+  box.innerHTML="";
+
+  FESTIVITY_LIBRARY_V44.forEach(f=>{
+    const div=document.createElement("div");
+    div.className="festivity-row";
+    div.innerHTML='<div class="festivity-row-title">'+escapeHtml(f.title)+'</div><div class="festivity-row-date">'+escapeHtml(f.date)+'</div>';
+    div.onclick=()=>openFestivityDetail(f.id);
+    box.appendChild(div);
+  });
+}
 
 function getFestivityDataV44(id){
   const store=getFestivityNotesStore();

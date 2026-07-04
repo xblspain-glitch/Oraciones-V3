@@ -1056,7 +1056,10 @@ function discardEditorChanges(){
   }
 }
 
-function leaveEditor(){if(isDirty) saveCurrent(false,true);else openReader()}
+function leaveEditor(){
+  if(isDirty) saveCurrent(false, true);
+  else openReader();
+}
 function newItem(){
   setActiveView("new");
   const id=uid();
@@ -1074,7 +1077,42 @@ function newItem(){
   renderReader();
   openEditor();
 }
-function moveToTrash(){const item=currentItem();if(!item) return;const items=getItems();if(items.length===1) return alert("Debe quedar al menos un elemento.");const typeName=section==="prayers"?"oración":section==="notes"?"nota":section==="guides"?"guía":"versículo";if(!confirm('¿Mover a papelera esta '+typeName+'?\n"'+item.title+'"')) return;const trash=getTrash();trash.unshift({...item,"deletedAt":Date.now()});const filtered=items.filter(x=>x.id!==item.id);setItems(filtered);if(section==="prayers") state.currentPrayerId=filtered[0].id;else if(section==="notes") state.currentNoteId=filtered[0].id;else if(section==="guides") state.currentGuideId=filtered[0].id;else state.currentVerseId=filtered[0].id;saveState();syncTabs();renderList();renderReader();applyReaderFont();openReader();toast("Movido a papelera")}
+function moveToTrash(){
+  const item = currentItem();
+  if(!item) return;
+
+  const items = getItems();
+  if(items.length === 1) return alert("Debe quedar al menos un elemento.");
+
+  const typeName = section === "prayers"
+    ? "oración"
+    : section === "notes"
+      ? "nota"
+      : section === "guides"
+        ? "guía"
+        : "versículo";
+
+  if(!confirm('¿Mover a papelera esta ' + typeName + '?\n"' + item.title + '"')) return;
+
+  const trash = getTrash();
+  trash.unshift({...item, "deletedAt": Date.now()});
+
+  const filtered = items.filter(x => x.id !== item.id);
+  setItems(filtered);
+
+  if(section === "prayers") state.currentPrayerId = filtered[0].id;
+  else if(section === "notes") state.currentNoteId = filtered[0].id;
+  else if(section === "guides") state.currentGuideId = filtered[0].id;
+  else state.currentVerseId = filtered[0].id;
+
+  saveState();
+  syncTabs();
+  renderList();
+  renderReader();
+  applyReaderFont();
+  openReader();
+  toast("Movido a papelera");
+}
 
 async function shareCurrent(){
   const item=currentItem();if(!item)return;
@@ -1739,10 +1777,67 @@ function openTrash(){
 }
 
   /* ===== PAPELERA ===== */
-  function renderTrash(){const box=document.getElementById("trashList");box.innerHTML="";const trash=getTrash();if(!trash.length){box.innerHTML='<div class="empty">La papelera está vacía.</div>';return}trash.forEach(item=>{const div=document.createElement("div");div.className="trash-item";div.innerHTML='<div class="trash-title">'+escapeHtml(item.title||"Sin título")+'</div><div class="row"><button class="btn soft" type="button" onclick="restoreFromTrash(\''+item.id+'\')">Restaurar</button><button class="btn danger" type="button" onclick="deleteForever(\''+item.id+'\')">Borrar definitivo</button></div>';box.appendChild(div)})}
-function restoreFromTrash(id){const trash=getTrash();const idx=trash.findIndex(x=>x.id===id);if(idx<0) return;const item=trash.splice(idx,1)[0];const items=getItems();items.unshift(item);setItems(items);setCurrentId(item.id);saveState();syncTabs();renderList();renderReader();renderTrash();toast("Restaurado")}
-function deleteForever(id){const trash=getTrash();const item=trash.find(x=>x.id===id);if(!item) return;if(!confirm('¿Borrar definitivamente "'+item.title+'"?')) return;setTrash(trash.filter(x=>x.id!==id));saveState();renderTrash();toast("Borrado definitivo")}
-function emptyTrash(){const trash=getTrash();if(!trash.length) return alert("La papelera ya está vacía.");if(!confirm("¿Vaciar toda la papelera? Esta acción no se puede deshacer.")) return;setTrash([]);saveState();renderTrash();toast("Papelera vaciada")}
+  function renderTrash(){
+    const box = document.getElementById("trashList");
+    box.innerHTML = "";
+
+    const trash = getTrash();
+    if(!trash.length){
+      box.innerHTML = '<div class="empty">La papelera está vacía.</div>';
+      return;
+    }
+
+    trash.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "trash-item";
+      div.innerHTML =
+        '<div class="trash-title">' + escapeHtml(item.title || "Sin título") + '</div>' +
+        '<div class="row">' +
+          '<button class="btn soft" type="button" onclick="restoreFromTrash(\'' + item.id + '\')">Restaurar</button>' +
+          '<button class="btn danger" type="button" onclick="deleteForever(\'' + item.id + '\')">Borrar definitivo</button>' +
+        '</div>';
+      box.appendChild(div);
+    });
+  }
+function restoreFromTrash(id){
+  const trash = getTrash();
+  const idx = trash.findIndex(x => x.id === id);
+  if(idx < 0) return;
+
+  const item = trash.splice(idx, 1)[0];
+  const items = getItems();
+  items.unshift(item);
+
+  setItems(items);
+  setCurrentId(item.id);
+  saveState();
+  syncTabs();
+  renderList();
+  renderReader();
+  renderTrash();
+  toast("Restaurado");
+}
+function deleteForever(id){
+  const trash = getTrash();
+  const item = trash.find(x => x.id === id);
+  if(!item) return;
+  if(!confirm('¿Borrar definitivamente "' + item.title + '"?')) return;
+
+  setTrash(trash.filter(x => x.id !== id));
+  saveState();
+  renderTrash();
+  toast("Borrado definitivo");
+}
+function emptyTrash(){
+  const trash = getTrash();
+  if(!trash.length) return alert("La papelera ya está vacía.");
+  if(!confirm("¿Vaciar toda la papelera? Esta acción no se puede deshacer.")) return;
+
+  setTrash([]);
+  saveState();
+  renderTrash();
+  toast("Papelera vaciada");
+}
 
 async function copyCurrentReference(){
   const item=currentItem();

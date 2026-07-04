@@ -128,8 +128,8 @@
   setTimeout(applyHomeSkyV902035, 120);
 })();
 
-/* ===== v3.1.16 - Arco iris alto en mañana/día =====
-   Mañana y día mantienen un único arco iris, ahora más alto.
+/* ===== v3.1.17 - Arco iris alto en mañana/día =====
+   Mañana y día mantienen un único arco iris, más alto, algo más ancho y más suave.
    Atardecer queda sin arco iris para evitar mezcla rara con el degradado cálido.
    Noche queda sin cambios. */
 (function(){
@@ -139,22 +139,22 @@
 body.dark .home-card-v9019.home-sky-morning,
 body.dark .home-card-v9019.home-sky-day{
   background:
-    radial-gradient(ellipse 170% 80% at 50% 82%,
+    radial-gradient(ellipse 184% 78% at 50% 74%,
       transparent 0%,
       transparent 52.6%,
-      rgba(255,  86, 106, .205) 54.0%,
-      rgba(255, 165,  72, .185) 55.8%,
-      rgba(255, 232, 105, .165) 57.6%,
-      rgba(111, 218, 134, .150) 59.4%,
-      rgba( 74, 190, 242, .165) 61.2%,
-      rgba(111, 136, 238, .145) 63.0%,
-      rgba(178, 110, 224, .128) 64.8%,
+      rgba(255,  86, 106, .180) 54.0%,
+      rgba(255, 165,  72, .162) 55.8%,
+      rgba(255, 232, 105, .112) 57.6%,
+      rgba(111, 218, 134, .132) 59.4%,
+      rgba( 74, 190, 242, .112) 61.2%,
+      rgba(111, 136, 238, .112) 63.0%,
+      rgba(178, 110, 224, .112) 64.8%,
       transparent 69.2%),
-    radial-gradient(ellipse 170% 80% at 50% 82%,
+    radial-gradient(ellipse 184% 78% at 50% 74%,
       transparent 0%,
       transparent 51.8%,
-      rgba(255,255,255,.070) 58.8%,
-      rgba(255,255,255,.020) 68.8%,
+      rgba(255,255,255,.060) 58.8%,
+      rgba(255,255,255,.018) 68.8%,
       transparent 73.2%),
     radial-gradient(circle at 7% 13%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.58) 5%, rgba(255,246,198,.34) 14%, rgba(255,232,138,.18) 27%, rgba(255,232,138,0) 49%),
     radial-gradient(ellipse at 35% 16%, rgba(255,255,255,.42) 0%, rgba(255,255,255,.16) 21%, rgba(255,255,255,0) 49%),

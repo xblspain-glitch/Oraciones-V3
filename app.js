@@ -1,4 +1,4 @@
-/* Oraciones V3 LAB - app.js paso 26: limpieza segura de legibilidad */
+/* Oraciones V3 LAB - app.js paso 30: limpieza segura de restauración automática */
 
 /* ===== PWA / INSTALACIÓN ===== */
 function buildInitialState(){
@@ -71,7 +71,42 @@ function openBackupFilePicker(){
   input.value="";
   input.click();
 }
-function restoreAutoBackup(){const raw=localStorage.getItem(AUTO_BACKUP_KEY);if(!raw) return alert("No hay backup automático.");if(!confirm("¿Restaurar el backup automático?")) return;try{const parsed=JSON.parse(raw);state={"section":parsed.section||"prayers","currentPrayerId":parsed.currentPrayerId||null,"currentNoteId":parsed.currentNoteId||null,"currentGuideId":parsed.currentGuideId||null,"currentVerseId":parsed.currentVerseId||null,"prayers":Array.isArray(parsed.prayers)?parsed.prayers:[],"notes":Array.isArray(parsed.notes)?parsed.notes:[],"guides":Array.isArray(parsed.guides)?parsed.guides:[],"verses":Array.isArray(parsed.verses)?parsed.verses:[],"trashPrayers":Array.isArray(parsed.trashPrayers)?parsed.trashPrayers:[],"trashNotes":Array.isArray(parsed.trashNotes)?parsed.trashNotes:[],"trashGuides":Array.isArray(parsed.trashGuides)?parsed.trashGuides:[],"trashVerses":Array.isArray(parsed.trashVerses)?parsed.trashVerses:[]};normalizeGuides();saveState();section=state.section;syncTabs();renderList();renderReader();applyReaderFont();openReader();toast("Backup automático restaurado")}catch(e){alert("No se pudo restaurar.")}}
+function restoreAutoBackup(){
+  const raw = localStorage.getItem(AUTO_BACKUP_KEY);
+  if(!raw) return alert("No hay backup automático.");
+  if(!confirm("¿Restaurar el backup automático?")) return;
+
+  try{
+    const parsed = JSON.parse(raw);
+    state = {
+      "section": parsed.section || "prayers",
+      "currentPrayerId": parsed.currentPrayerId || null,
+      "currentNoteId": parsed.currentNoteId || null,
+      "currentGuideId": parsed.currentGuideId || null,
+      "currentVerseId": parsed.currentVerseId || null,
+      "prayers": Array.isArray(parsed.prayers) ? parsed.prayers : [],
+      "notes": Array.isArray(parsed.notes) ? parsed.notes : [],
+      "guides": Array.isArray(parsed.guides) ? parsed.guides : [],
+      "verses": Array.isArray(parsed.verses) ? parsed.verses : [],
+      "trashPrayers": Array.isArray(parsed.trashPrayers) ? parsed.trashPrayers : [],
+      "trashNotes": Array.isArray(parsed.trashNotes) ? parsed.trashNotes : [],
+      "trashGuides": Array.isArray(parsed.trashGuides) ? parsed.trashGuides : [],
+      "trashVerses": Array.isArray(parsed.trashVerses) ? parsed.trashVerses : []
+    };
+
+    normalizeGuides();
+    saveState();
+    section = state.section;
+    syncTabs();
+    renderList();
+    renderReader();
+    applyReaderFont();
+    openReader();
+    toast("Backup automático restaurado");
+  }catch(e){
+    alert("No se pudo restaurar.");
+  }
+}
 function getDisplayCode(idx, kind){
   return (kind==="prayers"?"O":kind==="notes"?"N":kind==="guides"?"G":"V")+(idx+1)
 }

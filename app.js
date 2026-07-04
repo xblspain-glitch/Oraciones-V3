@@ -208,33 +208,57 @@ function setTrash(items){
 }
 function currentItem(){
   normalizeGuides();
-  const items=getItems();
-  const id=section==="prayers"?state.currentPrayerId:section==="notes"?state.currentNoteId:section==="guides"?state.currentGuideId:state.currentVerseId;
-  const found=items.find(x=>x.id===id);
-  if(found)return found;
-  const first=items[0]||null;
+
+  const items = getItems();
+  const id = section === "prayers"
+    ? state.currentPrayerId
+    : section === "notes"
+      ? state.currentNoteId
+      : section === "guides"
+        ? state.currentGuideId
+        : state.currentVerseId;
+
+  const found = items.find(x => x.id === id);
+  if(found) return found;
+
+  const first = items[0] || null;
   if(first){
-    if(section==="prayers") state.currentPrayerId=first.id;
-    else if(section==="notes") state.currentNoteId=first.id;
-    else if(section==="guides") state.currentGuideId=first.id;
-    else state.currentVerseId=first.id;
+    if(section === "prayers") state.currentPrayerId = first.id;
+    else if(section === "notes") state.currentNoteId = first.id;
+    else if(section === "guides") state.currentGuideId = first.id;
+    else state.currentVerseId = first.id;
   }
+
   return first;
 }
+
 function setCurrentId(id){
-  if(section==="prayers") state.currentPrayerId=id;
-  else if(section==="notes") state.currentNoteId=id;
-  else if(section==="guides") state.currentGuideId=id;
-  else state.currentVerseId=id;
+  if(section === "prayers") state.currentPrayerId = id;
+  else if(section === "notes") state.currentNoteId = id;
+  else if(section === "guides") state.currentGuideId = id;
+  else state.currentVerseId = id;
+
   saveState();
 }
+
 function displayItemTitle(item){
-  if(section==="verses") return (item.shared?"✓ ":"")+(item.favorite?"⭐ ":"")+(item.reference||item.title||"Sin referencia");
-  return (item.favorite?"⭐ ":"")+(item.title||"Sin título");
+  if(section === "verses"){
+    return (item.shared ? "✓ " : "")
+      + (item.favorite ? "⭐ " : "")
+      + (item.reference || item.title || "Sin referencia");
+  }
+
+  return (item.favorite ? "⭐ " : "") + (item.title || "Sin título");
 }
+
 function displayItemSub(item){
-  if(section==="verses") return verseCategoryLabel(item.category)+" · "+((item.text||item.content||"").slice(0,70));
-  return (item.content||"").slice(0,70);
+  if(section === "verses"){
+    return verseCategoryLabel(item.category)
+      + " · "
+      + ((item.text || item.content || "").slice(0, 70));
+  }
+
+  return (item.content || "").slice(0, 70);
 }
 
 function renderList(){

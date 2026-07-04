@@ -13,8 +13,40 @@ let deferredPrompt=null;
 let readerSize=parseInt(localStorage.getItem(SIZE_KEY)||"24",10);
 let returnToSentList=false;
 let section="prayers";
-let state={"section":"prayers","currentPrayerId":null,"currentNoteId":null,"currentGuideId":null,"currentVerseId":null,"currentParableId":null,"prayers":[],"notes":[],"guides":[],"verses":[],"parables":[],"verseCategories":[],"trashPrayers":[],"trashNotes":[],"trashGuides":[],"trashVerses":[],"trashParables":[]};
+let state={
+  "section":"prayers",
+  "currentPrayerId":null,
+  "currentNoteId":null,
+  "currentGuideId":null,
+  "currentVerseId":null,
+  "currentParableId":null,
+  "prayers":[],
+  "notes":[],
+  "guides":[],
+  "verses":[],
+  "parables":[],
+  "verseCategories":[],
+  "trashPrayers":[],
+  "trashNotes":[],
+  "trashGuides":[],
+  "trashVerses":[],
+  "trashParables":[]
+};
 let isDirty=false;
 let autosaveTimer=null;
-const seedPrayer="\ud83c\udf05 \u271d\ufe0f Oraci\u00f3n diaria completa\n\nSe\u00f1or Dios Todopoderoso,\ndamos gracias por este nuevo d\u00eda que me concede.\n\nDamos gracias por la vida que me ha dado,\npor el regalo de la vida, desde la creaci\u00f3n y el nacimiento,\nhasta el regalo de la vida eterna.\n\nPor ser el centro de mi vida,\npor llevar las riendas de mi vida\ny darle sentido.\n";
+const seedPrayer=[
+  "\ud83c\udf05 \u271d\ufe0f Oraci\u00f3n diaria completa",
+  "",
+  "Se\u00f1or Dios Todopoderoso,",
+  "damos gracias por este nuevo d\u00eda que me concede.",
+  "",
+  "Damos gracias por la vida que me ha dado,",
+  "por el regalo de la vida, desde la creaci\u00f3n y el nacimiento,",
+  "hasta el regalo de la vida eterna.",
+  "",
+  "Por ser el centro de mi vida,",
+  "por llevar las riendas de mi vida",
+  "y darle sentido.",
+  ""
+].join("\n");
 const seedNote="Aqu\u00ed puedes guardar ideas, reflexiones, vers\u00edculos sueltos o recordatorios.";

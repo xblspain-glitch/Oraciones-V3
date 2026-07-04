@@ -128,99 +128,9 @@
   setTimeout(applyHomeSkyV902035, 120);
 })();
 
-/* ===== v3.1.13 - Arco iris suave visible desde patches.js =====
-   Ajuste real sobre el origen que inyecta el fondo: más altura y presencia
-   que la v3.1.12, manteniendo el arco bajo y sin volver al anillo central. */
-(function(){
-  const css = `
-.home-card-v9019.home-sky-morning,
-.home-card-v9019.home-sky-day,
-body.dark .home-card-v9019.home-sky-morning,
-body.dark .home-card-v9019.home-sky-day{
-  background:
-    radial-gradient(ellipse 200% 55% at 50% 116%,
-      transparent 0%,
-      transparent 47.4%,
-      rgba(255, 112, 112, .118) 48.6%,
-      rgba(255, 176,  92, .108) 50.1%,
-      rgba(255, 235, 130, .098) 51.6%,
-      rgba(132, 218, 146, .090) 53.1%,
-      rgba(103, 195, 236, .098) 54.6%,
-      rgba(128, 151, 236, .084) 56.1%,
-      rgba(181, 133, 224, .074) 57.6%,
-      transparent 61.8%),
-    radial-gradient(circle at 7% 13%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.58) 5%, rgba(255,246,198,.34) 14%, rgba(255,232,138,.18) 27%, rgba(255,232,138,0) 49%),
-    radial-gradient(ellipse at 35% 16%, rgba(255,255,255,.42) 0%, rgba(255,255,255,.16) 21%, rgba(255,255,255,0) 49%),
-    radial-gradient(ellipse at 78% 25%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.13) 22%, rgba(255,255,255,0) 48%),
-    linear-gradient(125deg,#fff2c8 0%,#f8f6e4 25%,#d9f2ff 55%,#eafbff 100%)!important;
-}
-.home-card-v9019.home-sky-morning::before,
-.home-card-v9019.home-sky-day::before,
-body.dark .home-card-v9019.home-sky-morning::before,
-body.dark .home-card-v9019.home-sky-day::before{
-  background:
-    radial-gradient(ellipse at 28% 18%, rgba(255,255,255,.36) 0%, rgba(255,255,255,.14) 16%, rgba(255,255,255,0) 38%),
-    radial-gradient(ellipse at 70% 22%, rgba(255,255,255,.28) 0%, rgba(255,255,255,.11) 18%, rgba(255,255,255,0) 42%),
-    linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0) 66%)!important;
-}
-.home-card-v9019.home-sky-sunset,
-body.dark .home-card-v9019.home-sky-sunset{
-  border-color:rgba(246,184,126,.32)!important;
-  background:
-    radial-gradient(ellipse 200% 55% at 50% 116%,
-      transparent 0%,
-      transparent 47.4%,
-      rgba(255, 112, 112, .090) 48.6%,
-      rgba(255, 176,  92, .080) 50.1%,
-      rgba(255, 235, 130, .072) 51.6%,
-      rgba(132, 218, 146, .067) 53.1%,
-      rgba(103, 195, 236, .074) 54.6%,
-      rgba(128, 151, 236, .065) 56.1%,
-      rgba(181, 133, 224, .057) 57.6%,
-      transparent 61.8%),
-    radial-gradient(circle at 7% 14%, rgba(255,255,255,.86) 0%, rgba(255,240,204,.50) 8%, rgba(255,205,150,.22) 21%, rgba(239,148,92,.075) 36%, rgba(239,148,92,0) 60%),
-    radial-gradient(ellipse at 0% 48%, rgba(255,184,120,.18) 0%, rgba(255,214,168,.09) 36%, rgba(255,214,168,0) 72%),
-    radial-gradient(ellipse at 46% 24%, rgba(255,238,210,.22) 0%, rgba(255,238,210,.08) 30%, rgba(255,238,210,0) 64%),
-    radial-gradient(ellipse at 96% 38%, rgba(190,229,255,.48) 0%, rgba(190,229,255,.23) 36%, rgba(190,229,255,0) 73%),
-    linear-gradient(135deg,#fff0df 0%,#fff6ea 24%,#f3fbff 59%,#e4f7ff 100%)!important;
-  box-shadow:0 24px 58px rgba(72,153,214,.14),0 10px 26px rgba(226,124,76,.045),inset 0 1px 0 rgba(255,255,255,.96)!important;
-}
-.home-card-v9019.home-sky-sunset::before,
-body.dark .home-card-v9019.home-sky-sunset::before{
-  background:
-    radial-gradient(ellipse at 18% 18%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.13) 19%, rgba(255,255,255,0) 43%),
-    radial-gradient(ellipse at 80% 28%, rgba(255,255,255,.23) 0%, rgba(255,255,255,.085) 20%, rgba(255,255,255,0) 45%),
-    linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,0) 68%)!important;
-}
-.home-card-v9019.home-sky-sunset::after,
-body.dark .home-card-v9019.home-sky-sunset::after{
-  opacity:.24!important;
-  color:rgba(224,126,68,.30)!important;
-  filter:saturate(.82) brightness(1.08) blur(.08px)!important;
-  text-shadow:0 0 18px rgba(255,226,178,.42),0 0 42px rgba(236,142,78,.13)!important;
-}`;
-  [
-    'v3-1-4-rainbow-covenant-css',
-    'v3-1-10-rainbow-bottom-real-css',
-    'v3-1-11-rainbow-horizon-real-css',
-    'v3-1-12-rainbow-visible-open-css'
-  ].forEach(oldId => {
-    const old = document.getElementById(oldId);
-    if (old) old.remove();
-  });
-  const id = 'v3-1-13-rainbow-soft-visible-css';
-  const existing = document.getElementById(id);
-  if (existing) existing.remove();
-  const style = document.createElement('style');
-  style.id = id;
-  style.textContent = css;
-  document.head.appendChild(style);
-})();
-
-/* ===== v3.1.14 - Arco iris visible y controlado desde el origen real =====
-   Inspección completa: el fondo efectivo se inyecta desde patches.js al final.
-   Este bloque elimina los estilos dinámicos anteriores y aplica un único arco
-   más visible, más alto y suficientemente abierto para mañana, día y tarde.
+/* ===== v3.1.15 - Arco iris único y limpio =====
+   Limpieza real: se eliminan los estilos dinámicos anteriores del arco iris
+   y se deja una sola definición activa para mañana, día y tarde.
    Noche queda sin cambios. */
 (function(){
   const css = `
@@ -231,21 +141,21 @@ body.dark .home-card-v9019.home-sky-day{
   background:
     radial-gradient(ellipse 170% 80% at 50% 105%,
       transparent 0%,
-      transparent 53.2%,
-      rgba(255, 102, 112, .165) 54.3%,
-      rgba(255, 174,  82, .145) 56.0%,
-      rgba(255, 235, 118, .128) 57.7%,
-      rgba(124, 218, 142, .116) 59.4%,
-      rgba( 88, 194, 238, .128) 61.1%,
-      rgba(122, 145, 236, .112) 62.8%,
-      rgba(182, 124, 224, .098) 64.5%,
-      transparent 69.0%),
+      transparent 52.6%,
+      rgba(255,  86, 106, .205) 54.0%,
+      rgba(255, 165,  72, .185) 55.8%,
+      rgba(255, 232, 105, .165) 57.6%,
+      rgba(111, 218, 134, .150) 59.4%,
+      rgba( 74, 190, 242, .165) 61.2%,
+      rgba(111, 136, 238, .145) 63.0%,
+      rgba(178, 110, 224, .128) 64.8%,
+      transparent 69.2%),
     radial-gradient(ellipse 170% 80% at 50% 105%,
       transparent 0%,
-      transparent 52.2%,
-      rgba(255,255,255,.105) 59.0%,
-      rgba(255,255,255,.032) 68.5%,
-      transparent 73.0%),
+      transparent 51.8%,
+      rgba(255,255,255,.070) 58.8%,
+      rgba(255,255,255,.020) 68.8%,
+      transparent 73.2%),
     radial-gradient(circle at 7% 13%, rgba(255,255,255,.86) 0%, rgba(255,255,255,.58) 5%, rgba(255,246,198,.34) 14%, rgba(255,232,138,.18) 27%, rgba(255,232,138,0) 49%),
     radial-gradient(ellipse at 35% 16%, rgba(255,255,255,.42) 0%, rgba(255,255,255,.16) 21%, rgba(255,255,255,0) 49%),
     radial-gradient(ellipse at 78% 25%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.13) 22%, rgba(255,255,255,0) 48%),
@@ -266,21 +176,21 @@ body.dark .home-card-v9019.home-sky-sunset{
   background:
     radial-gradient(ellipse 170% 80% at 50% 105%,
       transparent 0%,
-      transparent 53.2%,
-      rgba(255, 102, 112, .125) 54.3%,
-      rgba(255, 174,  82, .108) 56.0%,
-      rgba(255, 235, 118, .094) 57.7%,
-      rgba(124, 218, 142, .086) 59.4%,
-      rgba( 88, 194, 238, .098) 61.1%,
-      rgba(122, 145, 236, .084) 62.8%,
-      rgba(182, 124, 224, .074) 64.5%,
-      transparent 69.0%),
+      transparent 52.6%,
+      rgba(255,  86, 106, .158) 54.0%,
+      rgba(255, 165,  72, .138) 55.8%,
+      rgba(255, 232, 105, .122) 57.6%,
+      rgba(111, 218, 134, .112) 59.4%,
+      rgba( 74, 190, 242, .130) 61.2%,
+      rgba(111, 136, 238, .112) 63.0%,
+      rgba(178, 110, 224, .096) 64.8%,
+      transparent 69.2%),
     radial-gradient(ellipse 170% 80% at 50% 105%,
       transparent 0%,
-      transparent 52.2%,
-      rgba(255,255,255,.082) 59.0%,
-      rgba(255,255,255,.025) 68.5%,
-      transparent 73.0%),
+      transparent 51.8%,
+      rgba(255,255,255,.055) 58.8%,
+      rgba(255,255,255,.017) 68.8%,
+      transparent 73.2%),
     radial-gradient(circle at 8% 16%, rgba(255,255,255,.84) 0%, rgba(255,244,218,.42) 8%, rgba(255,218,170,.16) 22%, rgba(239,148,92,.045) 38%, rgba(239,148,92,0) 62%),
     radial-gradient(ellipse at 0% 48%, rgba(255,192,132,.13) 0%, rgba(255,223,184,.065) 36%, rgba(255,223,184,0) 72%),
     radial-gradient(ellipse at 48% 24%, rgba(255,246,226,.21) 0%, rgba(255,246,226,.075) 30%, rgba(255,246,226,0) 64%),
@@ -301,13 +211,14 @@ body.dark .home-card-v9019.home-sky-sunset::before{
     'v3-1-11-rainbow-horizon-real-css',
     'v3-1-12-rainbow-visible-open-css',
     'v3-1-13-rainbow-soft-visible-css',
-    'v3-1-14-rainbow-visible-final-css'
-  ].forEach(oldId => {
+    'v3-1-14-rainbow-visible-final-css',
+    'v3-1-15-rainbow-clean-single-css'
+  ].forEach(function(oldId){
     const old = document.getElementById(oldId);
     if (old) old.remove();
   });
   const style = document.createElement('style');
-  style.id = 'v3-1-14-rainbow-visible-final-css';
+  style.id = 'v3-1-15-rainbow-clean-single-css';
   style.textContent = css;
   document.head.appendChild(style);
 })();

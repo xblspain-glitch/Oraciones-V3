@@ -439,9 +439,26 @@ function setReaderTextV49(text){
   if(el) el.innerHTML=renderCollapsibleBlocksV864(text||"");
 }
 
-function renderReader(){try{document.body.dataset.section=section;}catch(e){}applyReaderFont();
-  const dailyDateEl=document.getElementById("readerDailyDate"); const catReadEl=document.getElementById('readerCategory'); if(catReadEl){catReadEl.classList.add('hidden');catReadEl.textContent='';}
-  if(dailyDateEl){dailyDateEl.classList.add("hidden");dailyDateEl.textContent="";}
+function renderReader(){
+  try{
+    document.body.dataset.section=section;
+  }catch(e){}
+
+  applyReaderFont();
+
+  const dailyDateEl=document.getElementById("readerDailyDate");
+  const catReadEl=document.getElementById("readerCategory");
+
+  if(catReadEl){
+    catReadEl.classList.add("hidden");
+    catReadEl.textContent="";
+  }
+
+  if(dailyDateEl){
+    dailyDateEl.classList.add("hidden");
+    dailyDateEl.textContent="";
+  }
+
   const item=currentItem();
   if(!item){
     document.getElementById("readerCode").textContent="";
@@ -449,17 +466,21 @@ function renderReader(){try{document.body.dataset.section=section;}catch(e){}app
     document.getElementById("readerText").textContent=section==="verses"?"Pulsa ❤️ Versículos para ver categorías o ➕ Nueva para añadir uno.":"";
     return;
   }
+
   if(section==="verses"){
     const catEl=document.getElementById("readerCategory");
     if(catEl){
       catEl.textContent=verseCategoryLabel(item.category);
       catEl.classList.remove("hidden");
     }
+
     document.getElementById("readerCode").textContent=(item.shared?"✓ Compartido · ":"")+(specialVerseMode==="daily"?"🌅 Versículo del día · ":specialVerseMode==="random"?"🌿 Versículo aleatorio · ":"")+formatLastCardSentAt(item.lastCardSentAt)+" · "+verseCategoryLabel(item.category);
+
     if(specialVerseMode==="daily" && dailyDateEl){
       dailyDateEl.textContent="📅 "+formatDailyDateEs();
       dailyDateEl.classList.remove("hidden");
     }
+
     document.getElementById("readerTitle").textContent=(item.favorite?"⭐ ":"")+(item.reference||item.title||"Sin referencia");
     setReaderTextV49(item.text||item.content||"");
   }else{
@@ -467,6 +488,7 @@ function renderReader(){try{document.body.dataset.section=section;}catch(e){}app
     document.getElementById("readerTitle").textContent=(item.favorite?"⭐ ":"")+(item.title||"Sin título");
     setReaderTextV49(item.content||"");
   }
+
   updateFavoriteButtons();
   updateMoveVerseButtonVisibility();
 }

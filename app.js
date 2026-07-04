@@ -7074,4 +7074,33 @@ setInterval(updateVersePositionCounter, 1000);
   try{ smartBack = window.smartBack; }catch(e){}
 })();
 
+
+/* v3.1.1 - Arreglo: Versículo al azar desde Más no debe arrastrar Inicio */
+(function(){
+  if(window.__v311RandomFromMoreHomeFix) return;
+  window.__v311RandomFromMoreHomeFix = true;
+
+  function hideHomeForRandomV311(){
+    try{
+      document.body.classList.remove('home-active-v9019');
+      var home = document.getElementById('homeView');
+      if(home) home.classList.add('hidden');
+    }catch(e){}
+  }
+
+  var oldOpenRandomV311 = window.openRandomVerse || (typeof openRandomVerse !== 'undefined' ? openRandomVerse : null);
+  if(typeof oldOpenRandomV311 === 'function'){
+    window.openRandomVerse = function(){
+      hideHomeForRandomV311();
+      return oldOpenRandomV311.apply(this, arguments);
+    };
+    try{ openRandomVerse = window.openRandomVerse; }catch(e){}
+  }
+
+  var style = document.createElement('style');
+  style.id = 'v3-1-1-random-home-fix';
+  style.textContent = 'body.verse-special-fullscreen-v74 #homeView, body.verse-special-fullscreen-v751 #homeView{display:none!important;}';
+  document.head.appendChild(style);
+})();
+
 /* V3 paso 16: parches visuales finales movidos a patches.js. */

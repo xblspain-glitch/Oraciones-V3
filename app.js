@@ -7357,10 +7357,9 @@ setInterval(updateVersePositionCounter, 1000);
         btn.setAttribute("onclick", "toggleCurrentVerseSharedV3135()");
 
         var buttons = Array.prototype.slice.call(head.querySelectorAll("button"));
-        var shareBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Compartir") !== -1; });
-        var cardBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Tarjeta") !== -1; });
-        var neverBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Nunca enviados") !== -1; });
-        var anchor = shareBtn || cardBtn || neverBtn || null;
+        var blockBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Bloque") !== -1; });
+        var moveBtn = buttons.find(function(b){ return (b.textContent || "").indexOf("Mover") !== -1; });
+        var anchor = blockBtn || moveBtn || null;
         if(anchor && anchor.parentNode === head){
           head.insertBefore(btn, anchor.nextSibling);
         }else{

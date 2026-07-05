@@ -7295,27 +7295,14 @@ setInterval(updateVersePositionCounter, 1000);
 
   function currentVerseV3135(){
     try{
-      var verses = (window.state && Array.isArray(state.verses)) ? state.verses : [];
-      var it = null;
-
+      if(typeof section !== "undefined" && section !== "verses") return null;
       if(typeof currentItem === "function"){
-        try{ it = currentItem(); }catch(_e){}
+        var it = currentItem();
+        if(it) return it;
       }
-
-      if(it){
-        var matched = verses.find(function(v){
-          return v && (
-            (it.id && v.id === it.id) ||
-            (it.ref && v.ref === it.ref && it.text && v.text === it.text) ||
-            (it.reference && v.reference === it.reference && it.text && v.text === it.text)
-          );
-        });
-        if(matched) return matched;
-      }
-
       var id = (window.state && (state.currentVerseId || state.currentId)) || null;
       if(!id) return null;
-      return verses.find(function(v){ return v && v.id === id; }) || null;
+      return (state.verses || []).find(function(v){ return v && v.id === id; }) || null;
     }catch(e){ return null; }
   }
 
@@ -7361,7 +7348,8 @@ setInterval(updateVersePositionCounter, 1000);
       var v = currentVerseV3135();
       var head = document.querySelector("#readerView .panel-head");
       var existing = document.getElementById("readerSharedToggleBtnV3135");
-      if(!head || !v){
+      if(!head) return;
+      if(!v){
         if(existing && existing.parentNode) existing.parentNode.removeChild(existing);
         return;
       }

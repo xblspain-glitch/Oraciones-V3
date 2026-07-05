@@ -2572,13 +2572,13 @@ body.dark #readerView.reader-sent-bg-v3134{
   background-clip:padding-box!important;
 }
 #homeView #homeCardV9019.home-card-v9019::before{
-  top:14px!important;
+  top:16px!important;
 }
 @media (max-width:420px){
   #homeView #homeCardV9019.home-card-v9019{
     margin-top:6px!important;
   }
   #homeView #homeCardV9019.home-card-v9019::before{
-    top:14px!important;
+    top:16px!important;
   }
 }

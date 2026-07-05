@@ -7295,7 +7295,10 @@ setInterval(updateVersePositionCounter, 1000);
 
   function currentVerseV3135(){
     try{
-      if(typeof section !== "undefined" && section !== "verses") return null;
+      var mode = (typeof section !== "undefined") ? section : "";
+      var daily = false;
+      try{ daily = !!document.getElementById("readerDailyDate"); }catch(e){}
+      if(mode !== "verses" && !daily) return null;
       if(typeof currentItem === "function"){
         var it = currentItem();
         if(it) return it;

@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.49";
-const APP_VERSION_ZIP = "oraciones_v3_1_49_estado_copia_seguridad.zip";
+const APP_VERSION_LABEL = "v3.1.50";
+const APP_VERSION_ZIP = "oraciones_v3_1_50_estado_copia_mejorado.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3484,7 +3484,7 @@ async function exportAllZip(){
   toast("ZIP exportado");
 }
 
-/* ===== v3.1.49 - Estado de copia de seguridad ===== */
+/* ===== v3.1.50 - Estado de copia de seguridad mejorado ===== */
 const BACKUP_EXPORT_STATUS_KEY_V3149 = "oraciones_v3_last_backup_export_status";
 
 function backupCountsV3149(){
@@ -3531,11 +3531,18 @@ function backupAgeTextV3149(iso){
   return {tone:"bad", text:"Hace " + days + " días"};
 }
 
+function backupStatusLabelV3150(age){
+  if(!age || age.tone === "warn") return "⚪ Sin copia registrada";
+  if(age.tone === "ok") return "✅ Copia actualizada";
+  if(age.tone === "mid") return "🟡 Conviene hacer una copia";
+  return "🔴 Copia antigua";
+}
+
 function backupAdviceV3149(age){
-  if(!age || age.tone === "warn") return "Cuando descargues o compartas un JSON, guardaré aquí la fecha de la última copia.";
-  if(age.tone === "ok") return "Tu copia de seguridad está reciente.";
-  if(age.tone === "mid") return "Hace un tiempo que no exportas. Sería buena idea guardar un JSON nuevo.";
-  return "Conviene hacer una copia nueva antes de seguir añadiendo contenido.";
+  if(!age || age.tone === "warn") return "Cuando descargues o compartas un JSON, guardaré aquí la fecha de la última copia. Se recomienda guardar el archivo también en Google Drive.";
+  if(age.tone === "ok") return "Tu copia de seguridad está reciente. Se recomienda guardar también una copia en Google Drive.";
+  if(age.tone === "mid") return "Hace un tiempo que no exportas. Sería buena idea guardar un JSON nuevo y conservarlo en Google Drive.";
+  return "Conviene hacer una copia nueva antes de seguir añadiendo contenido y guardarla también en Google Drive.";
 }
 
 function readBackupStatusV3149(){
@@ -3570,8 +3577,10 @@ function renderBackupStatusV3149(){
   box.innerHTML =
     '<div class="backup-status-card-v3149 backup-status-'+age.tone+'-v3149">' +
       '<div class="backup-status-title-v3149">💾 Estado de la copia de seguridad</div>' +
+      '<div class="backup-status-state-v3150">' + backupStatusLabelV3150(age) + '</div>' +
       '<div class="backup-status-row-v3149"><strong>Última exportación:</strong><br>' + formatBackupDateV3149(data && data.exportedAt) + '</div>' +
       '<div class="backup-status-row-v3149"><strong>Antigüedad:</strong> ' + age.text + '</div>' +
+      '<div class="backup-status-row-v3149"><strong>Método:</strong> ' + ((data && data.method) ? data.method : "Aún no registrado") + '</div>' +
       '<div class="backup-status-row-v3149"><strong>Archivo:</strong><br><span class="backup-status-file-v3149">' + file + '</span></div>' +
       '<div class="backup-status-grid-v3149">' +
         '<span>🙏🏾 Oraciones: <strong>' + (counts.prayers||0) + '</strong></span>' +

@@ -2601,6 +2601,17 @@ body.dark #readerView.reader-sent-bg-v3134{
   font-size:16px;
   margin-bottom:8px;
 }
+.backup-status-state-v3150{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-weight:800;
+  font-size:13px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.68);
+  margin:0 0 8px 0;
+}
 .backup-status-row-v3149{
   font-size:13px;
   line-height:1.35;
@@ -2635,5 +2646,8 @@ body.dark .backup-status-card-v3149{
   border-color:rgba(148,163,184,.28);
 }
 body.dark .backup-status-advice-v3149{
+  background:rgba(15,23,42,.45);
+}
+body.dark .backup-status-state-v3150{
   background:rgba(15,23,42,.45);
 }

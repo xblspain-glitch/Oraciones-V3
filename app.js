@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.50";
-const APP_VERSION_ZIP = "oraciones_v3_1_50_estado_copia_mejorado.zip";
+const APP_VERSION_LABEL = "v3.1.51";
+const APP_VERSION_ZIP = "oraciones_v3_1_51_estado_copia_pulido.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3484,7 +3484,7 @@ async function exportAllZip(){
   toast("ZIP exportado");
 }
 
-/* ===== v3.1.50 - Estado de copia de seguridad mejorado ===== */
+/* ===== v3.1.51 - Estado de copia de seguridad pulido ===== */
 const BACKUP_EXPORT_STATUS_KEY_V3149 = "oraciones_v3_last_backup_export_status";
 
 function backupCountsV3149(){
@@ -3507,7 +3507,7 @@ function formatBackupDateV3149(iso){
   if(!iso) return "Sin exportaciones registradas";
   try{
     const d = new Date(iso);
-    return d.toLocaleString("es-ES", {
+    let value = d.toLocaleString("es-ES", {
       weekday:"long",
       day:"2-digit",
       month:"long",
@@ -3515,6 +3515,7 @@ function formatBackupDateV3149(iso){
       hour:"2-digit",
       minute:"2-digit"
     });
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }catch(e){
     return iso;
   }
@@ -3522,9 +3523,13 @@ function formatBackupDateV3149(iso){
 
 function backupAgeTextV3149(iso){
   if(!iso) return {tone:"warn", text:"Todavía no hay una copia registrada."};
-  const ms = Date.now() - new Date(iso).getTime();
-  const days = Math.max(0, Math.floor(ms / 86400000));
-  if(days === 0) return {tone:"ok", text:"Hoy"};
+  const ms = Math.max(0, Date.now() - new Date(iso).getTime());
+  const minutes = Math.floor(ms / 60000);
+  const hours = Math.floor(ms / 3600000);
+  const days = Math.floor(ms / 86400000);
+  if(minutes < 1) return {tone:"ok", text:"Hace unos segundos"};
+  if(minutes < 60) return {tone:"ok", text: minutes === 1 ? "Hace 1 minuto" : "Hace " + minutes + " minutos"};
+  if(hours < 24) return {tone:"ok", text: hours === 1 ? "Hace 1 hora" : "Hace " + hours + " horas"};
   if(days === 1) return {tone:"ok", text:"Ayer"};
   if(days <= 14) return {tone:"ok", text:"Hace " + days + " días"};
   if(days <= 45) return {tone:"mid", text:"Hace " + days + " días"};
@@ -3532,10 +3537,10 @@ function backupAgeTextV3149(iso){
 }
 
 function backupStatusLabelV3150(age){
-  if(!age || age.tone === "warn") return "⚪ Sin copia registrada";
-  if(age.tone === "ok") return "✅ Copia actualizada";
-  if(age.tone === "mid") return "🟡 Conviene hacer una copia";
-  return "🔴 Copia antigua";
+  if(!age || age.tone === "warn") return "Estado: ⚪ Sin copia registrada";
+  if(age.tone === "ok") return "Estado: ✅ Copia reciente";
+  if(age.tone === "mid") return "Estado: 🟡 Conviene hacer una copia";
+  return "Estado: 🔴 Copia antigua";
 }
 
 function backupAdviceV3149(age){

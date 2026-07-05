@@ -921,7 +921,7 @@ function saveCurrentOriginal(stay, silent){
   renderList();
   renderReader();
 
-  if(!stay) openReader();
+  if(!stay) leaveEditor();
   if(!silent) toast("Guardado");
 }
 
@@ -1092,7 +1092,7 @@ function discardEditorChanges(){
   }
   if(!item){
     isDirty=false;
-    openReader();
+    leaveEditor();
     toast("Cambios descartados");
     return;
   }
@@ -1128,7 +1128,7 @@ function discardEditorChanges(){
       renderList();
       renderReader();
       isDirty=false;
-      openReader();
+      leaveEditor();
       toast("Descartado");
       return;
     }
@@ -1136,12 +1136,12 @@ function discardEditorChanges(){
     // Si no era nuevo, restauramos la vista sin guardar cambios
     isDirty=false;
     renderReader();
-    openReader();
+    leaveEditor();
     toast("Cambios descartados");
   }catch(e){
     console.error("discardEditorChanges", e);
     isDirty=false;
-    openReader();
+    leaveEditor();
     toast("Cambios descartados");
   }
 }

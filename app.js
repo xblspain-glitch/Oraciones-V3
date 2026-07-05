@@ -347,7 +347,7 @@ function renderList(){
 
   items.forEach(item => {
     const div = document.createElement("div");
-    div.className = "item" + (current && item.id === current.id ? " active" : "");
+    div.className = "item" + (current && item.id === current.id ? " active" : "") + (section === "verses" && (item.shared || item.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
 
     const preview = String(item.content || "")
       .trim()
@@ -1800,7 +1800,7 @@ function renderVerseReferenceList(catId){
   verses.forEach((v, idx)=>{
     const div = document.createElement("div");
 
-    div.className = "title-row" + (state.currentVerseId===v.id ? " active" : "");
+    div.className = "title-row" + (state.currentVerseId===v.id ? " active" : "") + ((v.shared || v.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
     div.innerHTML = '<div class="title-code">V' + (idx + 1) + '</div><div class="title-name">' + escapeHtml((v.shared ? '✓ ' : '') + (v.favorite ? '⭐ ' : '') + (v.reference || v.title || "Sin referencia")) + '</div>';
     div.onclick = ()=>{
       verseNavigationMode = "verse";
@@ -1839,7 +1839,7 @@ function openVerseFavorites(){
 
   verses.forEach((v, idx) => {
     const div = document.createElement("div");
-    div.className = "title-row" + (state.currentVerseId === v.id ? " active" : "");
+    div.className = "title-row" + (state.currentVerseId === v.id ? " active" : "") + ((v.shared || v.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
     div.innerHTML = '<div class="title-code">★</div><div class="title-name">' + escapeHtml((v.shared ? '✓ ' : '') + (v.reference || v.title || "Sin referencia")) + '</div>';
     div.onclick = () => {
       verseNavigationMode = "verse";
@@ -1894,7 +1894,7 @@ function renderTitles(){
 
   items.forEach(item => {
     const div = document.createElement("div");
-    div.className = "title-row" + (current && item.id === current.id ? " active" : "");
+    div.className = "title-row" + (current && item.id === current.id ? " active" : "") + (section === "verses" && (item.shared || item.lastCardSentAt) ? " verse-sent-bg-v3128" : "");
     div.innerHTML = '<div class="title-code">' + escapeHtml(item.__code) + '</div><div class="title-name">' + escapeHtml(displayItemTitle(item)) + '</div>';
     div.onclick = () => {
       if(section === "verses"){

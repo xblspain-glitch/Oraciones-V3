@@ -2530,3 +2530,19 @@ body.dark .reader-end-card::before{
     0 0 34px rgba(151,112,225,.08),
     inset 0 1px 0 rgba(255,255,255,.14)!important;
 }
+
+
+/* V3.1.28 - Versículos compartidos/enviados con fondo azul clarito */
+.item.verse-sent-bg-v3128,
+.title-row.verse-sent-bg-v3128{
+  background:#eaf4ff!important;
+  border-color:#cfe5f7!important;
+}
+.title-row.verse-sent-bg-v3128.active{
+  background:#eaf4ff!important;
+}
+body.dark .item.verse-sent-bg-v3128,
+body.dark .title-row.verse-sent-bg-v3128{
+  background:rgba(80,150,210,.18)!important;
+  border-color:rgba(140,200,245,.35)!important;
+}

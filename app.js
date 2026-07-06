@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.52";
-const APP_VERSION_ZIP = "oraciones_v3_1_52_exportar_zip_fix_real.zip";
+const APP_VERSION_LABEL = "v3.1.53";
+const APP_VERSION_ZIP = "oraciones_v3_1_53_nueva_en_versiculos.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -7943,4 +7943,69 @@ setInterval(updateVersePositionCounter, 1000);
     };
     try{ showHomeV9019 = window.showHomeV9019; }catch(e){}
   }
+})();
+
+
+/* v3.1.53 - Botón Nueva en pantalla principal de Versículos */
+(function(){
+  if(window.__v3153NewVerseFromCategories) return;
+  window.__v3153NewVerseFromCategories = true;
+
+  function ensureNewVerseButtonInCategoriesV3153(){
+    try{
+      var head = document.querySelector('#verseCategoriesView .categories-head-v73') || document.querySelector('#verseCategoriesView .panel-head');
+      if(!head) return;
+      if(document.getElementById('btnVerseCatsNewV3153')) return;
+
+      var btn = document.createElement('button');
+      btn.id = 'btnVerseCatsNewV3153';
+      btn.className = 'btn primary';
+      btn.type = 'button';
+      btn.textContent = '➕ Nueva';
+      btn.onclick = function(){
+        try{ if(typeof section !== 'undefined') section = 'verses'; }catch(e){}
+        try{ if(typeof newItem === 'function') return newItem(); }catch(e){ console.error('Nueva desde categorías', e); }
+      };
+
+      var volver = Array.prototype.slice.call(head.querySelectorAll('button')).find(function(b){
+        return (b.textContent || '').indexOf('Volver') !== -1;
+      });
+      if(volver && volver.nextSibling) head.insertBefore(btn, volver.nextSibling);
+      else if(volver) head.appendChild(btn);
+      else head.insertBefore(btn, head.firstChild || null);
+    }catch(e){ console.error('ensureNewVerseButtonInCategoriesV3153', e); }
+  }
+
+  function afterV3153(){
+    ensureNewVerseButtonInCategoriesV3153();
+  }
+
+  var oldOpenVerseCategoriesV3153 = window.openVerseCategories || (typeof openVerseCategories !== 'undefined' ? openVerseCategories : null);
+  if(typeof oldOpenVerseCategoriesV3153 === 'function' && !oldOpenVerseCategoriesV3153.__v3153Wrapped){
+    var wrappedOpenVerseCategoriesV3153 = function(){
+      var r = oldOpenVerseCategoriesV3153.apply(this, arguments);
+      setTimeout(afterV3153, 20);
+      setTimeout(afterV3153, 150);
+      return r;
+    };
+    wrappedOpenVerseCategoriesV3153.__v3153Wrapped = true;
+    window.openVerseCategories = wrappedOpenVerseCategoriesV3153;
+    try{ openVerseCategories = window.openVerseCategories; }catch(e){}
+  }
+
+  var oldSyncTabsV3153 = window.syncTabs || (typeof syncTabs !== 'undefined' ? syncTabs : null);
+  if(typeof oldSyncTabsV3153 === 'function' && !oldSyncTabsV3153.__v3153Wrapped){
+    var wrappedSyncTabsV3153 = function(){
+      var r = oldSyncTabsV3153.apply(this, arguments);
+      setTimeout(afterV3153, 20);
+      return r;
+    };
+    wrappedSyncTabsV3153.__v3153Wrapped = true;
+    window.syncTabs = wrappedSyncTabsV3153;
+    try{ syncTabs = window.syncTabs; }catch(e){}
+  }
+
+  document.addEventListener('DOMContentLoaded', afterV3153);
+  setTimeout(afterV3153, 100);
+  setTimeout(afterV3153, 600);
 })();

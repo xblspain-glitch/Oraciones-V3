@@ -1419,8 +1419,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.51";
-const APP_VERSION_ZIP = "oraciones_v3_1_51_estado_copia_pulido.zip";
+const APP_VERSION_LABEL = "v3.1.52";
+const APP_VERSION_ZIP = "oraciones_v3_1_52_exportar_zip_fix_real.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3484,7 +3484,7 @@ async function exportAllZip(){
   toast("ZIP exportado");
 }
 
-/* ===== v3.1.51 - Estado de copia de seguridad pulido ===== */
+/* ===== v3.1.52 - Estado de copia de seguridad pulido ===== */
 const BACKUP_EXPORT_STATUS_KEY_V3149 = "oraciones_v3_last_backup_export_status";
 
 function backupCountsV3149(){

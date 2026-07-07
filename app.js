@@ -1419,7 +1419,7 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.58";
+const APP_VERSION_LABEL = "v3.1.59";
 const APP_VERSION_ZIP = "oraciones_v3_1_54_nueva_elige_categoria.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
@@ -8237,4 +8237,91 @@ setInterval(updateVersePositionCounter, 1000);
   document.addEventListener('DOMContentLoaded', function(){ setTimeout(bindNewButtonV3156, 200); });
   setTimeout(bindNewButtonV3156, 300);
   setTimeout(bindNewButtonV3156, 900);
+})();
+
+/* v3.1.59 - Eliminar vuelve a la botonera del lector de la sección */
+(function(){
+  if(window.__v3159DeleteBackToReaderToolbar) return;
+  window.__v3159DeleteBackToReaderToolbar = true;
+
+  function backToReaderToolbarV3159(){
+    try{
+      var home = document.getElementById('homeView');
+      if(home) home.classList.add('hidden');
+
+      ['editorView','backupView','trashView','titlesView','verseCategoriesView','calendarView'].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) el.classList.add('hidden');
+      });
+
+      document.body.classList.remove(
+        'home-active-v9019',
+        'titles-only',
+        'titles-fullscreen-v72',
+        'categories-fullscreen-v73',
+        'list-only',
+        'backup-only',
+        'special-view-only',
+        'editing-focus',
+        'hide-reading-ui'
+      );
+
+      if(typeof syncTabs === 'function') syncTabs();
+      if(typeof renderList === 'function') renderList();
+      if(typeof renderReader === 'function') renderReader();
+
+      if(typeof enterFullscreenReading === 'function') enterFullscreenReading();
+      else if(typeof openReader === 'function') openReader();
+
+      setTimeout(function(){
+        try{ window.scrollTo({top:0, behavior:'auto'}); }catch(e){ window.scrollTo(0,0); }
+      }, 30);
+    }catch(e){
+      console.error('backToReaderToolbarV3159', e);
+      try{ if(typeof openReader === 'function') openReader(); }catch(_e){}
+    }
+  }
+
+  window.moveToTrash = function(){
+    var item = (typeof currentItem === 'function') ? currentItem() : null;
+    if(!item) return;
+
+    var items = (typeof getItems === 'function') ? getItems() : [];
+    if(items.length === 1) return alert('Debe quedar al menos un elemento.');
+
+    var typeName = 'elemento';
+    try{
+      typeName = (typeof sectionLabelV85 === 'function') ? sectionLabelV85(section).sing :
+        (section === 'prayers' ? 'oración' : section === 'notes' ? 'nota' : section === 'guides' ? 'guía' : section === 'parables' ? 'parábola' : 'versículo');
+    }catch(_t){}
+
+    if(!confirm('¿Mover a papelera esta ' + typeName + '?\n"' + (item.title || item.reference || 'Sin título') + '"')) return;
+
+    var trash = (typeof getTrash === 'function') ? getTrash() : [];
+    trash.unshift(Object.assign({}, item, {deletedAt: Date.now()}));
+    if(typeof setTrash === 'function') setTrash(trash);
+
+    var filtered = items.filter(function(x){ return x.id !== item.id; });
+    if(typeof setItems === 'function') setItems(filtered);
+
+    if(filtered[0]){
+      try{
+        if(section === 'prayers') state.currentPrayerId = filtered[0].id;
+        else if(section === 'notes') state.currentNoteId = filtered[0].id;
+        else if(section === 'guides') state.currentGuideId = filtered[0].id;
+        else if(section === 'parables') state.currentParableId = filtered[0].id;
+        else state.currentVerseId = filtered[0].id;
+      }catch(_s){}
+    }
+
+    if(typeof saveState === 'function') saveState();
+    if(typeof syncTabs === 'function') syncTabs();
+    if(typeof renderList === 'function') renderList();
+    if(typeof renderReader === 'function') renderReader();
+    if(typeof applyReaderFont === 'function') applyReaderFont();
+    backToReaderToolbarV3159();
+    if(typeof toast === 'function') toast('Movido a papelera');
+  };
+
+  try{ moveToTrash = window.moveToTrash; }catch(e){}
 })();

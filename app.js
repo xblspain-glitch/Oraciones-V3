@@ -10719,10 +10719,10 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   else setTimeout(initV31116,0);
 })();
 
-/* ===== V3.1.133 - Recomendaciones estables con preparación visible ===== */
+/* ===== V3.1.134 - Recomendaciones completas sin espera fija ===== */
 (function(){
-  if(window.__v31128ReadingComfortInstalled) return;
-  window.__v31128ReadingComfortInstalled=true;
+  if(window.__v31134ReadingComfortInstalled) return;
+  window.__v31134ReadingComfortInstalled=true;
 
   window.toggleReadingUI=function(){
     if(!document.body.classList.contains('fullscreen-reading')) return;
@@ -10742,101 +10742,127 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   };
   try{toggleReadingUI=window.toggleReadingUI;}catch(e){}
 
-  var pending=null;
   var arranging=false;
+  var waitToken=0;
+  var observer=null;
 
-  function recommendationCount(box){
-    return box.querySelectorAll('[data-v59d-next],[data-v3182-psalm],[data-v3188-verse],.reader-psalm-link-v3182,.reader-verse-link-v3188').length;
+  function recommendationCount(root){
+    return root ? root.querySelectorAll('[data-v59d-next],[data-v3182-psalm],[data-v3188-verse],.reader-psalm-link-v3182,.reader-verse-link-v3188').length : 0;
   }
 
   function updateToggle(toggle,count,open){
     toggle.innerHTML='<span>🌿 Puede continuar con...'+(count?' ('+count+')':'')+'</span><span class="reader-recommendations-arrow-v31127" aria-hidden="true">'+(open?'▲':'▼')+'</span>';
   }
 
-  function arrangeRecommendations(){
+  function arrangeBox(box){
+    if(!box || !document.body.contains(box)) return;
+    var top=box.querySelector(':scope > [data-v59d-top]') || box.querySelector('[data-v59d-top]');
+    if(!top) return;
+
+    var content=box.querySelector(':scope > .reader-recommendations-content-v31127');
+    var toggle=box.querySelector(':scope > .reader-recommendations-toggle-v31127');
+    if(!content){
+      content=document.createElement('div');
+      content.className='reader-recommendations-content-v31127';
+      content.setAttribute('aria-hidden','true');
+      box.insertBefore(content,top);
+    }
+
+    Array.prototype.slice.call(box.children).forEach(function(child){
+      if(child===top || child===toggle || child===content) return;
+      content.appendChild(child);
+    });
+
+    var count=recommendationCount(content);
+    if(!count){
+      if(toggle) toggle.remove();
+      content.remove();
+      return;
+    }
+
+    if(!toggle){
+      toggle=document.createElement('button');
+      toggle.type='button';
+      toggle.className='reader-recommendations-toggle-v31127';
+      toggle.setAttribute('aria-expanded','false');
+      box.insertBefore(toggle,content);
+      toggle.addEventListener('click',function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+        var open=toggle.getAttribute('aria-expanded')==='true';
+        toggle.setAttribute('aria-expanded',open?'false':'true');
+        content.setAttribute('aria-hidden',open?'true':'false');
+        box.classList.toggle('recommendations-open-v31127',!open);
+        updateToggle(toggle,recommendationCount(content),!open);
+      },true);
+      toggle.addEventListener('pointerdown',function(e){e.stopPropagation();},true);
+      toggle.addEventListener('touchstart',function(e){e.stopPropagation();},{capture:true,passive:true});
+    }
+    updateToggle(toggle,recommendationCount(content),toggle.getAttribute('aria-expanded')==='true');
+  }
+
+  function arrangeAll(){
     if(arranging) return;
     arranging=true;
-    try{
-      document.querySelectorAll('.reader-next').forEach(function(box){
-        var top=box.querySelector(':scope > [data-v59d-top]') || box.querySelector('[data-v59d-top]');
-        if(!top) return;
-
-        var content=box.querySelector(':scope > .reader-recommendations-content-v31127');
-        var toggle=box.querySelector(':scope > .reader-recommendations-toggle-v31127');
-        if(!content){
-          content=document.createElement('div');
-          content.className='reader-recommendations-content-v31127';
-          content.setAttribute('aria-hidden','true');
-          box.insertBefore(content,top);
-        }
-
-        /* Mueve al desplegable todas las recomendaciones que los módulos anteriores
-           ya hayan creado. Se ejecuta tarde para no interferir con su generación. */
-        Array.prototype.slice.call(box.children).forEach(function(child){
-          if(child===top || child===toggle || child===content) return;
-          content.appendChild(child);
-        });
-
-        var count=recommendationCount(content);
-        if(!count){
-          if(toggle) toggle.remove();
-          content.remove();
-          return;
-        }
-
-        if(!toggle){
-          toggle=document.createElement('button');
-          toggle.type='button';
-          toggle.className='reader-recommendations-toggle-v31127';
-          toggle.setAttribute('aria-expanded','false');
-          box.insertBefore(toggle,content);
-          toggle.addEventListener('click',function(e){
-            /* Evita que el toque llegue al lector y active «Volver al inicio». */
-            e.preventDefault();
-            e.stopPropagation();
-            if(e.stopImmediatePropagation) e.stopImmediatePropagation();
-            var open=toggle.getAttribute('aria-expanded')==='true';
-            toggle.setAttribute('aria-expanded',open?'false':'true');
-            content.setAttribute('aria-hidden',open?'true':'false');
-            box.classList.toggle('recommendations-open-v31127',!open);
-            updateToggle(toggle,recommendationCount(content),!open);
-          },true);
-          toggle.addEventListener('pointerdown',function(e){e.stopPropagation();},true);
-          toggle.addEventListener('touchstart',function(e){e.stopPropagation();},{capture:true,passive:true});
-        }
-        updateToggle(toggle,recommendationCount(content),toggle.getAttribute('aria-expanded')==='true');
-        /* V3.1.132: solo se hace visible cuando ya está completamente agrupado. */
-        box.classList.add('recommendations-ready-v31132');
-      });
-    }catch(e){console.error('No se pudieron plegar las recomendaciones',e);}
+    try{document.querySelectorAll('.reader-next').forEach(arrangeBox);}
+    catch(e){console.error('No se pudieron plegar las recomendaciones',e);}
     finally{arranging=false;}
   }
 
-  function schedule(delay){
-    clearTimeout(pending);
-    pending=setTimeout(arrangeRecommendations,typeof delay==='number'?delay:160);
+  /* La oración aparece primero; Salmo y versículo se añaden después (380/520 ms).
+     No se crea ni se mueve nada hasta comprobar que existen las tres opciones. */
+  function waitForCompleteRecommendations(){
+    var token=++waitToken;
+    var started=Date.now();
+    function check(){
+      if(token!==waitToken) return;
+      var box=document.querySelector('.reader-next');
+      if(!box){
+        if(Date.now()-started<1800) return window.setTimeout(check,40);
+        return;
+      }
+      var alreadyGrouped=box.querySelector(':scope > .reader-recommendations-content-v31127');
+      var count=recommendationCount(alreadyGrouped || box);
+      if(count>=3){
+        arrangeAll();
+        return;
+      }
+      /* Margen de seguridad: si una biblioteca no tiene Salmos o Versículos,
+         muestra las recomendaciones disponibles sin bloquear el final. */
+      if(Date.now()-started>=1800){
+        arrangeAll();
+        return;
+      }
+      window.setTimeout(check,40);
+    }
+    check();
   }
 
-  /* V3.1.133: reaccionamos antes a cada recomendación nueva. La lógica de la
-     128 sigue siendo la misma: los módulos crean primero sus elementos y este
-     bloque únicamente los reúne. El aviso visual ocupa el espacio mientras tanto. */
-  var observer=new MutationObserver(function(){if(!arranging)schedule(140);});
   function init(){
+    observer=new MutationObserver(function(mutations){
+      if(arranging) return;
+      var relevant=mutations.some(function(m){
+        return Array.prototype.some.call(m.addedNodes||[],function(n){
+          return n.nodeType===1 && (n.matches && (n.matches('.reader-next,[data-v3182-psalm],[data-v3188-verse],.reader-psalm-link-v3182,.reader-verse-link-v3188') || n.querySelector && n.querySelector('.reader-next,[data-v3182-psalm],[data-v3188-verse],.reader-psalm-link-v3182,.reader-verse-link-v3188')));
+        });
+      });
+      if(relevant) waitForCompleteRecommendations();
+    });
     try{observer.observe(document.body,{childList:true,subtree:true});}catch(e){}
-    schedule(420);
+    waitForCompleteRecommendations();
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
 
   var previousRender=window.renderReader || (typeof renderReader!=='undefined'?renderReader:null);
-  if(typeof previousRender==='function' && !window.__v31128RenderWrapped){
-    window.__v31128RenderWrapped=true;
+  if(typeof previousRender==='function' && !window.__v31134RenderWrapped){
+    window.__v31134RenderWrapped=true;
     window.renderReader=function(){
       var result=previousRender.apply(this,arguments);
-      schedule(500);
+      waitForCompleteRecommendations();
       return result;
     };
     try{renderReader=window.renderReader;}catch(e){}
   }
 })();
-

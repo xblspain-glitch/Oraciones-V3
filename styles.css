@@ -3797,3 +3797,53 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
   visibility:visible!important;
   pointer-events:auto!important;
 }
+
+
+/* ===== V3.1.133 - Preparación visible y espacio reservado =====
+   Al llegar muy rápido al final, el lector ya muestra un bloque discreto en vez
+   de una zona vacía. Cuando las recomendaciones quedan agrupadas, desaparece
+   automáticamente sin alterar la lógica estable de la V3.1.128. */
+.reader-next:not(.recommendations-ready-v31132){
+  position:relative;
+  min-height:116px;
+  padding-top:58px;
+}
+.reader-next:not(.recommendations-ready-v31132)::before{
+  content:"🌿 Preparando recomendaciones…";
+  position:absolute;
+  top:8px;
+  left:0;
+  right:0;
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 14px;
+  box-sizing:border-box;
+  border-radius:14px;
+  font-size:.94rem;
+  font-weight:750;
+  letter-spacing:.01em;
+  color:var(--text-muted,#657468);
+  background:rgba(255,255,255,.56);
+  border:1px solid rgba(83,126,94,.16);
+  animation:recommendationsPreparingV31133 1.15s ease-in-out infinite;
+  pointer-events:none;
+}
+.reader-next.recommendations-ready-v31132{
+  min-height:0;
+  padding-top:0;
+}
+@keyframes recommendationsPreparingV31133{
+  0%,100%{opacity:.62}
+  50%{opacity:1}
+}
+body.dark-mode .reader-next:not(.recommendations-ready-v31132)::before,
+html[data-theme="dark"] .reader-next:not(.recommendations-ready-v31132)::before{
+  background:rgba(255,255,255,.07);
+  border-color:rgba(255,255,255,.11);
+  color:rgba(255,255,255,.72);
+}
+@media (prefers-reduced-motion:reduce){
+  .reader-next:not(.recommendations-ready-v31132)::before{animation:none!important}
+}

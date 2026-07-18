@@ -10719,7 +10719,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   else setTimeout(initV31116,0);
 })();
 
-/* ===== V3.1.128 - Versículos y recomendaciones plegables estables ===== */
+/* ===== V3.1.133 - Recomendaciones estables con preparación visible ===== */
 (function(){
   if(window.__v31128ReadingComfortInstalled) return;
   window.__v31128ReadingComfortInstalled=true;
@@ -10814,14 +10814,16 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   function schedule(delay){
     clearTimeout(pending);
-    pending=setTimeout(arrangeRecommendations,typeof delay==='number'?delay:700);
+    pending=setTimeout(arrangeRecommendations,typeof delay==='number'?delay:160);
   }
 
-  /* Espera a que se creen oración, Salmo y versículo antes de plegarlos. */
-  var observer=new MutationObserver(function(){if(!arranging)schedule(650);});
+  /* V3.1.133: reaccionamos antes a cada recomendación nueva. La lógica de la
+     128 sigue siendo la misma: los módulos crean primero sus elementos y este
+     bloque únicamente los reúne. El aviso visual ocupa el espacio mientras tanto. */
+  var observer=new MutationObserver(function(){if(!arranging)schedule(140);});
   function init(){
     try{observer.observe(document.body,{childList:true,subtree:true});}catch(e){}
-    schedule(1000);
+    schedule(420);
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
@@ -10831,7 +10833,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     window.__v31128RenderWrapped=true;
     window.renderReader=function(){
       var result=previousRender.apply(this,arguments);
-      schedule(1100);
+      schedule(500);
       return result;
     };
     try{renderReader=window.renderReader;}catch(e){}

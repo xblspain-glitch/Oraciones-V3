@@ -3346,3 +3346,309 @@ body.dark-mode .recommendation-verse-v3189 .recommendation-category-v3188{
   .recommendation-cross-v3190::after{width:68px;bottom:-9px}
   .recommendation-category-v3188{padding:4px 9px}
 }
+
+/* ===== v3.1.92 — Día y noche ===== */
+.routine-panel-v3192{max-width:920px;margin:0 auto;padding:24px 14px 50px}.routine-head-v3192{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:25px}.routine-page-title-v3192{text-align:center;font-size:clamp(27px,6vw,40px);font-weight:800;color:#536d49;margin:10px 0 7px}.routine-page-sub-v3192{text-align:center;max-width:650px;margin:0 auto 28px;color:var(--muted,#667085);line-height:1.55}.routine-hub-grid-v3192{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:720px;margin:0 auto}.routine-hub-card-v3192{border:1px solid rgba(80,100,70,.14);border-radius:26px;padding:30px 20px;min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;box-shadow:0 14px 32px rgba(60,70,55,.1);cursor:pointer}.routine-hub-card-v3192 strong{font-size:25px}.routine-hub-card-v3192 small{font-size:14px;opacity:.72}.routine-hub-icon-v3192{font-size:52px}.morning-v3192{background:linear-gradient(145deg,#fff9e9,#f8e4b9)}.night-v3192{background:linear-gradient(145deg,#f1efff,#dcd8f2)}.routine-list-v3192{display:flex;flex-direction:column;gap:10px;max-width:780px;margin:0 auto}.routine-item-v3192{display:grid;grid-template-columns:38px 42px minmax(0,1fr) auto;align-items:center;gap:8px;padding:12px;border:1px solid rgba(90,100,80,.13);border-radius:17px;background:var(--card,#fff);box-shadow:0 5px 15px rgba(50,60,45,.06)}.routine-order-v3192{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#eef2e9;color:#536d49;font-weight:800}.routine-kind-v3192{font-size:25px;text-align:center}.routine-info-v3192{min-width:0}.routine-info-v3192 strong{display:block;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.28;font-size:16px}.routine-info-v3192 span{font-size:12px;color:var(--muted,#7a8175)}.routine-actions-v3192{display:flex;gap:5px}.routine-actions-v3192 button{width:34px;height:34px;border-radius:10px;border:1px solid rgba(90,100,80,.16);background:transparent;font-size:18px}.routine-actions-v3192 button:disabled{opacity:.28}.routine-actions-v3192 .routine-remove-v3192{color:#a44}.routine-empty-v3192{min-height:260px;border:1px dashed rgba(90,100,80,.22);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:30px;color:var(--muted,#687064)}.routine-empty-v3192 strong{font-size:20px;color:var(--text,#273126)}.routine-empty-icon-v3192{font-size:50px}.routine-modal-v3192{position:fixed;inset:0;z-index:10050;background:rgba(20,25,18,.58);display:flex;align-items:flex-end;justify-content:center;padding:12px}.routine-modal-v3192.hidden{display:none!important}.routine-modal-sheet-v3192{width:min(720px,100%);max-height:88vh;overflow:auto;background:var(--card,#fff);border-radius:26px 26px 18px 18px;padding:18px;box-shadow:0 -10px 40px rgba(0,0,0,.24)}.routine-modal-head-v3192{display:flex;justify-content:space-between;gap:10px}.routine-modal-title-v3192,.routine-choice-title-v3192{display:block;width:100%;border:0;background:transparent;text-align:center;font-size:24px;font-weight:800;color:#536d49;margin:18px 0 20px}.routine-type-grid-v3192{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.routine-type-grid-v3192 button{border:1px solid rgba(85,100,75,.15);background:#f7f8f5;border-radius:19px;padding:23px 10px;display:flex;flex-direction:column;gap:8px;align-items:center}.routine-type-grid-v3192 span{font-size:36px}.routine-choice-list-v3192{display:flex;flex-direction:column;gap:9px}.routine-choice-v3192,.routine-item-choice-v3192{width:100%;border:1px solid rgba(85,100,75,.14);background:var(--card,#fff);border-radius:15px;padding:13px 15px;display:grid;grid-template-columns:42px 1fr auto;align-items:center;text-align:left;gap:8px}.routine-choice-v3192>span,.routine-item-choice-v3192>span{font-size:25px;text-align:center}.routine-choice-v3192 strong,.routine-item-choice-v3192 strong{display:block}.routine-choice-v3192 small,.routine-item-choice-v3192 small{color:var(--muted,#778071)}.routine-item-choice-v3192{grid-template-columns:42px 1fr}.routine-item-choice-v3192.already-v3192{opacity:.5}.routine-modal-empty-v3192{text-align:center;padding:35px;color:var(--muted,#778071)}.routine-reader-v3192{max-width:780px;margin:0 auto;padding:20px 18px 60px}.routine-reader-top-v3192{display:flex;justify-content:space-between;align-items:center}.routine-reader-top-v3192 span{font-weight:700;color:#68735f}.routine-reader-routine-v3192{text-align:center;margin-top:25px;color:#718067;font-weight:700}.routine-reader-kind-v3192{text-align:center;margin-top:24px;font-size:15px;color:#7b6d54}.routine-reader-title-v3192{text-align:center;font-size:clamp(25px,6vw,38px);font-weight:800;margin:10px auto;color:#536d49;max-width:680px}.routine-reader-line-v3192{width:90px;height:1px;background:#b9a778;margin:22px auto}.routine-reader-text-v3192{font-size:20px;line-height:1.82}.routine-reader-nav-v3192{display:flex;justify-content:space-between;gap:12px;margin-top:35px}.routine-reader-nav-v3192 button{min-width:130px}.dark .routine-hub-card-v3192{color:#f4f2ea}.dark .morning-v3192{background:linear-gradient(145deg,#4b412d,#625235)}.dark .night-v3192{background:linear-gradient(145deg,#302e46,#44405f)}.dark .routine-item-v3192,.dark .routine-modal-sheet-v3192,.dark .routine-choice-v3192,.dark .routine-item-choice-v3192{background:#222820;border-color:rgba(255,255,255,.1)}.dark .routine-type-grid-v3192 button{background:#2b3128;color:#f4f4ef;border-color:rgba(255,255,255,.1)}
+@media(max-width:600px){.routine-hub-grid-v3192{grid-template-columns:1fr}.routine-hub-card-v3192{min-height:165px}.routine-type-grid-v3192{grid-template-columns:1fr}.routine-item-v3192{grid-template-columns:30px 34px minmax(0,1fr);}.routine-actions-v3192{grid-column:3;justify-content:flex-end}.routine-reader-text-v3192{font-size:18px;line-height:1.75}.routine-start-v3192{flex:1}}
+
+
+/* V3.1.93 — Día/Noche como sección independiente */
+body.routine-fullscreen-v3193 .topbar,
+body.routine-fullscreen-v3193 .sidebar,
+body.routine-fullscreen-v3193 #list{display:none!important}
+body.routine-fullscreen-v3193 .main{display:block!important;min-height:100dvh!important;grid-template-columns:1fr!important}
+body.routine-fullscreen-v3193 .content{padding:0!important;min-height:100dvh!important;width:100%!important;max-width:none!important}
+body.routine-fullscreen-v3193 #routineHubV3192,
+body.routine-fullscreen-v3193 #routineEditorV3192,
+body.routine-fullscreen-v3193 #routineReaderV3192{border:none!important;border-radius:0!important;min-height:100dvh!important;margin:0!important}
+body.routine-fullscreen-v3193 .routine-panel-v3192,
+body.routine-fullscreen-v3193 .routine-reader-v3192{padding:calc(12px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom))!important}
+
+/* V3.1.94 — Día/Noche usa el lector habitual */
+body.routine-reading-normal-v3194 #readerView{
+  padding-bottom:calc(118px + env(safe-area-inset-bottom));
+}
+.routine-normal-nav-v3194{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  z-index:10050;
+  width:min(100%,760px);
+  transform:translateX(-50%);
+  display:grid;
+  grid-template-columns:auto minmax(95px,1fr) auto auto;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:color-mix(in srgb,var(--card) 96%,transparent);
+  border-top:1px solid var(--border);
+  box-shadow:0 -8px 24px rgba(0,0,0,.10);
+  backdrop-filter:blur(12px);
+}
+.routine-progress-v3194{min-width:0;text-align:center;line-height:1.2}
+.routine-progress-v3194 strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem;color:var(--olive,#5e7352)}
+.routine-progress-v3194 span{display:block;margin-top:3px;font-size:.78rem;color:var(--muted)}
+.routine-normal-nav-v3194 .btn{margin:0;white-space:nowrap}
+/* V3.1.95 — La botonera de la rutina se oculta junto con la barra superior */
+.routine-normal-nav-v3194{
+  transition:opacity .22s ease, transform .22s ease, visibility .22s ease;
+}
+body.fullscreen-reading.hide-reading-ui.routine-reading-normal-v3194 .routine-normal-nav-v3194{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translate(-50%,18px);
+}
+body.fullscreen-reading.hide-reading-ui.routine-reading-normal-v3194 #readerView{
+  padding-bottom:48px;
+}
+@media(max-width:620px){
+  body.routine-reading-normal-v3194 #readerView{padding-bottom:calc(154px + env(safe-area-inset-bottom))}
+  .routine-normal-nav-v3194{grid-template-columns:1fr 1fr 1fr;gap:7px}
+  .routine-progress-v3194{grid-column:1/-1;grid-row:1}
+  .routine-exit-v3194{grid-column:1;grid-row:2}
+  .routine-normal-nav-v3194 .btn{padding:10px 8px;font-size:.91rem}
+}
+
+/* V3.1.96 — Títulos completos y legibles en las rutinas */
+.routine-item-v3192{align-items:start}
+.routine-kind-v3192,.routine-order-v3192{margin-top:2px}
+.routine-info-v3192 strong{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;display:block!important;-webkit-line-clamp:unset!important;line-clamp:unset!important;max-height:none!important}
+/* V3.1.97 — selector de Oración diaria dentro de rutinas */
+.routine-daily-modal-v3197{position:fixed;inset:0;z-index:10050;background:rgba(22,29,25,.48);display:flex;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(3px)}
+.routine-daily-modal-v3197.hidden{display:none!important}
+.routine-daily-card-v3197{width:min(92vw,470px);max-height:88vh;overflow:auto;background:linear-gradient(180deg,#fffdf7,#f5f8f2);border:1px solid rgba(93,112,82,.22);border-radius:28px;padding:25px 20px 20px;text-align:center;box-shadow:0 24px 70px rgba(18,28,20,.28)}
+.routine-daily-cross-v3197{font-size:28px;color:#687f5f;margin-bottom:3px}
+.routine-daily-card-v3197 h2{margin:2px 0 5px;color:#58704f;font-size:27px}
+.routine-daily-card-v3197 p{margin:0 0 18px;color:#6d716a;font-size:18px}
+.routine-daily-options-v3197{display:grid;gap:11px;margin-bottom:17px}
+.routine-daily-options-v3197 button{display:flex;align-items:center;gap:14px;width:100%;border:1px solid rgba(108,126,99,.2);background:#fff;border-radius:18px;padding:14px 15px;text-align:left;box-shadow:0 5px 14px rgba(47,63,44,.06)}
+.routine-daily-options-v3197 button>span{font-size:28px;min-width:36px;text-align:center}
+.routine-daily-options-v3197 button div{display:flex;flex-direction:column;gap:3px}
+.routine-daily-options-v3197 button strong{font-size:18px;color:#252b25}
+.routine-daily-options-v3197 button small{font-size:14px;color:#73786f}
+.routine-daily-options-v3197 button:disabled{opacity:.45}
+@media (prefers-color-scheme:dark){.routine-daily-card-v3197{background:linear-gradient(180deg,#242724,#1e221e);border-color:#475047}.routine-daily-options-v3197 button{background:#2b302b;border-color:#414a41}.routine-daily-options-v3197 button strong{color:#f2f3ef}.routine-daily-options-v3197 button small,.routine-daily-card-v3197 p{color:#b9beb6}}
+
+/* V3.1.98 — grupos de elección de oraciones */
+.routine-type-grid-v3192{grid-template-columns:repeat(2,minmax(0,1fr))}
+.routine-choice-save-v3198{width:100%;margin-bottom:8px;min-height:48px}
+.prayer-choice-toggle-v3198.selected-v3198{border-color:#718967;background:#eef5e9;box-shadow:inset 0 0 0 1px rgba(83,109,73,.2)}
+.prayer-choice-toggle-v3198.selected-v3198>span{color:#58704f;font-weight:900}
+.dark .prayer-choice-toggle-v3198.selected-v3198{background:#33402f;border-color:#718967}
+@media (min-width:620px){.routine-type-grid-v3192{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* V3.1.100 — botón visible para confirmar un grupo de oraciones */
+.routine-choice-accept-v3200{width:100%;min-height:52px;margin:0 0 10px;border-radius:15px;font-size:16px;font-weight:800;position:sticky;top:0;z-index:3;box-shadow:0 6px 16px rgba(50,70,45,.14)}
+.routine-choice-accept-v3200:disabled{opacity:.58;box-shadow:none}
+.dark .routine-choice-accept-v3200{box-shadow:0 6px 18px rgba(0,0,0,.28)}
+
+/* V3.1.102 · Momentos */
+body.moments-fullscreen-v31102 .topbar{display:none!important}
+.moments-panel-v31102{max-width:850px;margin:0 auto;padding:18px 16px 90px;min-height:100vh}
+.moments-title-v31102{text-align:center;font-size:30px;font-weight:850;margin:18px 0 6px}
+.moments-sub-v31102{text-align:center;color:var(--muted);max-width:650px;margin:0 auto 22px;line-height:1.5}
+.moments-grid-v31102{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.moment-card-v31102{display:flex;gap:14px;text-align:left;padding:17px;border:1px solid var(--line);border-radius:20px;background:var(--panel);color:var(--text);cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.06)}
+.moment-card-v31102>span{font-size:31px}.moment-card-v31102 div{display:flex;flex-direction:column;gap:5px}.moment-card-v31102 strong{font-size:17px}.moment-card-v31102 small{color:var(--muted);line-height:1.35}.moment-card-v31102 em{font-style:normal;font-size:11px;color:var(--accent);margin-top:3px}.moment-card-v31102.incomplete-v31102 em{color:var(--muted)}
+.moment-preview-actions-v31102{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:18px 0}.moment-route-v31102{display:flex;flex-direction:column;gap:10px;max-width:680px;margin:18px auto}.moment-route-item-v31102{display:flex;align-items:center;gap:14px;padding:15px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}.moment-route-item-v31102>span{font-size:29px;width:38px;text-align:center}.moment-route-item-v31102 div{display:flex;flex-direction:column;gap:3px;min-width:0}.moment-route-item-v31102 small{color:var(--muted);font-weight:700}.moment-route-item-v31102 strong{overflow-wrap:anywhere}
+.moment-start-wrap-v31102{text-align:center;margin-top:20px}.moment-start-wrap-v31102 .btn{font-size:17px;padding:13px 22px}
+.moment-choice-modal-v31102,.moment-catalog-modal-v31102{position:fixed;inset:0;z-index:10020;background:rgba(13,16,24,.72);display:flex;align-items:center;justify-content:center;padding:16px}.moment-choice-modal-v31102.hidden,.moment-catalog-modal-v31102.hidden{display:none!important}.moment-choice-sheet-v31102,.moment-catalog-sheet-v31102{width:min(620px,100%);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:25px;padding:20px;box-shadow:0 20px 70px rgba(0,0,0,.35)}.moment-choice-cross-v31102{text-align:center;font-size:38px}.moment-choice-sheet-v31102 h2,.moment-catalog-sheet-v31102 h2{text-align:center}.moment-choice-list-v31102{display:flex;flex-direction:column;gap:10px}.moment-choice-list-v31102 button{display:flex;align-items:center;gap:13px;text-align:left;padding:15px;border:1px solid var(--line);border-radius:17px;background:var(--bg);color:var(--text)}.moment-choice-list-v31102 button>span{font-size:26px}.moment-choice-list-v31102 button div{display:flex;flex-direction:column;gap:4px}.moment-choice-list-v31102 small{color:var(--muted)}
+.moment-catalog-list-v31102{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;margin:16px 0}.moment-tag-option-v31102{display:flex;align-items:center;gap:9px;padding:11px;border:1px solid var(--line);border-radius:14px;background:var(--bg);cursor:pointer}.moment-tag-option-v31102 input{width:19px;height:19px}.moment-catalog-actions-v31102{display:flex;justify-content:center;gap:9px;position:sticky;bottom:0;background:var(--panel);padding-top:12px}
+@media(max-width:600px){.moments-grid-v31102{grid-template-columns:1fr}.moments-title-v31102{font-size:26px}.moment-catalog-list-v31102{grid-template-columns:1fr}}
+
+
+/* ===== V3.1.103 — Momentos independiente y lector principal unificado ===== */
+/* Momentos ocupa toda la pantalla de contenido y oculta por completo la lista lateral. */
+body.moments-fullscreen-v31102 .sidebar{display:none!important}
+body.moments-fullscreen-v31102 .main{grid-template-columns:minmax(0,1fr)!important;min-height:100dvh}
+body.moments-fullscreen-v31102 .content{width:100%;max-width:980px;margin:0 auto;padding:14px}
+body.moments-fullscreen-v31102 #list{display:none!important}
+
+/* Cabecera decorativa común del lector. */
+#readerView .reader-identity-v31103{
+  --reader-accent:#2f6fa8;
+  --reader-accent-soft:rgba(83,146,203,.13);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin:5px 0 18px;padding:12px 16px;border-radius:17px;
+  background:var(--reader-accent-soft);border:1px solid color-mix(in srgb,var(--reader-accent) 22%,transparent);
+}
+#readerView .reader-identity-v31103.hidden{display:none!important}
+#readerView .reader-identity-line-v31103{height:1px;flex:1 1 72px;max-width:150px;background:linear-gradient(90deg,transparent,var(--reader-accent))}
+#readerView .reader-identity-line-v31103:last-child{background:linear-gradient(90deg,var(--reader-accent),transparent)}
+#readerView .reader-identity-icon-v31103{
+  display:grid;place-items:center;min-width:38px;height:38px;padding:0 4px;border-radius:50%;
+  color:var(--reader-accent);background:color-mix(in srgb,var(--reader-accent) 11%,white);
+  border:1px solid color-mix(in srgb,var(--reader-accent) 28%,transparent);font-size:1.34rem;font-weight:900;line-height:1;
+}
+#readerView .reader-identity-label-v31103{color:var(--reader-accent);font-size:.84rem;font-weight:850;letter-spacing:.035em;text-transform:uppercase}
+
+#readerView.reader-kind-prayers-v31103 .reader-identity-v31103{--reader-accent:#2f6fa8;--reader-accent-soft:rgba(76,145,205,.14)}
+#readerView.reader-kind-psalms-v31103 .reader-identity-v31103{--reader-accent:#b85f16;--reader-accent-soft:rgba(231,141,56,.15)}
+#readerView.reader-kind-verses-v31103 .reader-identity-v31103{--reader-accent:#76528d;--reader-accent-soft:rgba(151,111,177,.15)}
+#readerView.reader-kind-notes-v31103 .reader-identity-v31103{--reader-accent:#a77908;--reader-accent-soft:rgba(232,190,63,.17)}
+#readerView.reader-kind-neutral-v31103 .reader-identity-v31103{display:none!important}
+
+body.dark #readerView .reader-identity-v31103,body.dark-mode #readerView .reader-identity-v31103{
+  background:color-mix(in srgb,var(--reader-accent) 18%,#171a1d);
+  border-color:color-mix(in srgb,var(--reader-accent) 42%,transparent);
+}
+body.dark #readerView .reader-identity-icon-v31103,body.dark-mode #readerView .reader-identity-icon-v31103{
+  background:color-mix(in srgb,var(--reader-accent) 22%,#171a1d);color:color-mix(in srgb,var(--reader-accent) 72%,white);
+}
+body.dark #readerView .reader-identity-label-v31103,body.dark-mode #readerView .reader-identity-label-v31103{color:color-mix(in srgb,var(--reader-accent) 68%,white)}
+
+@media(max-width:860px){
+  body.moments-fullscreen-v31102 .content{padding:10px}
+  #readerView .reader-identity-v31103{margin-top:2px;padding:10px 12px;gap:8px;border-radius:15px}
+  #readerView .reader-identity-line-v31103{max-width:84px}
+  #readerView .reader-identity-label-v31103{font-size:.78rem}
+}
+
+
+/* ===== V3.1.104 — fondos de lectura por tipo y navegación inmersiva en Momentos ===== */
+/* Toda la página de lectura adopta un tono muy suave del color de su sección. */
+#readerView.reader-kind-prayers-v31103{
+  --reader-page-bg:#f1f7fd;
+  background:var(--reader-page-bg)!important;
+}
+#readerView.reader-kind-psalms-v31103{
+  --reader-page-bg:#fff6ec;
+  background:var(--reader-page-bg)!important;
+}
+#readerView.reader-kind-verses-v31103{
+  --reader-page-bg:#f7f1fb;
+  background:var(--reader-page-bg)!important;
+}
+#readerView.reader-kind-notes-v31103{
+  --reader-page-bg:#fffbea;
+  background:var(--reader-page-bg)!important;
+}
+#readerView.reader-kind-prayers-v31103 .panel-head,
+#readerView.reader-kind-psalms-v31103 .panel-head,
+#readerView.reader-kind-verses-v31103 .panel-head,
+#readerView.reader-kind-notes-v31103 .panel-head{
+  background:color-mix(in srgb,var(--reader-page-bg) 94%,white)!important;
+}
+#readerView.reader-kind-prayers-v31103 .reader-text,
+#readerView.reader-kind-psalms-v31103 .reader-text,
+#readerView.reader-kind-verses-v31103 .reader-text,
+#readerView.reader-kind-notes-v31103 .reader-text{
+  background:transparent!important;
+}
+
+/* La misma cruz para Oraciones, Salmos, Versículos y Guía; solo cambia su color. */
+#readerView .reader-identity-icon-v31103{
+  border-radius:50%;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:1.48rem;
+}
+
+/* En Momentos, la barra inferior se oculta y reaparece junto con la superior. */
+body.fullscreen-reading.hide-reading-ui.moment-reading-v31102 .moment-nav-v31102{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translate(-50%,18px);
+}
+body.fullscreen-reading.moment-reading-v31102 .moment-nav-v31102{
+  transition:opacity .22s ease,transform .22s ease,visibility .22s ease;
+}
+body.fullscreen-reading.hide-reading-ui.moment-reading-v31102 #readerView{
+  padding-bottom:48px!important;
+}
+
+/* Tonos equivalentes y cómodos en modo oscuro. */
+body.dark #readerView.reader-kind-prayers-v31103,body.dark-mode #readerView.reader-kind-prayers-v31103{--reader-page-bg:#172431}
+body.dark #readerView.reader-kind-psalms-v31103,body.dark-mode #readerView.reader-kind-psalms-v31103{--reader-page-bg:#2b2119}
+body.dark #readerView.reader-kind-verses-v31103,body.dark-mode #readerView.reader-kind-verses-v31103{--reader-page-bg:#261f2c}
+body.dark #readerView.reader-kind-notes-v31103,body.dark-mode #readerView.reader-kind-notes-v31103{--reader-page-bg:#292616}
+body.dark #readerView.reader-kind-prayers-v31103 .panel-head,
+body.dark #readerView.reader-kind-psalms-v31103 .panel-head,
+body.dark #readerView.reader-kind-verses-v31103 .panel-head,
+body.dark #readerView.reader-kind-notes-v31103 .panel-head,
+body.dark-mode #readerView.reader-kind-prayers-v31103 .panel-head,
+body.dark-mode #readerView.reader-kind-psalms-v31103 .panel-head,
+body.dark-mode #readerView.reader-kind-verses-v31103 .panel-head,
+body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
+  background:color-mix(in srgb,var(--reader-page-bg) 90%,#111)!important;
+}
+
+/* V3.1.106 — Mis momentos */
+.custom-moments-heading-v31106{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;padding-top:20px;border-top:1px solid var(--line)}
+.custom-moments-heading-v31106>div{display:flex;flex-direction:column;gap:4px}.custom-moments-heading-v31106 strong{font-size:22px}.custom-moments-heading-v31106 small{color:var(--muted)}
+.custom-moments-empty-v31106{grid-column:1/-1;display:flex;flex-direction:column;gap:5px;text-align:center;padding:24px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);background:var(--panel)}
+.custom-moments-empty-v31106 strong{color:var(--text)}
+.custom-v31106{border-style:dashed}
+.custom-editor-item-v31106{position:relative;padding-right:124px}
+.custom-editor-actions-v31106{position:absolute;right:10px;display:flex;gap:5px}
+.custom-editor-actions-v31106 button{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font-size:18px}
+.custom-editor-actions-v31106 button:disabled{opacity:.35}
+.custom-choice-cancel-v31106{width:100%;justify-content:center;margin-top:4px}
+@media(max-width:600px){.custom-moments-heading-v31106{align-items:stretch;flex-direction:column}.custom-editor-item-v31106{padding-right:108px}.custom-editor-actions-v31106 button{width:30px;height:30px}}
+
+/* ===== V3.1.108 — tarjetas integradas y fondo de Notas casi marfil ===== */
+/* El amarillo de toda la página de Notas queda apenas perceptible. */
+#readerView.reader-kind-notes-v31103{
+  --reader-page-bg:#fffef9;
+  background:var(--reader-page-bg)!important;
+}
+
+/* La tarjeta se compone realmente de: icono | contenido | controles.
+   De este modo las flechas y la cruz siempre quedan dentro de su borde. */
+.moment-route-item-v31102.custom-editor-item-v31106{
+  display:grid!important;
+  grid-template-columns:42px minmax(0,1fr) 38px;
+  align-items:center;
+  column-gap:14px;
+  min-height:132px;
+  padding:14px 12px 14px 16px!important;
+  overflow:hidden;
+}
+.moment-route-item-v31102.custom-editor-item-v31106>span{
+  grid-column:1;
+  width:42px;
+  min-width:42px;
+  margin:0;
+}
+.moment-route-item-v31102.custom-editor-item-v31106>div:not(.custom-editor-actions-v31106){
+  grid-column:2;
+  min-width:0;
+  padding-right:2px;
+}
+.moment-route-item-v31102.custom-editor-item-v31106 .custom-editor-actions-v31106{
+  position:static!important;
+  right:auto!important;
+  grid-column:3;
+  width:38px;
+  min-width:38px;
+  align-self:stretch;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  margin:0;
+}
+.moment-route-item-v31102.custom-editor-item-v31106 .custom-editor-actions-v31106 button{
+  box-sizing:border-box;
+  width:34px;
+  height:34px;
+  min-width:34px;
+  flex:0 0 34px;
+  margin:0;
+  padding:0;
+}
+@media(max-width:600px){
+  .moment-route-item-v31102.custom-editor-item-v31106{
+    grid-template-columns:38px minmax(0,1fr) 34px;
+    min-height:124px;
+    column-gap:10px;
+    padding:12px 10px 12px 13px!important;
+  }
+  .moment-route-item-v31102.custom-editor-item-v31106>span{width:38px;min-width:38px}
+  .moment-route-item-v31102.custom-editor-item-v31106 .custom-editor-actions-v31106{width:34px;min-width:34px}
+  .moment-route-item-v31102.custom-editor-item-v31106 .custom-editor-actions-v31106 button{
+    width:30px;height:30px;min-width:30px;flex-basis:30px;
+  }
+}

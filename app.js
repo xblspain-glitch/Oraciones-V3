@@ -1,3 +1,15 @@
+
+(function(){
+ if(window.__scrollSpy)return;window.__scrollSpy=true;
+ const log=(m)=>{try{console.log('[SCROLLSPY]',m,new Error().stack);}catch(e){}};
+ const wst=window.scrollTo.bind(window);
+ window.scrollTo=function(){log('window.scrollTo '+JSON.stringify([...arguments]));return wst(...arguments);}
+ const esi=Element.prototype.scrollIntoView;
+ Element.prototype.scrollIntoView=function(){log('scrollIntoView '+this.tagName+'.'+this.className);return esi.apply(this,arguments);}
+ const d=Object.getOwnPropertyDescriptor(Element.prototype,'scrollTop');
+ Object.defineProperty(Element.prototype,'scrollTop',{get:d.get,set:function(v){log('set scrollTop '+v+' on '+this.tagName+'.'+this.className);return d.set.call(this,v);}});
+})();
+
 /* Oraciones V3 LAB - app.js paso 45: limpieza render de versículos */
 
 /* ===== PWA / INSTALACIÓN ===== */

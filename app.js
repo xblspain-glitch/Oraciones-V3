@@ -10997,74 +10997,91 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
  else setTimeout(run,500);
 })();
 
-/* ===== V3.1.142 - Conservar posición al abrir bloques y emergentes ===== */
+/* ===== V3.1.143 - Posición estable sin pequeño salto ===== */
 (function(){
-  if(window.__v31142ScrollPreserved) return;
-  window.__v31142ScrollPreserved = true;
+  if(window.__v31143ScrollStable) return;
+  window.__v31143ScrollStable = true;
 
-  function getScrollStateV31142(){
+  function captureV31143(){
     var root=document.scrollingElement || document.documentElement;
     var reader=document.getElementById('readerText');
     return {
       x: window.pageXOffset || root.scrollLeft || 0,
       y: window.pageYOffset || root.scrollTop || 0,
-      readerTop: reader ? reader.scrollTop : 0,
-      readerLeft: reader ? reader.scrollLeft : 0
+      reader: reader,
+      readerTop: reader && reader.scrollHeight>reader.clientHeight ? reader.scrollTop : null,
+      rootAnchor: root.style.overflowAnchor,
+      bodyAnchor: document.body ? document.body.style.overflowAnchor : '',
+      readerAnchor: reader ? reader.style.overflowAnchor : ''
     };
   }
 
-  function restoreScrollStateV31142(pos){
+  function lockAnchoringV31143(pos){
+    var root=document.scrollingElement || document.documentElement;
+    try{ root.style.overflowAnchor='none'; }catch(e){}
+    try{ if(document.body) document.body.style.overflowAnchor='none'; }catch(e){}
+    try{ if(pos && pos.reader) pos.reader.style.overflowAnchor='none'; }catch(e){}
+  }
+
+  function putBackV31143(pos){
     if(!pos) return;
-    var restore=function(){
-      try{ window.scrollTo(pos.x,pos.y); }catch(e){}
-      try{
-        var reader=document.getElementById('readerText');
-        if(reader){ reader.scrollTop=pos.readerTop; reader.scrollLeft=pos.readerLeft; }
-      }catch(e){}
-    };
-    restore();
-    requestAnimationFrame(function(){
-      restore();
-      requestAnimationFrame(restore);
-    });
-    setTimeout(restore,40);
-    setTimeout(restore,120);
+    try{ window.scrollTo(pos.x,pos.y); }catch(e){ try{window.scrollTo(0,pos.y);}catch(e2){} }
+    try{ if(pos.reader && pos.readerTop!==null) pos.reader.scrollTop=pos.readerTop; }catch(e){}
   }
 
-  // Los desplegables se abren manualmente para impedir que el navegador
-  // recoloque la lectura al principio al cambiar su altura.
+  function unlockAnchoringV31143(pos){
+    var root=document.scrollingElement || document.documentElement;
+    try{ root.style.overflowAnchor=pos.rootAnchor||''; }catch(e){}
+    try{ if(document.body) document.body.style.overflowAnchor=pos.bodyAnchor||''; }catch(e){}
+    try{ if(pos.reader) pos.reader.style.overflowAnchor=pos.readerAnchor||''; }catch(e){}
+  }
+
+  function settleV31143(pos){
+    // Se restaura en el mismo ciclo y una vez tras el recálculo de diseño.
+    // Se evita la cadena de temporizadores que producía el pequeño “bote”.
+    putBackV31143(pos);
+    requestAnimationFrame(function(){
+      putBackV31143(pos);
+      requestAnimationFrame(function(){
+        putBackV31143(pos);
+        unlockAnchoringV31143(pos);
+      });
+    });
+  }
+
   document.addEventListener('click',function(ev){
     var summary=ev.target && ev.target.closest ? ev.target.closest('.reader-collapse-block > summary') : null;
     if(!summary) return;
     var details=summary.parentElement;
     if(!details || details.tagName!=='DETAILS') return;
     ev.preventDefault();
-    var pos=getScrollStateV31142();
+    ev.stopPropagation();
+    var pos=captureV31143();
+    lockAnchoringV31143(pos);
     details.open=!details.open;
-    restoreScrollStateV31142(pos);
+    settleV31143(pos);
   },true);
 
-  function wrapPreservingScrollV31142(name){
+  function wrapV31143(name){
     var original=window[name];
-    if(typeof original!=='function' || original.__v31142Wrapped) return;
+    if(typeof original!=='function' || original.__v31143Wrapped) return;
     var wrapped=function(){
-      var pos=getScrollStateV31142();
-      var result=original.apply(this,arguments);
-      restoreScrollStateV31142(pos);
+      var pos=captureV31143();
+      lockAnchoringV31143(pos);
+      var result;
+      try{ result=original.apply(this,arguments); }
+      finally{ settleV31143(pos); }
       return result;
     };
-    wrapped.__v31142Wrapped=true;
+    wrapped.__v31143Wrapped=true;
     window[name]=wrapped;
     try{ eval(name+'=window["'+name+'"]'); }catch(e){}
   }
 
-  // Apertura y cierre de los emergentes de lectura.
-  wrapPreservingScrollV31142('openReaderPopupBlockV908');
-  wrapPreservingScrollV31142('closeReaderPopupBlockV908');
-
-  // Refuerzo por si otro parche redefine las funciones tras cargar este bloque.
+  wrapV31143('openReaderPopupBlockV908');
+  wrapV31143('closeReaderPopupBlockV908');
   setTimeout(function(){
-    wrapPreservingScrollV31142('openReaderPopupBlockV908');
-    wrapPreservingScrollV31142('closeReaderPopupBlockV908');
+    wrapV31143('openReaderPopupBlockV908');
+    wrapV31143('closeReaderPopupBlockV908');
   },300);
 })();

@@ -1469,8 +1469,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_148_emergente_persistente.zip";
+const APP_VERSION_LABEL = "v3.1.140";
+const APP_VERSION_ZIP = "oraciones_v3_1_139_numeracion_notas_negrita.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -11078,110 +11078,152 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{ eval(name+'=window["'+name+'"]'); }catch(e){}
   }
 
+  wrapV31143('openReaderPopupBlockV908');
+  wrapV31143('closeReaderPopupBlockV908');
+  setTimeout(function(){
+    wrapV31143('openReaderPopupBlockV908');
+    wrapV31143('closeReaderPopupBlockV908');
+  },300);
 })();
 
-/* ===== V3.1.149 - Emergente: secuencia única sin foco, scroll ni relayout forzado ===== */
+/* ===== V3.1.144 - Emergentes: conservar posición desde pointerdown ===== */
 (function(){
-  if(window.__v31149PopupCleanFlow) return;
-  window.__v31149PopupCleanFlow=true;
+  if(window.__v31144PopupPointerScrollFix) return;
+  window.__v31144PopupPointerScrollFix = true;
 
-  var overlay=null;
-  var currentIndex=-1;
+  var pendingSnapshot = null;
+  var activeSnapshot = null;
+  var restoreTimers = [];
 
-  function htmlEscapeV31149(value){
-    if(typeof escapeHtml==='function') return escapeHtml(value);
-    return String(value==null?'':value)
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  function scrollHost(){
+    var content=document.querySelector('.content');
+    if(content && content.scrollHeight>content.clientHeight) return content;
+    return document.scrollingElement || document.documentElement;
   }
 
-  function ensureOverlayV31149(){
-    if(overlay && overlay.isConnected) return overlay;
-    overlay=document.getElementById('readerPopupOverlayV908');
-    if(overlay) overlay.remove();
+  function capture(){
+    var host=scrollHost();
+    var root=document.scrollingElement || document.documentElement;
+    return {
+      at:Date.now(),
+      host:host,
+      hostTop:host ? host.scrollTop : 0,
+      hostLeft:host ? host.scrollLeft : 0,
+      winX:window.pageXOffset || root.scrollLeft || 0,
+      winY:window.pageYOffset || root.scrollTop || 0,
+      hostOverflow:host && host.style ? host.style.overflow : '',
+      hostAnchor:host && host.style ? host.style.overflowAnchor : '',
+      rootAnchor:root.style.overflowAnchor || '',
+      bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
+    };
+  }
 
-    overlay=document.createElement('div');
-    overlay.id='readerPopupOverlayV908';
-    overlay.className='reader-popup-overlay-v908 v31149-persistent';
-    overlay.setAttribute('aria-hidden','true');
-    overlay.innerHTML='<div class="reader-popup-card-v908" role="dialog">'+
-      '<h3 class="v31149-popup-title"></h3>'+
-      '<div class="reader-popup-content-v908 v31149-popup-content"></div>'+
-      '<div class="reader-popup-actions-v913">'+
-      '<button class="btn soft v31149-edit" type="button">✏️ Editar</button>'+
-      '<button class="btn soft danger v31149-delete" type="button">🗑️ Eliminar</button>'+
-      '<button class="btn primary v31149-close" type="button">Cerrar</button>'+
-      '</div></div>';
-    document.body.appendChild(overlay);
-
-    overlay.addEventListener('click',function(ev){
-      if(ev.target===overlay || ev.target.closest('.v31149-close')){
-        window.closeReaderPopupBlockV908();
-      }else if(ev.target.closest('.v31149-edit')){
-        var i=currentIndex;
-        window.closeReaderPopupBlockV908();
-        if(typeof window.editPopupBlockV908==='function') window.editPopupBlockV908(i);
-      }else if(ev.target.closest('.v31149-delete')){
-        var j=currentIndex;
-        window.closeReaderPopupBlockV908();
-        if(typeof window.deletePopupBlockV908==='function') window.deletePopupBlockV908(j);
+  function restore(pos){
+    if(!pos) return;
+    try{
+      if(pos.host){
+        pos.host.scrollLeft=pos.hostLeft;
+        pos.host.scrollTop=pos.hostTop;
       }
-    });
-    return overlay;
+    }catch(e){}
+    try{window.scrollTo(pos.winX,pos.winY);}catch(e){}
   }
 
-  function removeButtonFocusV31149(ev){
-    var button=ev.target && ev.target.closest ? ev.target.closest('.reader-popup-title') : null;
-    if(!button) return;
-    try{button.blur();}catch(_e){}
+  function clearTimers(){
+    while(restoreTimers.length){
+      try{clearTimeout(restoreTimers.pop());}catch(e){}
+    }
   }
-  // Captura justo antes del onclick inline. No cancela ni duplica el click.
-  document.addEventListener('click',removeButtonFocusV31149,true);
+
+  function lock(pos){
+    if(!pos) return;
+    var root=document.scrollingElement || document.documentElement;
+    try{root.style.overflowAnchor='none';}catch(e){}
+    try{if(document.body)document.body.style.overflowAnchor='none';}catch(e){}
+    try{
+      if(pos.host && pos.host.style){
+        pos.host.style.overflowAnchor='none';
+        pos.host.style.overflow='hidden';
+      }
+    }catch(e){}
+  }
+
+  function unlock(pos){
+    if(!pos) return;
+    var root=document.scrollingElement || document.documentElement;
+    try{root.style.overflowAnchor=pos.rootAnchor;}catch(e){}
+    try{if(document.body)document.body.style.overflowAnchor=pos.bodyAnchor;}catch(e){}
+    try{
+      if(pos.host && pos.host.style){
+        pos.host.style.overflow=pos.hostOverflow;
+        pos.host.style.overflowAnchor=pos.hostAnchor;
+      }
+    }catch(e){}
+  }
+
+  function keepPosition(pos){
+    clearTimers();
+    restore(pos);
+    [0,16,50,120,250,500,800].forEach(function(ms){
+      restoreTimers.push(setTimeout(function(){restore(pos);},ms));
+    });
+  }
+
+  function preCapture(ev){
+    try{
+      var btn=ev.target && ev.target.closest ? ev.target.closest('.reader-popup-title') : null;
+      if(!btn) return;
+      pendingSnapshot=capture();
+    }catch(e){}
+  }
+  document.addEventListener('pointerdown',preCapture,true);
+  document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
+  document.addEventListener('mousedown',preCapture,true);
 
   window.openReaderPopupBlockV908=function(idx){
     try{
-      currentIndex=idx;
+      var pos=(pendingSnapshot && Date.now()-pendingSnapshot.at<1800) ? pendingSnapshot : capture();
+      pendingSnapshot=null;
+      activeSnapshot=pos;
+      lock(pos);
+
       var text='';
-      try{text=getCurrentContentTextV865();}catch(_e){}
+      try{text=getCurrentContentTextV865();}catch(e){text='';}
       var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
-      var block=blocks[idx];
-      if(!block){alert('No se ha encontrado este bloque emergente.');return;}
+      var b=blocks[idx];
+      if(!b){unlock(pos);activeSnapshot=null;alert('No se ha encontrado este bloque emergente.');return;}
 
-      var el=ensureOverlayV31149();
-      var titleNode=el.querySelector('.v31149-popup-title');
-      var contentNode=el.querySelector('.v31149-popup-content');
+      var old=document.getElementById('readerPopupOverlayV908');
+      if(old) old.remove();
 
-      // El contenido se prepara fuera del DOM visible y se sustituye una sola vez.
-      var template=document.createElement('template');
-      var bodyHtml=(typeof highlightBibleReferencesV49==='function')
-        ? highlightBibleReferencesV49(block.body||'')
-        : htmlEscapeV31149(block.body||'');
-      template.innerHTML=bodyHtml;
-
-      titleNode.textContent=block.title||'Emergente';
-      contentNode.replaceChildren(template.content.cloneNode(true));
-      contentNode.scrollTop=0;
-
-      // Única escritura que hace visible el popup. No se toca body, lector ni scroll.
-      el.classList.add('v31149-visible');
-      el.setAttribute('aria-hidden','false');
+      var wrap=document.createElement('div');
+      wrap.id='readerPopupOverlayV908';
+      wrap.className='reader-popup-overlay-v908';
+      wrap.onclick=function(ev){if(ev.target===wrap)window.closeReaderPopupBlockV908();};
+      var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
+      var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
+      wrap.innerHTML='<div class="reader-popup-card-v908"><h3>'+title+'</h3><div class="reader-popup-content-v908">'+body+'</div><div class="reader-popup-actions-v913"><button class="btn soft" type="button" onclick="closeReaderPopupBlockV908(); editPopupBlockV908('+idx+')">✏️ Editar</button><button class="btn soft danger" type="button" onclick="closeReaderPopupBlockV908(); deletePopupBlockV908('+idx+')">🗑️ Eliminar</button><button class="btn primary" type="button" onclick="closeReaderPopupBlockV908()">Cerrar</button></div></div>';
+      document.body.appendChild(wrap);
+      keepPosition(pos);
     }catch(e){
-      console.error('openReaderPopupBlockV31149',e);
+      console.error('openReaderPopupBlockV31144',e);
+      if(activeSnapshot){unlock(activeSnapshot);restore(activeSnapshot);activeSnapshot=null;}
     }
   };
 
   window.closeReaderPopupBlockV908=function(){
-    var el=ensureOverlayV31149();
-    el.classList.remove('v31149-visible');
-    el.setAttribute('aria-hidden','true');
+    var pos=activeSnapshot;
+    clearTimers();
+    var el=document.getElementById('readerPopupOverlayV908');
+    if(el)el.remove();
+    if(pos){
+      unlock(pos);
+      restore(pos);
+      requestAnimationFrame(function(){restore(pos);requestAnimationFrame(function(){restore(pos);});});
+    }
+    activeSnapshot=null;
   };
 
-  function installV31149(){
-    ensureOverlayV31149();
-    try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(_e){}
-    try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(_e){}
-  }
-
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',installV31149,{once:true});
-  else installV31149();
+  try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
+  try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
 })();

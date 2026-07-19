@@ -1469,7 +1469,7 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.139";
+const APP_VERSION_LABEL = "v3.1.140";
 const APP_VERSION_ZIP = "oraciones_v3_1_139_numeracion_notas_negrita.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
@@ -10870,38 +10870,28 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.139 - Migración única de números emoji en Notas ===== */
+/* ===== V3.1.140 - Migración única de flechas antiguas en Notas ===== */
 (function(){
-  if(window.__v31139NoteNumberMigrationInstalled) return;
-  window.__v31139NoteNumberMigrationInstalled=true;
+  if(window.__v31140NoteArrowMigrationInstalled) return;
+  window.__v31140NoteArrowMigrationInstalled=true;
 
-  var MIGRATION_KEY='oraciones_note_symbols_migration_v3140';
-  var KEYCAP_RUN=/((?:[0-9]\uFE0F?\u20E3)+)(?=\s)/g;
-  var KEYCAP_DIGIT=/([0-9])\uFE0F?\u20E3/g;
+  var MIGRATION_KEY='oraciones_note_arrows_migration_v3140_definitiva';
+  var LEGACY_ARROW=/(?:👉|➡\uFE0F?)/g;
 
-  function hasLegacyContent(text){
-    text=String(text||'');
-    return hasLegacyNumber(text)||text.indexOf('👉')!==-1||text.indexOf('➡')!==-1;
+  function hasLegacyArrow(text){
+    LEGACY_ARROW.lastIndex=0;
+    return LEGACY_ARROW.test(String(text||''));
   }
 
-  function hasLegacyNumber(text){
-    KEYCAP_RUN.lastIndex=0;
-    return KEYCAP_RUN.test(String(text||''));
+  function convertLegacyArrows(text){
+    LEGACY_ARROW.lastIndex=0;
+    return String(text||'').replace(LEGACY_ARROW,'→');
   }
 
-  function convertLegacyNumbers(text){
-    KEYCAP_RUN.lastIndex=0;
-    text=String(text||'').replace(/👉|➡️?|➜/g,'→');
-    return text.replace(KEYCAP_RUN,function(run){
-      var digits=run.replace(KEYCAP_DIGIT,'$1');
-      return '**'+digits+'.**';
-    });
-  }
-
-  function notesWithLegacyContent(){
+  function notesWithLegacyArrows(){
     if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
     return state.notes.filter(function(note){
-      return note && hasLegacyContent(note.content);
+      return note && hasLegacyArrow(note.content);
     });
   }
 
@@ -10914,13 +10904,12 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       if(localStorage.getItem(MIGRATION_KEY)) return;
     }catch(e){}
 
-    var affected=notesWithLegacyContent();
+    var affected=notesWithLegacyArrows();
     if(!affected.length) return;
 
     var accept=window.confirm(
-      'Se ha detectado un formato antiguo en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
-      '¿Desea actualizar automáticamente la numeración y las flechas al nuevo formato?\n\n'+
-      'Ejemplo: 1️⃣  →  1.'
+      'Se han detectado flechas antiguas en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
+      '¿Desea sustituir automáticamente 👉 y ➡️ por la flecha sencilla →?'
     );
 
     if(!accept){
@@ -10930,7 +10919,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     var changed=0;
     affected.forEach(function(note){
-      var converted=convertLegacyNumbers(note.content);
+      var converted=convertLegacyArrows(note.content);
       if(converted!==String(note.content||'')){
         note.content=converted;
         note.updatedAt=Date.now();
@@ -10939,7 +10928,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     });
 
     if(changed){
-      try{if(typeof saveState==='function') saveState();}catch(e){console.error('No se pudo guardar la migración de notas',e);}
+      try{if(typeof saveState==='function') saveState();}catch(e){console.error('No se pudo guardar la migración de flechas',e);}
       try{
         if(typeof section!=='undefined' && section==='notes'){
           if(typeof renderList==='function') renderList();
@@ -10952,7 +10941,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     window.alert('✓ Se han actualizado correctamente '+changed+' nota'+(changed===1?'':'s')+'.');
   }
 
-  function init(){window.setTimeout(runMigrationPrompt,350);}
+  function init(){window.setTimeout(runMigrationPrompt,700);}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
 })();

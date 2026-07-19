@@ -3813,6 +3813,16 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
 }
 
 
-/* ===== V3.1.164 - Gestos contenidos por el propio contenido ===== */
-#readerPopupOverlayV908.v31148-persistent .reader-popup-card-v908{overscroll-behavior:contain;}
-#readerPopupOverlayV908.v31148-persistent .v31148-popup-content{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+/* ===== V3.1.153 - El emergente absorbe los gestos sin mover el fondo ===== */
+#readerPopupOverlayV908.v31148-persistent{
+  touch-action:none;
+  overscroll-behavior:none;
+}
+#readerPopupOverlayV908.v31148-persistent .reader-popup-card-v908{
+  overscroll-behavior:contain;
+}
+#readerPopupOverlayV908.v31148-persistent .v31148-popup-content{
+  touch-action:pan-y;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}

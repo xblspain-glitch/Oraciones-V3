@@ -11419,39 +11419,38 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
     window.openReaderPopupBlockV908=function(idx){
       var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
-      pending=null; active=p; currentIndex=idx; lock(p);
+      pending=null; active=p; currentIndex=idx;
       try{
         var text='';
         try{text=getCurrentContentTextV865();}catch(e){}
         var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
         var b=blocks[idx];
-        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
+        if(!b){active=null;alert('No se ha encontrado este bloque emergente.');return;}
         var el=ensureOverlay();
         var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
         var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
         el.querySelector('.v31148-popup-title').innerHTML=title;
         el.querySelector('.v31148-popup-content').innerHTML=body;
         el.querySelector('.v31148-popup-content').scrollTop=0;
+        /* V3.1.154: prueba final totalmente neutra. El overlay ya existe desde
+           la carga y al abrir no se modifica overflow, position, height,
+           scrollTop ni se ejecuta ninguna restauración del documento. Solo se
+           actualiza el contenido y se cambia la clase de visibilidad. */
         el.classList.add('v31148-visible');
         el.setAttribute('aria-hidden','false');
-        stabilize(p);
       }catch(e){
-        console.error('openReaderPopupBlockV31148',e);
-        unlock(p);restoreOnlyIfNeeded(p);active=null;
+        console.error('openReaderPopupBlockV31154',e);
+        active=null;
       }
     };
 
     window.closeReaderPopupBlockV908=function(){
-      var p=active;
+      /* Al cerrar tampoco se corrige ni se restaura el scroll: únicamente se
+         vuelve invisible el overlay que permanece siempre montado en el DOM. */
       cancelTimers();
       var el=ensureOverlay();
       el.classList.remove('v31148-visible');
       el.setAttribute('aria-hidden','true');
-      if(p){
-        unlock(p);
-        restoreOnlyIfNeeded(p);
-        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
-      }
       active=null;
     };
 

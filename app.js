@@ -10879,21 +10879,29 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   var KEYCAP_RUN=/((?:[0-9]\uFE0F?\u20E3)+)(?=\s)/g;
   var KEYCAP_DIGIT=/([0-9])\uFE0F?\u20E3/g;
 
+  function hasLegacyContent(text){
+    text=String(text||'');
+    return hasLegacyNumber(text)||text.indexOf('👉')!==-1||text.indexOf('➡')!==-1;
+  }
+
   function hasLegacyNumber(text){
-    var s=String(text||'');
     KEYCAP_RUN.lastIndex=0;
-    return KEYCAP_RUN.test(s)||s.indexOf('👉')!==-1||s.indexOf('➡️')!==-1;
+    return KEYCAP_RUN.test(String(text||''));
   }
 
   function convertLegacyNumbers(text){
     KEYCAP_RUN.lastIndex=0;
-    return String(text||'').replace(KEYCAP_RUN,function(run){var digits=run.replace(KEYCAP_DIGIT,'$1');return '**'+digits+'.**';}).replace(/👉/g,'→').replace(/➡️/g,'→');
+    text=String(text||'').replace(/👉|➡️?|➜/g,'→');
+    return text.replace(KEYCAP_RUN,function(run){
+      var digits=run.replace(KEYCAP_DIGIT,'$1');
+      return '**'+digits+'.**';
+    });
   }
 
-  function notesWithLegacyNumbers(){
+  function notesWithLegacyContent(){
     if(typeof state==='undefined' || !state || !Array.isArray(state.notes)) return [];
     return state.notes.filter(function(note){
-      return note && hasLegacyNumber(note.content);
+      return note && hasLegacyContent(note.content);
     });
   }
 
@@ -10906,12 +10914,12 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       if(localStorage.getItem(MIGRATION_KEY)) return;
     }catch(e){}
 
-    var affected=notesWithLegacyNumbers();
+    var affected=notesWithLegacyContent();
     if(!affected.length) return;
 
     var accept=window.confirm(
-      'Se ha detectado una numeración antigua en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
-      '¿Desea sustituir automáticamente los números emoji por números con punto y en negrita?\n\n'+
+      'Se ha detectado un formato antiguo en '+affected.length+' nota'+(affected.length===1?'':'s')+'.\n\n'+
+      '¿Desea actualizar automáticamente la numeración y las flechas al nuevo formato?\n\n'+
       'Ejemplo: 1️⃣  →  1.'
     );
 

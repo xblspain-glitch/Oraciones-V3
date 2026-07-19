@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_160_emergente_anclado_contenedor.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_161_diagnostico_coordenadas.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -11228,49 +11228,120 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
 })();
 
-/* ===== V3.1.160 - Emergente anclado al contenedor, independiente del viewport visual ===== */
+/* ===== V3.1.153 - Emergente persistente con fondo inmóvil sin overflow:hidden ===== */
 (function(){
-  if(window.__v31160ContainerPopup) return;
-  window.__v31160ContainerPopup=true;
+  if(window.__v31148StablePopup) return;
+  window.__v31148StablePopup=true;
 
+  var pending=null;
+  var active=null;
+  var timers=[];
   var overlay=null;
   var currentIndex=-1;
-  var mountedHost=null;
-  var oldHostPosition='';
-  var lastTouchY=null;
 
-  function getHost(){
+  function host(){
     var content=document.querySelector('.content');
     if(content && content.scrollHeight>content.clientHeight) return content;
     return document.scrollingElement || document.documentElement;
   }
 
-  function isRoot(h){
-    return h===document.documentElement || h===document.body || h===document.scrollingElement;
+  function snap(){
+    var h=host();
+    var root=document.scrollingElement || document.documentElement;
+    return {
+      at:Date.now(), host:h,
+      top:h ? h.scrollTop : 0,
+      left:h ? h.scrollLeft : 0,
+      x:window.pageXOffset || root.scrollLeft || 0,
+      y:window.pageYOffset || root.scrollTop || 0,
+      overflow:h && h.style ? h.style.overflow : '',
+      anchor:h && h.style ? h.style.overflowAnchor : '',
+      rootAnchor:root.style.overflowAnchor || '',
+      bodyAnchor:document.body ? (document.body.style.overflowAnchor || '') : ''
+    };
+  }
+
+  function cancelTimers(){
+    while(timers.length){ try{clearTimeout(timers.pop());}catch(e){} }
+  }
+
+  function differs(p){
+    if(!p) return false;
+    try{
+      if(p.host && (Math.abs(p.host.scrollTop-p.top)>1 || Math.abs(p.host.scrollLeft-p.left)>1)) return true;
+      var root=document.scrollingElement || document.documentElement;
+      var x=window.pageXOffset || root.scrollLeft || 0;
+      var y=window.pageYOffset || root.scrollTop || 0;
+      return Math.abs(x-p.x)>1 || Math.abs(y-p.y)>1;
+    }catch(e){ return true; }
+  }
+
+  function restoreOnlyIfNeeded(p){
+    if(!p || !differs(p)) return;
+    try{ if(p.host){p.host.scrollTop=p.top;p.host.scrollLeft=p.left;} }catch(e){}
+    try{window.scrollTo(p.x,p.y);}catch(e){}
+  }
+
+  function lock(p){
+    if(!p) return;
+    var root=document.scrollingElement || document.documentElement;
+    try{root.style.overflowAnchor='none';}catch(e){}
+    try{if(document.body)document.body.style.overflowAnchor='none';}catch(e){}
+    try{
+      if(p.host && p.host.style){
+        p.host.style.overflowAnchor='none';
+        /* V3.1.152: no tocar overflow del contenedor raíz. En Android,
+           overflow:hidden iniciaba un desplazamiento nativo diferido que
+           luego era corregido por el temporizador, produciendo el temblor. */
+      }
+    }catch(e){}
+  }
+
+  function unlock(p){
+    if(!p) return;
+    var root=document.scrollingElement || document.documentElement;
+    try{root.style.overflowAnchor=p.rootAnchor;}catch(e){}
+    try{if(document.body)document.body.style.overflowAnchor=p.bodyAnchor;}catch(e){}
+    try{
+      if(p.host && p.host.style){
+        p.host.style.overflow=p.overflow;
+        p.host.style.overflowAnchor=p.anchor;
+      }
+    }catch(e){}
+  }
+
+  function stabilize(p){
+    cancelTimers();
+    restoreOnlyIfNeeded(p);
+    requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
+    timers.push(setTimeout(function(){restoreOnlyIfNeeded(p);},90));
+    timers.push(setTimeout(function(){restoreOnlyIfNeeded(p);},260));
   }
 
   function ensureOverlay(){
     if(overlay && overlay.isConnected) return overlay;
-    var old=document.getElementById('readerPopupOverlayV908');
-    if(old) old.remove();
-    overlay=document.createElement('div');
-    overlay.id='readerPopupOverlayV908';
-    overlay.className='reader-popup-overlay-v908 v31160-container-popup';
+    overlay=document.getElementById('readerPopupOverlayV908');
+    if(!overlay){
+      overlay=document.createElement('div');
+      overlay.id='readerPopupOverlayV908';
+      document.body.appendChild(overlay);
+    }
+    overlay.className='reader-popup-overlay-v908 v31148-persistent';
     overlay.setAttribute('aria-hidden','true');
     overlay.innerHTML='<div class="reader-popup-card-v908" role="dialog" aria-modal="true">'+
-      '<h3 class="v31160-popup-title"></h3>'+
-      '<div class="reader-popup-content-v908 v31160-popup-content"></div>'+
+      '<h3 class="v31148-popup-title"></h3>'+
+      '<div class="reader-popup-content-v908 v31148-popup-content"></div>'+
       '<div class="reader-popup-actions-v913">'+
-      '<button class="btn soft v31160-edit" type="button">✏️ Editar</button>'+
-      '<button class="btn soft danger v31160-delete" type="button">🗑️ Eliminar</button>'+
-      '<button class="btn primary v31160-close" type="button">Cerrar</button>'+
+      '<button class="btn soft v31148-edit" type="button">✏️ Editar</button>'+
+      '<button class="btn soft danger v31148-delete" type="button">🗑️ Eliminar</button>'+
+      '<button class="btn primary v31148-close" type="button">Cerrar</button>'+
       '</div></div>';
     overlay.addEventListener('click',function(ev){
-      if(ev.target===overlay || ev.target.closest('.v31160-close')) window.closeReaderPopupBlockV908();
-      else if(ev.target.closest('.v31160-edit')){
+      if(ev.target===overlay || ev.target.closest('.v31148-close')) window.closeReaderPopupBlockV908();
+      else if(ev.target.closest('.v31148-edit')){
         var i=currentIndex; window.closeReaderPopupBlockV908();
         if(typeof window.editPopupBlockV908==='function') window.editPopupBlockV908(i);
-      }else if(ev.target.closest('.v31160-delete')){
+      }else if(ev.target.closest('.v31148-delete')){
         var j=currentIndex; window.closeReaderPopupBlockV908();
         if(typeof window.deletePopupBlockV908==='function') window.deletePopupBlockV908(j);
       }
@@ -11278,34 +11349,26 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     return overlay;
   }
 
-  function mountOverVisibleArea(){
-    var el=ensureOverlay();
-    var h=getHost();
-    mountedHost=h;
-    if(!isRoot(h)){
-      oldHostPosition=h.style.position || '';
-      if(getComputedStyle(h).position==='static') h.style.position='relative';
-      if(el.parentNode!==h) h.appendChild(el);
-      el.style.top=h.scrollTop+'px';
-      el.style.left=h.scrollLeft+'px';
-      el.style.width=h.clientWidth+'px';
-      el.style.height=h.clientHeight+'px';
-    }else{
-      if(el.parentNode!==document.body) document.body.appendChild(el);
-      var root=document.scrollingElement || document.documentElement;
-      el.style.top=(window.pageYOffset || root.scrollTop || 0)+'px';
-      el.style.left=(window.pageXOffset || root.scrollLeft || 0)+'px';
-      el.style.width=document.documentElement.clientWidth+'px';
-      el.style.height=document.documentElement.clientHeight+'px';
-    }
+  function preCapture(ev){
+    try{
+      if(ev.target && ev.target.closest && ev.target.closest('.reader-popup-title')) pending=snap();
+    }catch(e){}
   }
+  document.addEventListener('pointerdown',preCapture,true);
+  document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
+  document.addEventListener('mousedown',preCapture,true);
+
+  /* V3.1.153: bloquear únicamente los gestos que intentarían desplazar el
+     documento situado detrás del emergente. No se cambia overflow, position,
+     height ni scrollTop del fondo, por lo que su posición permanece intacta. */
+  var lastTouchY=null;
 
   function popupVisible(){
-    return !!(overlay && overlay.classList.contains('v31160-visible'));
+    return !!(overlay && overlay.classList.contains('v31148-visible'));
   }
 
   function popupScrollerFrom(target){
-    try{return target && target.closest ? target.closest('.v31160-popup-content') : null;}catch(e){return null;}
+    try{return target && target.closest ? target.closest('.v31148-popup-content') : null;}catch(e){return null;}
   }
 
   document.addEventListener('touchstart',function(ev){
@@ -11318,48 +11381,223 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     if(!popupVisible()) return;
     var t=ev.touches && ev.touches[0];
     var scroller=popupScrollerFrom(ev.target);
-    if(!t || !scroller){ev.preventDefault();return;}
-    var y=t.clientY, dy=(lastTouchY===null)?0:y-lastTouchY;
+    if(!t || !scroller){
+      ev.preventDefault();
+      return;
+    }
+
+    var y=t.clientY;
+    var dy=(lastTouchY===null) ? 0 : y-lastTouchY;
     lastTouchY=y;
     var max=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
-    if(max<=1 || (dy>0 && scroller.scrollTop<=0) || (dy<0 && scroller.scrollTop>=max-1)) ev.preventDefault();
+    var atTop=scroller.scrollTop<=0;
+    var atBottom=scroller.scrollTop>=max-1;
+
+    /* Permitir el desplazamiento interno del texto, pero cortar el gesto al
+       llegar a sus extremos para que no se encadene con la página de fondo. */
+    if(max<=1 || (dy>0 && atTop) || (dy<0 && atBottom)){
+      ev.preventDefault();
+    }
   },{capture:true,passive:false});
+
   document.addEventListener('touchend',function(){lastTouchY=null;},{capture:true,passive:true});
   document.addEventListener('touchcancel',function(){lastTouchY=null;},{capture:true,passive:true});
 
+  document.addEventListener('wheel',function(ev){
+    if(!popupVisible()) return;
+    var scroller=popupScrollerFrom(ev.target);
+    if(!scroller){ev.preventDefault();return;}
+    var max=Math.max(0,scroller.scrollHeight-scroller.clientHeight);
+    if(max<=1 || (ev.deltaY<0 && scroller.scrollTop<=0) ||
+       (ev.deltaY>0 && scroller.scrollTop>=max-1)){
+      ev.preventDefault();
+    }
+  },{capture:true,passive:false});
+
   function install(){
     ensureOverlay();
+
     window.openReaderPopupBlockV908=function(idx){
+      var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
+      pending=null; active=p; currentIndex=idx; lock(p);
       try{
         var text='';
         try{text=getCurrentContentTextV865();}catch(e){}
         var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
         var b=blocks[idx];
-        if(!b){alert('No se ha encontrado este bloque emergente.');return;}
-        currentIndex=idx;
-        mountOverVisibleArea();
+        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
+        var el=ensureOverlay();
         var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
         var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
-        overlay.querySelector('.v31160-popup-title').innerHTML=title;
-        overlay.querySelector('.v31160-popup-content').innerHTML=body;
-        overlay.querySelector('.v31160-popup-content').scrollTop=0;
-        overlay.classList.add('v31160-visible');
-        overlay.setAttribute('aria-hidden','false');
-      }catch(e){console.error('openReaderPopupBlockV31160',e);}
+        el.querySelector('.v31148-popup-title').innerHTML=title;
+        el.querySelector('.v31148-popup-content').innerHTML=body;
+        el.querySelector('.v31148-popup-content').scrollTop=0;
+        el.classList.add('v31148-visible');
+        el.setAttribute('aria-hidden','false');
+        stabilize(p);
+      }catch(e){
+        console.error('openReaderPopupBlockV31148',e);
+        unlock(p);restoreOnlyIfNeeded(p);active=null;
+      }
     };
 
     window.closeReaderPopupBlockV908=function(){
+      var p=active;
+      cancelTimers();
       var el=ensureOverlay();
-      el.classList.remove('v31160-visible');
+      el.classList.remove('v31148-visible');
       el.setAttribute('aria-hidden','true');
-      if(mountedHost && !isRoot(mountedHost)) mountedHost.style.position=oldHostPosition;
-      mountedHost=null;
+      if(p){
+        unlock(p);
+        restoreOnlyIfNeeded(p);
+        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
+      }
+      active=null;
     };
 
     try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
     try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true});
-  else install();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){setTimeout(install,380);},{once:true});
+  else setTimeout(install,380);
+})();
+
+/* ===== V3.1.161 - Diagnóstico exacto del movimiento del emergente ===== */
+(function(){
+  if(window.__v31161PopupDiag) return;
+  window.__v31161PopupDiag=true;
+
+  var logs=[];
+  var seq=0;
+  var openNo=0;
+  var closeNo=0;
+  var lastEvent='init';
+  var content=null;
+
+  function n(v){ return (typeof v==='number' && isFinite(v)) ? Math.round(v*100)/100 : null; }
+  function sel(el){
+    if(!el) return 'null';
+    var s=(el.tagName||'').toLowerCase();
+    if(el.id) s+='#'+el.id;
+    if(el.classList && el.classList.length) s+='.'+Array.from(el.classList).slice(0,3).join('.');
+    return s||String(el);
+  }
+  function getContent(){ return document.querySelector('.content'); }
+  function anchorInfo(){
+    var c=getContent();
+    if(!c) return {};
+    var cr=c.getBoundingClientRect();
+    var x=Math.max(cr.left+8,Math.min(cr.right-8,cr.left+cr.width/2));
+    var y=Math.max(cr.top+8,Math.min(cr.bottom-8,cr.top+Math.min(180,cr.height/3)));
+    var el=document.elementFromPoint(x,y);
+    var r=el && el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+    return {anchor:sel(el),anchorTop:r?n(r.top):null,anchorBottom:r?n(r.bottom):null};
+  }
+  function shot(label,extra){
+    var c=getContent();
+    var root=document.scrollingElement||document.documentElement;
+    var vv=window.visualViewport;
+    var ov=document.getElementById('readerPopupOverlayV908');
+    var card=ov&&ov.querySelector('.reader-popup-card-v908');
+    var cr=c&&c.getBoundingClientRect();
+    var or=ov&&ov.getBoundingClientRect();
+    var rr=card&&card.getBoundingClientRect();
+    var a=anchorInfo();
+    logs.push(Object.assign({
+      i:++seq,t:Math.round(performance.now()),label:label,event:lastEvent,
+      openNo:openNo,closeNo:closeNo,
+      contentTop:c?n(c.scrollTop):null,contentLeft:c?n(c.scrollLeft):null,
+      contentClientH:c?n(c.clientHeight):null,contentScrollH:c?n(c.scrollHeight):null,
+      contentRectTop:cr?n(cr.top):null,contentRectBottom:cr?n(cr.bottom):null,
+      winY:n(window.scrollY),rootTop:n(root.scrollTop),
+      innerH:n(window.innerHeight),docClientH:n(document.documentElement.clientHeight),
+      vvTop:vv?n(vv.offsetTop):null,vvLeft:vv?n(vv.offsetLeft):null,
+      vvH:vv?n(vv.height):null,vvScale:vv?n(vv.scale):null,
+      overlayClass:ov?ov.className:'none',overlayTop:or?n(or.top):null,overlayH:or?n(or.height):null,
+      cardTop:rr?n(rr.top):null,cardBottom:rr?n(rr.bottom):null,
+      focus:sel(document.activeElement),bodyClass:document.body.className,
+      anchor:a.anchor,anchorTop:a.anchorTop,anchorBottom:a.anchorBottom
+    },extra||{}));
+  }
+  function burst(prefix){
+    shot(prefix+':sync');
+    requestAnimationFrame(function(){shot(prefix+':raf1');requestAnimationFrame(function(){shot(prefix+':raf2');});});
+    [16,40,80,120,180,260,400,650,900].forEach(function(ms){setTimeout(function(){shot(prefix+':'+ms+'ms');},ms);});
+  }
+  function report(){
+    var head='V3.1.161 DIAGNOSTICO EMERGENTE\nUA: '+navigator.userAgent+'\nDPR: '+window.devicePixelRatio+'\nFecha: '+new Date().toISOString()+'\n';
+    return head+logs.map(function(x){return JSON.stringify(x);}).join('\n');
+  }
+  function copyReport(){
+    var text=report();
+    window.__popupDiagText=text;
+    try{localStorage.setItem('v31161_popup_diag',text);}catch(e){}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){try{toast('📋 Diagnóstico copiado. Pégalo en el chat.');}catch(e){alert('Diagnóstico copiado. Pégalo en el chat.');}},function(){fallback(text);});
+    }else fallback(text);
+  }
+  function fallback(text){
+    try{
+      var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+      try{toast('📋 Diagnóstico copiado. Pégalo en el chat.');}catch(e){alert('Diagnóstico copiado. Pégalo en el chat.');}
+    }catch(e){prompt('Copia este diagnóstico:',text);}
+  }
+
+  ['pointerdown','pointerup','touchstart','touchend','mousedown','mouseup','click','focusin','focusout'].forEach(function(type){
+    document.addEventListener(type,function(ev){
+      var relevant=ev.target&&ev.target.closest&&(ev.target.closest('.reader-popup-title')||ev.target.closest('#readerPopupOverlayV908'));
+      if(!relevant) return;
+      lastEvent=type+':'+sel(ev.target);
+      shot('event:'+type,{target:sel(ev.target),cancelable:!!ev.cancelable,defaultPrevented:!!ev.defaultPrevented});
+    },true);
+  });
+  ['scroll','resize'].forEach(function(type){window.addEventListener(type,function(){lastEvent='window:'+type;shot('window:'+type);},true);});
+  if(window.visualViewport){
+    ['scroll','resize'].forEach(function(type){visualViewport.addEventListener(type,function(){lastEvent='vv:'+type;shot('vv:'+type);},true);});
+  }
+  document.addEventListener('scroll',function(ev){
+    if(ev.target===document) return;
+    if(ev.target===getContent() || (ev.target&&ev.target.closest&&ev.target.closest('#readerPopupOverlayV908'))){
+      lastEvent='scroll:'+sel(ev.target);shot('element-scroll',{target:sel(ev.target)});
+    }
+  },true);
+
+  function install(){
+    var oldOpen=window.openReaderPopupBlockV908;
+    var oldClose=window.closeReaderPopupBlockV908;
+    if(typeof oldOpen!=='function'||typeof oldClose!=='function'){setTimeout(install,250);return;}
+    if(oldOpen.__v31161wrapped) return;
+
+    window.openReaderPopupBlockV908=function(idx){
+      openNo++;lastEvent='wrapper:before-open';shot('OPEN '+openNo+' before',{idx:idx});
+      var out=oldOpen.apply(this,arguments);
+      lastEvent='wrapper:after-open';burst('OPEN '+openNo+' after');
+      return out;
+    };
+    window.openReaderPopupBlockV908.__v31161wrapped=true;
+    window.closeReaderPopupBlockV908=function(){
+      closeNo++;lastEvent='wrapper:before-close';shot('CLOSE '+closeNo+' before');
+      var out=oldClose.apply(this,arguments);
+      lastEvent='wrapper:after-close';burst('CLOSE '+closeNo+' after');
+      setTimeout(copyReport,1050);
+      return out;
+    };
+    try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}
+    try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
+
+    var ov=document.getElementById('readerPopupOverlayV908');
+    if(ov){
+      new MutationObserver(function(ms){lastEvent='mutation:overlay';shot('mutation:overlay',{mutations:ms.map(function(m){return m.type+':'+m.attributeName;}).join(',')});}).observe(ov,{attributes:true,attributeFilter:['class','style','aria-hidden']});
+    }
+    new MutationObserver(function(ms){
+      var hit=ms.some(function(m){return m.type==='attributes'&&(m.attributeName==='class'||m.attributeName==='style');});
+      if(hit){lastEvent='mutation:root';shot('mutation:root');}
+    }).observe(document.documentElement,{attributes:true,subtree:false,attributeFilter:['class','style']});
+    new MutationObserver(function(ms){lastEvent='mutation:body';shot('mutation:body');}).observe(document.body,{attributes:true,attributeFilter:['class','style']});
+    shot('diagnostic-installed');
+  }
+  setTimeout(install,900);
 })();

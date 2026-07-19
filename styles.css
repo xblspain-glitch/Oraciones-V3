@@ -3827,29 +3827,20 @@ body.dark-mode #readerView.reader-kind-notes-v31103 .panel-head{
   -webkit-overflow-scrolling:touch;
 }
 
-
-/* ===== V3.1.157 - Emergente sin recomposición visual del fondo =====
-   Causa corregida: en Android/WebView, backdrop-filter combinado con una capa
-   fija promovida por translateZ(0), contain y transición de opacidad vuelve a
-   rasterizar el documento situado detrás y simula un pequeño scroll aunque las
-   coordenadas reales no cambien. El emergente se muestra ahora como una capa
-   fija simple, sin desenfoque, transformaciones ni animación de composición. */
+/* ===== V3.1.158 - Sin restauradores de scroll ni ajuste de anclaje ===== */
 #readerPopupOverlayV908.v31148-persistent{
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
   transform:none !important;
-  backface-visibility:visible !important;
   contain:none !important;
   transition:none !important;
   animation:none !important;
-  will-change:auto !important;
 }
 #readerPopupOverlayV908.v31148-persistent.v31148-visible{
   transition:none !important;
 }
 #readerPopupOverlayV908.v31148-persistent .reader-popup-card-v908{
   transform:none !important;
-  backface-visibility:visible !important;
   contain:none !important;
   transition:none !important;
   animation:none !important;

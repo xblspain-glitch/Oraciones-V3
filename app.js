@@ -1470,7 +1470,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.148";
-const APP_VERSION_ZIP = "oraciones_v3_1_157_emergente_sin_recomposicion.zip";
+const APP_VERSION_ZIP = "oraciones_v3_1_158_emergente_sin_restauradores.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -11418,41 +11418,45 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     ensureOverlay();
 
     window.openReaderPopupBlockV908=function(idx){
-      var p=(pending && Date.now()-pending.at<1800) ? pending : snap();
-      pending=null; active=p; currentIndex=idx; lock(p);
+      /* V3.1.158: no capturar ni restaurar scroll. La V3.1.153 guardaba la
+         posición en pointerdown y después la imponía de nuevo al abrir. En
+         Android/WebView el botón recibe foco al completar el toque y el
+         contenedor puede ajustarse unos píxeles; los restauradores de la 153
+         peleaban contra ese ajuste nativo y producían el movimiento visible. */
+      pending=null;
+      active=null;
+      currentIndex=idx;
+      cancelTimers();
       try{
         var text='';
         try{text=getCurrentContentTextV865();}catch(e){}
         var blocks=(typeof parsePopupBlocksV908==='function') ? parsePopupBlocksV908(text) : [];
         var b=blocks[idx];
-        if(!b){unlock(p);active=null;alert('No se ha encontrado este bloque emergente.');return;}
+        if(!b){alert('No se ha encontrado este bloque emergente.');return;}
         var el=ensureOverlay();
         var title=(typeof escapeHtml==='function') ? escapeHtml(b.title||'Emergente') : String(b.title||'Emergente');
         var body=(typeof highlightBibleReferencesV49==='function') ? highlightBibleReferencesV49(b.body||'') : ((typeof escapeHtml==='function') ? escapeHtml(b.body||'') : String(b.body||''));
         el.querySelector('.v31148-popup-title').innerHTML=title;
         el.querySelector('.v31148-popup-content').innerHTML=body;
         el.querySelector('.v31148-popup-content').scrollTop=0;
+        try{
+          var focused=document.activeElement;
+          if(focused && focused.classList && focused.classList.contains('reader-popup-title')) focused.blur();
+        }catch(e){}
         el.classList.add('v31148-visible');
         el.setAttribute('aria-hidden','false');
-        stabilize(p);
       }catch(e){
-        console.error('openReaderPopupBlockV31148',e);
-        unlock(p);restoreOnlyIfNeeded(p);active=null;
+        console.error('openReaderPopupBlockV31158',e);
       }
     };
 
     window.closeReaderPopupBlockV908=function(){
-      var p=active;
       cancelTimers();
       var el=ensureOverlay();
       el.classList.remove('v31148-visible');
       el.setAttribute('aria-hidden','true');
-      if(p){
-        unlock(p);
-        restoreOnlyIfNeeded(p);
-        requestAnimationFrame(function(){restoreOnlyIfNeeded(p);});
-      }
       active=null;
+      pending=null;
     };
 
     try{openReaderPopupBlockV908=window.openReaderPopupBlockV908;}catch(e){}

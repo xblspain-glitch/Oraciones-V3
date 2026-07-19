@@ -10886,7 +10886,12 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   function convertLegacyArrows(text){
     LEGACY_ARROW.lastIndex=0;
-    return String(text||'').replace(LEGACY_ARROW,'→');
+    return String(text||'')
+      .replace(LEGACY_ARROW,'→')
+      .replace(/1️⃣/g,'**1.**').replace(/2️⃣/g,'**2.**').replace(/3️⃣/g,'**3.**')
+      .replace(/4️⃣/g,'**4.**').replace(/5️⃣/g,'**5.**').replace(/6️⃣/g,'**6.**')
+      .replace(/7️⃣/g,'**7.**').replace(/8️⃣/g,'**8.**').replace(/9️⃣/g,'**9.**')
+      .replace(/🔟/g,'**10.**');
   }
 
   function collectAffected(){

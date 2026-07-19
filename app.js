@@ -6431,7 +6431,7 @@ setInterval(updateVersePositionCounter, 1000);
         dIdx++;
       }else{
         out += '<div class="reader-popup-block" data-popup-index="'+pIdx+'">' +
-          '<button class="reader-popup-title" type="button" onclick="event.preventDefault();event.stopPropagation();openReaderPopupBlockV908('+pIdx+')">'+title+'</button>' +
+          '<button class="reader-popup-title" type="button" onclick="openReaderPopupBlockV908('+pIdx+')">'+title+'</button>' +
           '<div class="block-controls-v865">' +
           '<button class="block-mini-v865" type="button" onclick="event.preventDefault();event.stopPropagation();editPopupBlockV908('+pIdx+')">✏️ Editar</button>' +
           '<button class="block-mini-v865 danger" type="button" onclick="event.preventDefault();event.stopPropagation();deletePopupBlockV908('+pIdx+')">🗑️ Eliminar</button>' +
@@ -11084,103 +11084,4 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     wrapV31143('openReaderPopupBlockV908');
     wrapV31143('closeReaderPopupBlockV908');
   },300);
-})();
-
-
-/* ===== V3.1.144 - Emergente conserva la posición real de lectura ===== */
-(function(){
-  if(window.__v31144PopupScrollExact) return;
-  window.__v31144PopupScrollExact = true;
-
-  var savedPopupPositionV31144 = null;
-  var pendingPopupPositionV31144 = null;
-
-  function isScrollableV31144(el){
-    if(!el || el===document.body || el===document.documentElement) return false;
-    try{
-      var cs=getComputedStyle(el);
-      var oy=cs.overflowY;
-      return (oy==='auto'||oy==='scroll'||oy==='overlay') && el.scrollHeight>el.clientHeight;
-    }catch(e){ return false; }
-  }
-
-  function captureV31144(trigger){
-    var root=document.scrollingElement||document.documentElement;
-    var seen=[];
-    var nodes=[];
-    function add(el){
-      if(!el || seen.indexOf(el)!==-1) return;
-      seen.push(el);
-      if(isScrollableV31144(el)) nodes.push({el:el,top:el.scrollTop,left:el.scrollLeft});
-    }
-    var n=trigger;
-    while(n && n!==document){ add(n); n=n.parentElement; }
-    add(document.querySelector('.content'));
-    add(document.getElementById('readerView'));
-    add(document.getElementById('readerText'));
-    return {
-      x:window.pageXOffset||root.scrollLeft||0,
-      y:window.pageYOffset||root.scrollTop||0,
-      nodes:nodes
-    };
-  }
-
-  function restoreV31144(pos){
-    if(!pos) return;
-    try{ window.scrollTo(pos.x,pos.y); }catch(e){}
-    (pos.nodes||[]).forEach(function(item){
-      try{ item.el.scrollTop=item.top; item.el.scrollLeft=item.left; }catch(e){}
-    });
-  }
-
-  function settleV31144(pos){
-    restoreV31144(pos);
-    requestAnimationFrame(function(){
-      restoreV31144(pos);
-      requestAnimationFrame(function(){ restoreV31144(pos); });
-    });
-  }
-
-  // Se ejecuta antes del onclick en línea y conserva el contenedor que realmente se desplaza.
-  document.addEventListener('click',function(ev){
-    var btn=ev.target&&ev.target.closest?ev.target.closest('.reader-popup-title'):null;
-    if(!btn) return;
-    pendingPopupPositionV31144=captureV31144(btn);
-    // El clic no debe llegar a #readerText, cuyo onclick alterna la interfaz de lectura.
-    ev.stopPropagation();
-  },true);
-
-  function installV31144(){
-    var openOld=window.openReaderPopupBlockV908;
-    if(typeof openOld==='function' && !openOld.__v31144Wrapped){
-      var openNew=function(){
-        var pos=pendingPopupPositionV31144||captureV31144(document.activeElement);
-        pendingPopupPositionV31144=null;
-        savedPopupPositionV31144=pos;
-        var result=openOld.apply(this,arguments);
-        settleV31144(pos);
-        return result;
-      };
-      openNew.__v31144Wrapped=true;
-      window.openReaderPopupBlockV908=openNew;
-      try{ openReaderPopupBlockV908=window.openReaderPopupBlockV908; }catch(e){}
-    }
-
-    var closeOld=window.closeReaderPopupBlockV908;
-    if(typeof closeOld==='function' && !closeOld.__v31144Wrapped){
-      var closeNew=function(){
-        var pos=savedPopupPositionV31144||captureV31144(null);
-        var result=closeOld.apply(this,arguments);
-        settleV31144(pos);
-        savedPopupPositionV31144=null;
-        return result;
-      };
-      closeNew.__v31144Wrapped=true;
-      window.closeReaderPopupBlockV908=closeNew;
-      try{ closeReaderPopupBlockV908=window.closeReaderPopupBlockV908; }catch(e){}
-    }
-  }
-
-  installV31144();
-  setTimeout(installV31144,350);
 })();

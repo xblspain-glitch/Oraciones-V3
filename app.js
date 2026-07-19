@@ -10886,12 +10886,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 
   function convertLegacyArrows(text){
     LEGACY_ARROW.lastIndex=0;
-    return String(text||'')
-      .replace(LEGACY_ARROW,'→')
-      .replace(/1️⃣/g,'**1.**').replace(/2️⃣/g,'**2.**').replace(/3️⃣/g,'**3.**')
-      .replace(/4️⃣/g,'**4.**').replace(/5️⃣/g,'**5.**').replace(/6️⃣/g,'**6.**')
-      .replace(/7️⃣/g,'**7.**').replace(/8️⃣/g,'**8.**').replace(/9️⃣/g,'**9.**')
-      .replace(/🔟/g,'**10.**');
+    return String(text||'').replace(LEGACY_ARROW,'→');
   }
 
   function collectAffected(){
@@ -10971,4 +10966,33 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   function init(){window.setTimeout(runMigrationPrompt,700);}
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
+})();
+
+
+/* ===== V3.1.141 - Migración única de 🔟 ===== */
+(function(){
+ if(window.__v31141TenMigrationInstalled)return;
+ window.__v31141TenMigrationInstalled=true;
+ var KEY='oraciones_note_ten_migration_v3141';
+ function fix(t){return String(t||'').replace(/🔟/g,'**10.**');}
+ function run(){
+  try{if(localStorage.getItem(KEY))return;}catch(e){}
+  if(typeof state==='undefined'||!state)return;
+  var items=[];
+  ['notes','guides'].forEach(function(k){
+    var arr=state[k];
+    if(Array.isArray(arr))arr.forEach(function(it){if(it&&String(it.content||'').indexOf('🔟')!==-1)items.push(it);});
+  });
+  if(!items.length)return;
+  if(!confirm('Se ha detectado la numeración 🔟 en algunas notas o guías.\n\n¿Desea actualizarla automáticamente al formato 10.?')){
+    try{localStorage.setItem(KEY,'cancelled');}catch(e){}
+    return;
+  }
+  items.forEach(function(it){it.content=fix(it.content); it.updatedAt=Date.now();});
+  try{if(typeof saveState==='function')saveState();}catch(e){}
+  try{localStorage.setItem(KEY,'updated');}catch(e){}
+  alert('✓ Numeración 10 actualizada.');
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,500);});
+ else setTimeout(run,500);
 })();

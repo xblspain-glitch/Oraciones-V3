@@ -10462,7 +10462,13 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     document.body.appendChild(modal);
     modal.addEventListener('click',function(e){if(e.target===modal) closeRecommendationModalV3188();});
     modal.querySelector('#recommendationCloseXV3188').addEventListener('click',closeRecommendationModalV3188);
-    modal.querySelector('#recommendationCloseV3188').addEventListener('click',closeRecommendationModalV3188);
+    /* El botón inferior comparte estilos con otros botones de navegación.
+       Cerramos aquí el evento por completo para que ningún manejador global
+       actúe después de ocultar el modal y lleve el lector al inicio. */
+    modal.querySelector('#recommendationCloseV3188').addEventListener('click',function(e){
+      if(e){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();}
+      closeRecommendationModalV3188();
+    });
     return modal;
   }
   function restoreRecommendationScrollV3171(){
@@ -10486,6 +10492,11 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       restoreRecommendationScrollV3171();
       requestAnimationFrame(restoreRecommendationScrollV3171);
     });
+    /* Android/Chrome puede reajustar la ventana al terminar el evento táctil
+       del botón inferior; repetimos la restauración tras esos reajustes. */
+    setTimeout(restoreRecommendationScrollV3171,0);
+    setTimeout(restoreRecommendationScrollV3171,80);
+    setTimeout(restoreRecommendationScrollV3171,220);
   }
   window.closeRecommendationModalV3188=closeRecommendationModalV3188;
 

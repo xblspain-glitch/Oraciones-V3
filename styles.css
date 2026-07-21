@@ -5007,3 +5007,39 @@ body.dark .counter-cross-v3182,body.dark-mode .counter-cross-v3182{
   .counter-symbol-v3182{width:17px;height:17px;font-size:14px}
   .counter-psalm-v3182{font-size:15px}
 }
+
+
+/* ===== V3.1.184 — Iconos propios para Versículo del día y Día/Noche ===== */
+body.home-active-v9019 .home-icon-button-v3184{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:9px!important;
+}
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-v3184{
+  display:block!important;
+  width:38px!important;
+  height:34px!important;
+  object-fit:contain!important;
+  flex:0 0 38px!important;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.16));
+}
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{
+  width:40px!important;
+  height:35px!important;
+  flex-basis:40px!important;
+}
+body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daynight-v3184{
+  width:37px!important;
+  height:35px!important;
+  flex-basis:37px!important;
+}
+body.home-active-v9019 .home-icon-button-v3184 span{
+  display:inline-block!important;
+  white-space:nowrap!important;
+}
+@media(max-width:420px){
+  body.home-active-v9019 .home-icon-button-v3184{gap:7px!important;}
+  body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-v3184{width:34px!important;height:31px!important;flex-basis:34px!important;}
+  body.home-active-v9019 .home-icon-button-v3184 .home-special-icon-daily-v3184{width:36px!important;height:32px!important;flex-basis:36px!important;}
+}

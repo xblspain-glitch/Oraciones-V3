@@ -4024,28 +4024,51 @@ async function shareVerseCard(){
     ctx.shadowBlur=10;
     ctx.shadowOffsetY=3;
 
-    // Halo tenue detrás del icono superior
+    // V3.1.194 — icono de Mañana integrado en la tarjeta, sin aspecto de pegatina.
+    // La cruz de marca de agua permanece completamente intacta.
     ctx.save();
-    const iconHalo=ctx.createRadialGradient(540,245,10,540,245,130);
-    iconHalo.addColorStop(0,"rgba(255,255,255,0.38)");
+    const iconCenterY=165;
+    const iconHalo=ctx.createRadialGradient(540,iconCenterY,8,540,iconCenterY,92);
+    iconHalo.addColorStop(0,"rgba(255,246,209,0.24)");
+    iconHalo.addColorStop(.55,"rgba(255,255,255,0.10)");
     iconHalo.addColorStop(1,"rgba(255,255,255,0)");
     ctx.fillStyle=iconHalo;
-    ctx.fillRect(390,95,300,300);
+    ctx.fillRect(425,iconCenterY-115,230,230);
     ctx.restore();
 
-    // V3.1.193 — mismo icono ilustrado de Mañana en la tarjeta compartida.
     try{
       const morningIcon=await new Promise((resolve,reject)=>{
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src="icon-manana-global-v3193.png?v=v3-1-193";
+        im.src="icon-manana-global-v3193.png?v=v3-1-194";
       });
       const iw=190, ih=190;
-      ctx.drawImage(morningIcon,540-iw/2,150-iw/2,iw,ih);
+      const off=document.createElement("canvas");
+      off.width=iw; off.height=ih;
+      const octx=off.getContext("2d");
+      octx.drawImage(morningIcon,0,0,iw,ih);
+
+      // Fundido suave de los bordes para que la ilustración nazca del fondo turquesa.
+      octx.globalCompositeOperation="destination-in";
+      const feather=octx.createRadialGradient(iw/2,ih/2,iw*.30,iw/2,ih/2,iw*.51);
+      feather.addColorStop(0,"rgba(0,0,0,1)");
+      feather.addColorStop(.72,"rgba(0,0,0,.98)");
+      feather.addColorStop(.90,"rgba(0,0,0,.72)");
+      feather.addColorStop(1,"rgba(0,0,0,0)");
+      octx.fillStyle=feather;
+      octx.fillRect(0,0,iw,ih);
+
+      ctx.save();
+      ctx.globalAlpha=.98;
+      ctx.shadowColor="rgba(68,103,105,.22)";
+      ctx.shadowBlur=8;
+      ctx.shadowOffsetY=3;
+      ctx.drawImage(off,540-iw/2,iconCenterY-ih/2,iw,ih);
+      ctx.restore();
     }catch(e){
       ctx.font="84px Arial";
-      ctx.fillText("🌅",540,245);
+      ctx.fillText("🌅",540,260);
     }
     ctx.font="italic 56px Georgia, serif";
     ctx.fillText("Versículo del día",540,345);

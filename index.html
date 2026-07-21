@@ -15,10 +15,12 @@
 <link rel="preload" as="image" href="bg-day.webp">
 <link rel="preload" as="image" href="bg-sunset.webp">
 <link rel="preload" as="image" href="bg-night.webp">
+<link rel="preload" as="image" href="icon-versiculo-dia-v3185.png">
+<link rel="preload" as="image" href="icon-dia-noche-v3185.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
-<link rel="stylesheet" href="styles.css?v=v3-1-187-iconos-maximos">
+<link rel="stylesheet" href="styles.css?v=v3-1-188-iconos-sin-destello">
 <link rel="stylesheet" href="themes.css?v=v3-1-63-share-history-persist">
 
 <style>
@@ -26,6 +28,14 @@
  will-change: opacity;
  transform: translateZ(0);
  backface-visibility:hidden;
+}
+
+/* V3.1.188 · tamaño crítico desde el primer render para evitar destellos */
+#btnDaily.home-icon-button-v3184>img.home-special-icon-daily-v3184{display:block;width:62px;height:54px;max-width:62px;max-height:54px;object-fit:contain;flex:0 0 62px}
+#btnDailyRoutinesV3192.home-icon-button-v3184>img.home-special-icon-daynight-v3184{display:block;width:58px;height:54px;max-width:58px;max-height:54px;object-fit:contain;flex:0 0 58px}
+@media(max-width:420px){
+#btnDaily.home-icon-button-v3184>img.home-special-icon-daily-v3184{width:56px;height:49px;max-width:56px;max-height:49px;flex-basis:56px}
+#btnDailyRoutinesV3192.home-icon-button-v3184>img.home-special-icon-daynight-v3184{width:52px;height:49px;max-width:52px;max-height:49px;flex-basis:52px}
 }
 </style>
 
@@ -91,8 +101,8 @@
     </div>
     <button id="btnNew" data-view-btn="new" class="btn primary" type="button" onclick="newItem()">➕ Nueva</button>
     <button id="btnRead" data-view-btn="read" class="btn soft" type="button" onclick="enterFullscreenReading()">📖 Leer</button>
-    <button id="btnDaily" data-view-btn="daily" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyVerse()"><img src="icon-versiculo-dia-v3185.png" class="home-special-icon-v3184 home-special-icon-daily-v3184" alt=""><span>Versículo del día</span></button>
-    <button id="btnDailyRoutinesV3192" data-view-btn="routines" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyRoutinesV3192()"><img src="icon-dia-noche-v3185.png" class="home-special-icon-v3184 home-special-icon-daynight-v3184" alt=""><span>Día/Noche</span></button>
+    <button id="btnDaily" data-view-btn="daily" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyVerse()"><img src="icon-versiculo-dia-v3185.png" class="home-special-icon-v3184 home-special-icon-daily-v3184" alt="" width="62" height="54" style="display:block;width:62px;height:54px;max-width:62px;max-height:54px;object-fit:contain;flex:0 0 62px"><span>Versículo del día</span></button>
+    <button id="btnDailyRoutinesV3192" data-view-btn="routines" class="btn soft home-icon-button-v3184" type="button" onclick="openDailyRoutinesV3192()"><img src="icon-dia-noche-v3185.png" class="home-special-icon-v3184 home-special-icon-daynight-v3184" alt="" width="58" height="54" style="display:block;width:58px;height:54px;max-width:58px;max-height:54px;object-fit:contain;flex:0 0 58px"><span>Día/Noche</span></button>
     <button id="btnMomentsV31102" data-view-btn="moments" class="btn soft" type="button" onclick="openMomentsV31102()">🌿 Momentos</button>
     <button id="btnGlobalSearchV3177" data-view-btn="global-search" class="btn soft global-search-main-v3177" type="button" onclick="openGlobalSearchV3177()">🔎 Buscar en toda la app</button>
     <button id="calendarBtn" data-view-btn="calendar" class="btn soft" type="button" onclick="openChristianCalendar()">📅 Calendario</button>
@@ -408,11 +418,11 @@
 <script src="versiculos.js?v=v3-1-64-share-history-persistence-fix"></script>
 <script src="theme-mode.js?v=v3-1-54-new-verse-category-choice"></script>
 <script src="jszip.min.js?v=v3-1-63-share-history-persist"></script>
-<script src="app.js?v=v3-1-187-iconos-maximos"></script>
+<script src="app.js?v=v3-1-188-iconos-sin-destello"></script>
 <script src="patches.js?v=v3-1-63-share-history-persist"></script>
 <script src="routines.js?v=v3-1-137-ajustes-visuales-editor-grupo"></script>
 <script src="moments.js?v=v3-1-123-catalogacion-mejorada"></script>
-<script src="counters-v3183.js?v=v3-1-187-iconos-maximos"></script>
+<script src="counters-v3183.js?v=v3-1-188-iconos-sin-destello"></script>
 </body>
 </html>
 

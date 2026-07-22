@@ -1,3 +1,4 @@
+const BUILD_V3_1_200="tarjeta-final-limpia";
 /* Oraciones V3 LAB - app.js paso 45: limpieza render de versículos */
 
 /* ===== PWA / INSTALACIÓN ===== */
@@ -1815,7 +1816,19 @@ function renderVerseCategories(){
     const div = document.createElement("div");
 
     div.className = "category-card";
-    div.innerHTML = '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
+    const customCategoryIconsV3199={
+      amor:'icon-cat-amor-v3199.png',
+      arrepentimiento:'icon-cat-arrepentimiento-v3199.png',
+      arrepentimiento_perdon:'icon-cat-arrepentimiento-v3199.png',
+      arrepentimiento_y_perdon:'icon-cat-arrepentimiento-v3199.png',
+      justicia:'icon-cat-justicia-v3199.png',
+      justicia_juicio:'icon-cat-justicia-v3199.png'
+    };
+    const customIconV3199=customCategoryIconsV3199[String(cat.id||'')];
+    const cleanCategoryLabelV3199=String(cat.label||'').replace(/^[^\p{L}\p{N}]+\s*/u,'');
+    div.innerHTML = customIconV3199
+      ? '<div class="category-title-v3199"><img class="category-icon-v3199" src="'+customIconV3199+'" alt=""><span>'+escapeHtml(cleanCategoryLabelV3199)+'</span></div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>'
+      : '<div>' + escapeHtml(cat.label) + '</div><div class="category-count">' + count + ' versículo' + (count===1 ? '' : 's') + '</div>';
     div.onclick = ()=>openVerseCategory(cat.id);
 
     box.appendChild(div);
@@ -3800,11 +3813,11 @@ applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont(
 
 function getCardTextLayout(txt){
   const n = String(txt || "").length;
-  if(n <= 150) return {font:50, line:72, max:7, y:1035};
-  if(n <= 240) return {font:46, line:66, max:9, y:1025};
-  if(n <= 340) return {font:42, line:60, max:11, y:1010};
-  if(n <= 480) return {font:38, line:54, max:13, y:995};
-  return {font:35, line:49, max:15, y:980};
+  if(n <= 150) return {font:50, line:72, max:7, y:1015};
+  if(n <= 240) return {font:46, line:66, max:9, y:1015};
+  if(n <= 340) return {font:42, line:60, max:11, y:1000};
+  if(n <= 480) return {font:38, line:54, max:13, y:985};
+  return {font:35, line:49, max:15, y:970};
 }
 
 function markCurrentVerseCardSentDirect(){
@@ -4033,11 +4046,16 @@ async function shareVerseCard(){
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
     ctx.fillText(fecha,540,655);
 
-    ctx.font="54px Georgia, serif";
-    ctx.fillText(category,540,742);
+    // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
+    const categoryTextV3200=String(category||"")
+      .replace(/^[^\p{L}\p{N}]+\s*/u,"")
+      .toLocaleUpperCase("es-ES");
+    ctx.font="44px Georgia, serif";
+    ctx.textAlign="center";
+    ctx.fillText(categoryTextV3200,540,742);
 
     ctx.font="bold 74px Georgia, serif";
-    ctx.fillText(ref,540,875);
+    ctx.fillText(ref,540,865);
 
     // Línea decorativa azul tenue con cruz central
     ctx.save();
@@ -4046,11 +4064,11 @@ async function shareVerseCard(){
     ctx.shadowOffsetY=0;
     ctx.strokeStyle="rgba(190,238,248,0.58)";
     ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(180,935); ctx.lineTo(500,935); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(580,935); ctx.lineTo(900,935); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(180,925); ctx.lineTo(500,925); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(580,925); ctx.lineTo(900,925); ctx.stroke();
     ctx.fillStyle="rgba(214,249,255,0.78)";
     ctx.font="34px Georgia, serif";
-    ctx.fillText("✝",540,947);
+    ctx.fillText("✝",540,937);
     ctx.restore();
 
     const textLayout=getCardTextLayout(body);

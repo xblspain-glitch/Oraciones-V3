@@ -3818,7 +3818,7 @@ function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(IN
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})
 document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,700);document.getElementById("installBtn").addEventListener("click", async ()=>{if(!deferredPrompt){toast("Usa el menú del navegador: Añadir a pantalla de inicio");return}deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;document.getElementById("installBanner").classList.add("hidden")});document.getElementById("editTitle").addEventListener("input",scheduleAutosave);document.getElementById("editText").addEventListener("input",scheduleAutosave);const input=document.getElementById("jsonFileInput");if(input)input.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Backup seleccionado: "+file.name;importBackupFromFile(file);input.value=""});const versesInput=document.getElementById("versesFileInput");if(versesInput)versesInput.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Versículos seleccionados: "+file.name;importVersesFromFile(file);versesInput.value=""});if(isStandalone()) document.body.classList.add("standalone")})
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-232-marca-agua-copiada-exacta-v2",{updateViaCache:"none"})})}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-233-tarjetas-v2-240-integradas",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){
@@ -3899,7 +3899,7 @@ async function chooseCardStyleV2217(style){
 async function shareVerseCard(cardStyle="classic"){
   try{
     const cardBackgroundsV2219={
-      classic:"card-header-sky-v3197.webp",
+      classic:"card-sabiduria-v2240.jpg",
       jerusalem:"shared-card-new-jerusalem-v2217.png",
       salvacion:"card-salvacion-v2219.jpg",
       oracion:"card-oracion-v2219.jpg",
@@ -3911,10 +3911,16 @@ async function shareVerseCard(cardStyle="classic"){
       esperanza:"card-esperanza-v2219.jpg",
       juicio:"card-juicio-v2219.jpg",
       fe:"card-fe-v2219.jpg",
-      "segunda-venida":"card-segunda-venida-v2219.jpg"
+      "segunda-venida":"card-segunda-venida-v2219.jpg",
+      "reino-dios":"card-reino-dios-v2230.jpg",
+      santidad:"card-santidad-v2230.jpg",
+      "cristo-es-dios":"card-cristo-es-dios-v2230.jpg"
     };
     const isIllustratedV2219 = cardStyle !== "classic";
     const isThematicV2220 = cardStyle !== "classic" && cardStyle !== "jerusalem";
+    // V2.232 — Nueva Jerusalén usa exactamente el mismo layout completo
+    // que las tarjetas temáticas nuevas: textos y marca de agua.
+    const usesNewTextLayoutV2231 = true; // V2.233 — Sabiduría también usa el layout unificado
     const selectedBackgroundV2219 = cardBackgroundsV2219[cardStyle] || cardBackgroundsV2219.classic;
     const item = (typeof currentItem === "function") ? currentItem() : null;
 
@@ -4013,7 +4019,7 @@ async function shareVerseCard(cardStyle="classic"){
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src=selectedBackgroundV2219+"?v=v3-1-232-marca-agua-copiada-exacta-v2";
+        im.src=selectedBackgroundV2219+"?v=v3-1-233-tarjetas-v2-240-integradas";
       });
       ctx.drawImage(cardBackground,0,0,1080,1920);
     }catch(e){
@@ -4093,7 +4099,7 @@ async function shareVerseCard(cardStyle="classic"){
         ctx.restore();
       }
     }
-    await drawExactLogoWatermark(ctx,540,isThematicV2220?1335:1168,isThematicV2220?870:780);
+    await drawExactLogoWatermark(ctx,540,usesNewTextLayoutV2231?1335:1168,usesNewTextLayoutV2231?870:780);
 
     ctx.textAlign="center";
     ctx.fillStyle="#ffffff";
@@ -4104,12 +4110,12 @@ async function shareVerseCard(cardStyle="classic"){
     // La cabecera visual (sol, nubes y Biblia) ya forma parte del fondo.
     // No se dibuja ningún icono superpuesto, evitando el efecto de pegatina.
     ctx.font="italic 56px Georgia, serif";
-    ctx.fillText("Versículo del día",540,isThematicV2220?900:(isIllustratedV2219?790:590));
+    ctx.fillText("Versículo del día",540,usesNewTextLayoutV2231?900:590);
     ctx.font="34px Georgia, serif";
     const ds=new Date();
     const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
-    ctx.fillText(fecha,540,isThematicV2220?965:(isIllustratedV2219?855:655));
+    ctx.fillText(fecha,540,usesNewTextLayoutV2231?965:655);
 
     // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
     const categoryTextV3200=String(category||"")
@@ -4117,10 +4123,10 @@ async function shareVerseCard(cardStyle="classic"){
       .toLocaleUpperCase("es-ES");
     ctx.font="44px Georgia, serif";
     ctx.textAlign="center";
-    ctx.fillText(categoryTextV3200,540,isThematicV2220?1045:(isIllustratedV2219?935:742));
+    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1045:742);
 
     ctx.font="bold 74px Georgia, serif";
-    ctx.fillText(ref,540,isThematicV2220?1145:(isIllustratedV2219?1040:865));
+    ctx.fillText(ref,540,usesNewTextLayoutV2231?1145:865);
 
     // Línea decorativa azul tenue con cruz central
     ctx.save();
@@ -4129,14 +4135,14 @@ async function shareVerseCard(cardStyle="classic"){
     ctx.shadowOffsetY=0;
     ctx.strokeStyle="rgba(190,238,248,0.58)";
     ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(180,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.lineTo(500,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(580,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.lineTo(900,isThematicV2220?1200:(isIllustratedV2219?1092:925)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(180,usesNewTextLayoutV2231?1200:925); ctx.lineTo(500,usesNewTextLayoutV2231?1200:925); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(580,usesNewTextLayoutV2231?1200:925); ctx.lineTo(900,usesNewTextLayoutV2231?1200:925); ctx.stroke();
     ctx.fillStyle="rgba(214,249,255,0.78)";
     ctx.font="34px Georgia, serif";
-    ctx.fillText("✝",540,isThematicV2220?1212:(isIllustratedV2219?1104:937));
+    ctx.fillText("✝",540,usesNewTextLayoutV2231?1212:937);
     ctx.restore();
 
-    const textLayout=isThematicV2220 ? getThematicCardTextLayoutV2220(body) : (isIllustratedV2219 ? getNewJerusalemCardTextLayoutV2217(body) : getCardTextLayout(body));
+    const textLayout=usesNewTextLayoutV2231 ? getThematicCardTextLayoutV2220(body) : getCardTextLayout(body);
     ctx.font="italic "+textLayout.font+"px Georgia, serif";
     wrapText(ctx,body,540,textLayout.y,930,textLayout.line,textLayout.max);
 

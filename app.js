@@ -3818,17 +3818,17 @@ function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(IN
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})
 document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,700);document.getElementById("installBtn").addEventListener("click", async ()=>{if(!deferredPrompt){toast("Usa el menú del navegador: Añadir a pantalla de inicio");return}deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;document.getElementById("installBanner").classList.add("hidden")});document.getElementById("editTitle").addEventListener("input",scheduleAutosave);document.getElementById("editText").addEventListener("input",scheduleAutosave);const input=document.getElementById("jsonFileInput");if(input)input.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Backup seleccionado: "+file.name;importBackupFromFile(file);input.value=""});const versesInput=document.getElementById("versesFileInput");if(versesInput)versesInput.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Versículos seleccionados: "+file.name;importVersesFromFile(file);versesInput.value=""});if(isStandalone()) document.body.classList.add("standalone")})
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-235-prueba-fuente-versiculo",{updateViaCache:"none"})})}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-236-prueba-fuente-versiculo-12",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){
   const n = String(txt || "").length;
   // V2.218 — aumenta únicamente el cuerpo del versículo en la tarjeta Biblia.
-  if(n <= 150) return {font:60, line:77, max:7, y:1015};
+  if(n <= 150) return {font:54, line:77, max:7, y:1015};
   if(n <= 240) return {font:50, line:71, max:9, y:1015};
   if(n <= 340) return {font:45, line:64, max:11, y:1000};
   if(n <= 480) return {font:41, line:58, max:13, y:985};
-  return {font:43, line:53, max:15, y:970};
+  return {font:38, line:53, max:15, y:970};
 }
 
 function markCurrentVerseCardSentDirect(){
@@ -3864,11 +3864,11 @@ function getThematicCardTextLayoutV2220(txt){
   const n=String(txt||"").length;
   // V2.220 — texto completamente debajo de la ilustración.
   // Los pasajes largos se compactan y se limitan para conservar una tarjeta limpia.
-  if(n<=150) return {font:60,line:72,max:5,y:1285};
-  if(n<=240) return {font:54,line:64,max:6,y:1285};
-  if(n<=340) return {font:47,line:57,max:7,y:1275};
-  if(n<=480) return {font:43,line:51,max:8,y:1265};
-  return {font:38,line:45,max:9,y:1255};
+  if(n<=150) return {font:60,line:81,max:5,y:1285};
+  if(n<=240) return {font:54,line:72,max:6,y:1285};
+  if(n<=340) return {font:47,line:64,max:7,y:1275};
+  if(n<=480) return {font:43,line:57,max:8,y:1265};
+  return {font:38,line:50,max:9,y:1255};
 }
 
 function getNewJerusalemCardTextLayoutV2217(txt){
@@ -3876,10 +3876,10 @@ function getNewJerusalemCardTextLayoutV2217(txt){
   // V2.218 — cuerpo del versículo algo mayor y comienzo más bajo
   // para que respire respecto a la línea decorativa con la cruz.
   if(n<=150) return {font:52,line:73,max:7,y:1190};
-  if(n<=240) return {font:54,line:67,max:9,y:1180};
+  if(n<=240) return {font:48,line:67,max:9,y:1180};
   if(n<=340) return {font:43,line:60,max:11,y:1170};
   if(n<=480) return {font:39,line:54,max:13,y:1160};
-  return {font:38,line:47,max:15,y:1150};
+  return {font:34,line:47,max:15,y:1150};
 }
 
 function openCardStyleSelectorV2217(){
@@ -4019,7 +4019,7 @@ async function shareVerseCard(cardStyle="classic"){
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src=selectedBackgroundV2219+"?v=v3-1-235-prueba-fuente-versiculo";
+        im.src=selectedBackgroundV2219+"?v=v3-1-236-prueba-fuente-versiculo-12";
       });
       ctx.drawImage(cardBackground,0,0,1080,1920);
     }catch(e){

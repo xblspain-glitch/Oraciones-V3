@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Oraciones V3">
-<link rel="manifest" href="manifest.json?v=v3-1-240-referencia-fija-versiculo-dinamico">
+<link rel="manifest" href="manifest.json?v=v3-1-241-actualizaciones-v2-256">
 <link rel="preload" as="image" href="icon-192.png">
 <link rel="preload" as="image" href="bg-morning.webp">
 <link rel="preload" as="image" href="bg-day.webp">
@@ -23,7 +23,7 @@
 
 <link rel="preload" as="image" href="routine-morning-bible-v2216.webp">
 <link rel="preload" as="image" href="routine-night-bible-v2216.webp">
-<link rel="stylesheet" href="styles.css?v=v3-1-240-referencia-fija-versiculo-dinamico">
+<link rel="stylesheet" href="styles.css?v=v3-1-241-actualizaciones-v2-256">
 <link rel="stylesheet" href="themes.css?v=v3-1-63-share-history-persist">
 
 <style>
@@ -69,6 +69,27 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
 }
 </style>
 
+  <link rel="stylesheet" href="biblical-characters-v2243.css?v=248">
+
+<style>
+.biblical-characters-main-v2242{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.biblical-characters-button-icon-v2255{
+  width:32px;
+  height:30px;
+  object-fit:contain;
+  flex:0 0 32px;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.18));
+}
+@media(max-width:420px){
+  .biblical-characters-button-icon-v2255{width:30px;height:28px;flex-basis:30px}
+}
+</style>
+
 </head>
 <body>
 
@@ -95,22 +116,23 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
 <div class="topbar">
   <div class="topbar-row">
     <div class="segment">
-      <button id="tabPrayers" class="active tab-prayers-v3176" type="button" onclick="switchSectionAndReadV90187('prayers')"><span class="prayer-cross-top-v3176" aria-hidden="true"></span><span class="prayer-label-top-v3176">Oraciones</span></button>
-      <button id="tabNotes" class="top-tab-png-v3176" type="button" onclick="switchSectionAndReadV90187('notes')"><img src="icon-notas-detallado-v2210.png" class="top-tab-png-icon-v3176" alt=""><span>Notas</span></button>
-      <button id="tabGuides" class="top-tab-png-v3176" type="button" onclick="switchSectionAndReadV90187('guides')"><img src="icon-guia-detallado-v2210.png" class="top-tab-png-icon-v3176" alt=""><span>Guía</span></button>
-      <button id="tabVerses" class="tab-verses-heart-v3176" type="button" onclick="switchSection('verses')"><span class="tab-verses-label-v3176">Versículos</span></button>
+      <button id="tabPrayers" class="active tab-prayers-v3176 section-frame-blue-v245" type="button" onclick="switchSectionAndReadV90187('prayers')"><span class="prayer-cross-top-v3176" aria-hidden="true"></span><span class="prayer-label-top-v3176">Oraciones</span></button>
+      <button id="tabNotes" class="top-tab-png-v3176 section-frame-yellow-v245" type="button" onclick="switchSectionAndReadV90187('notes')"><img src="icon-notas-detallado-v2210.png" class="top-tab-png-icon-v3176" alt=""><span>Notas</span></button>
+      <button id="tabGuides" class="top-tab-png-v3176 section-frame-gold-guide-v247" type="button" onclick="switchSectionAndReadV90187('guides')"><img src="icon-guia-detallado-v2210.png" class="top-tab-png-icon-v3176" alt=""><span>Guía</span></button>
+      <button id="tabVerses" class="tab-verses-heart-v3176 section-frame-green-verses-v245" type="button" onclick="switchSection('verses')"><span class="tab-verses-label-v3176">Versículos</span></button>
     </div>
     <button id="btnNew" data-view-btn="new" class="btn primary" type="button" onclick="newItem()">➕ Nueva</button>
     <button id="btnRead" data-view-btn="read" class="btn soft" type="button" onclick="enterFullscreenReading()">📖 Leer</button>
-    <button id="btnDaily" data-view-btn="daily" class="btn soft" type="button" onclick="openDailyVerse()">📖 Versículo del día</button>
-    <button id="btnDailyRoutinesV3192" data-view-btn="routines" class="btn soft" type="button" onclick="openDailyRoutinesV3192()">🌅🌙 Día/Noche</button>
-    <button id="btnMomentsV31102" data-view-btn="moments" class="btn soft" type="button" onclick="openMomentsV31102()">🌿 Momentos</button>
+    <button id="btnDaily" data-view-btn="daily" class="btn soft section-frame-lavender-v245" type="button" onclick="openDailyVerse()">📖 Versículo del día</button>
+    <button id="btnDailyRoutinesV3192" data-view-btn="routines" class="btn soft section-frame-blue-routines-v247" type="button" onclick="openDailyRoutinesV3192()">🌅🌙 Día/Noche</button>
+    <button id="btnMomentsV31102" data-view-btn="moments" class="btn soft section-frame-green-moments-v245" type="button" onclick="openMomentsV31102()">🌿 Momentos</button>
     <button id="btnGlobalSearchV3177" data-view-btn="global-search" class="btn soft global-search-main-v3177" type="button" onclick="openGlobalSearchV3177()">🔎 Buscar en toda la app</button>
-    <button id="calendarBtn" data-view-btn="calendar" class="btn soft" type="button" onclick="openChristianCalendar()">📅 Calendario</button>
+    <button id="calendarBtn" data-view-btn="calendar" class="btn soft section-frame-orange-calendar-v247" type="button" onclick="openChristianCalendar()">📅 Calendario</button>
+    <button id="biblicalCharactersBtnV2242" data-view-btn="biblical-characters" class="btn soft biblical-characters-main-v2242" type="button" onclick="openBiblicalCharactersV2242()"><img class="biblical-characters-button-icon-v2255" src="icon-personajes-biblicos-v2255.png" alt="" aria-hidden="true"> <span>Personajes</span></button>
     <div class="home-fixed-row-v31763 home-fixed-row-three-v31763">
-      <button id="tabParables" data-view-btn="parables" class="btn soft" type="button" onclick="switchSectionAndReadV90187('parables')">🌱 Parábolas</button>
-      <button id="tabPsalms" data-view-btn="psalms" class="btn soft psalms-main-btn-v3176" type="button" onclick="switchSectionAndReadV90187('psalms')"><span class="psalms-note-v3176">♫</span> Salmos</button>
-      <button id="btnMainMark" class="btn soft" type="button" data-mark-button="1" onclick="openReadingMarkMenu(event)">📍 Marca</button>
+      <button id="tabParables" data-view-btn="parables" class="btn soft section-frame-green-parables-v245" type="button" onclick="switchSectionAndReadV90187('parables')">🌱 Parábolas</button>
+      <button id="tabPsalms" data-view-btn="psalms" class="btn soft psalms-main-btn-v3176 section-frame-peach-psalms-v247" type="button" onclick="switchSectionAndReadV90187('psalms')"><span class="psalms-note-v3176">♫</span> Salmos</button>
+      <button id="btnMainMark" class="btn soft section-frame-pink-mark-v247" type="button" data-mark-button="1" onclick="openReadingMarkMenu(event)">📍 Marca</button>
       </div>
         <button id="btnTitles" data-view-btn="titles" class="btn soft" type="button" onclick="openTitlesView()">📑 Títulos</button>
     <button id="btnEdit" data-view-btn="edit" class="btn soft" type="button" onclick="openEditor()">✍️ Editar</button>
@@ -144,6 +166,24 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
         <div class="home-line-v9019"></div>
         <div class="home-phrase-v9019" id="homePhraseV9019">🙏🏾 Que esta palabra fortalezca hoy tu corazón.</div>
       </div>
+    </div>
+
+    <div id="biblicalCharactersViewV2242" class="panel hidden biblical-characters-panel-v2242">
+      <div class="biblical-characters-head-v2242">
+        <button class="btn soft" type="button" onclick="closeBiblicalCharactersV2242()">← Volver</button>
+      </div>
+      <div id="biblicalCharactersHomeV2242">
+        <h1 class="biblical-characters-title-v2242">Personajes Bíblicos</h1>
+        <p class="biblical-characters-sub-v2242">Recuerde quién fue cada personaje, por qué es importante y qué enseñanza nos deja.</p>
+        <label class="biblical-characters-search-v2242">
+          <span aria-hidden="true">🔎</span>
+          <input id="biblicalCharactersSearchV2242" type="search" autocomplete="off" placeholder="Buscar personaje, libro o categoría…" oninput="renderBiblicalCharactersV2242()">
+        </label>
+        <div id="biblicalCharactersCategoriesV2242" class="biblical-characters-categories-v2242"></div>
+        <div class="biblical-characters-list-head-v2242"><strong id="biblicalCharactersListTitleV2242">Todos los personajes</strong><span id="biblicalCharactersCountV2242"></span></div>
+        <div id="biblicalCharactersListV2242" class="biblical-characters-list-v2242"></div>
+      </div>
+      <article id="biblicalCharacterDetailV2242" class="biblical-character-detail-v2242 hidden"></article>
     </div>
 
     <div id="momentsHubV31102" class="panel hidden moments-panel-v31102">
@@ -418,7 +458,7 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
     <p class="card-style-sub-v2217">Seleccione el diseño que desea compartir.</p>
     <div class="card-style-grid-v2217">
       <button class="card-style-option-v2217" type="button" onclick="chooseCardStyleV2217('classic')">
-        <img class="card-style-preview-v2217 classic-v2217" src="card-sabiduria-v2240.jpg?v=v3-1-240-referencia-fija-versiculo-dinamico" alt="Sabiduría">
+        <img class="card-style-preview-v2217 classic-v2217" src="card-sabiduria-v2240.jpg?v=v3-1-241-actualizaciones-v2-256" alt="Sabiduría">
         <span><strong>📖 Sabiduría</strong><small>Tarjeta temática</small></span>
       </button>
       <button class="card-style-option-v2217" type="button" onclick="chooseCardStyleV2217('jerusalem')">
@@ -454,11 +494,12 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
 <script src="versiculos.js?v=v3-1-64-share-history-persistence-fix"></script>
 <script src="theme-mode.js?v=v3-1-54-new-verse-category-choice"></script>
 <script src="jszip.min.js?v=v3-1-63-share-history-persist"></script>
-<script src="app.js?v=v3-1-240-referencia-fija-versiculo-dinamico"></script>
+<script src="app.js?v=v3-1-241-actualizaciones-v2-256"></script>
+<script src="biblical-characters-v2243.js?v=256"></script>
 <script src="patches.js?v=v3-1-63-share-history-persist"></script>
-<script src="routines.js?v=v3-1-240-referencia-fija-versiculo-dinamico"></script>
+<script src="routines.js?v=v3-1-241-actualizaciones-v2-256"></script>
 <script src="moments.js?v=v3-1-123-catalogacion-mejorada"></script>
-<script src="counters-v3183.js?v=v3-1-189-transicion-estable"></script>
+<script src="counters-v3183.js?v=v3-1-241-actualizaciones-v2-256"></script>
 </body>
 </html>
 

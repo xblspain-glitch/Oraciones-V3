@@ -1,3 +1,4 @@
+/* V2.243 · integración de Personajes Bíblicos como sección independiente */
 const BUILD_V3_1_200="tarjeta-final-limpia";
 /* Oraciones V3 LAB - app.js paso 45: limpieza render de versículos */
 
@@ -166,6 +167,7 @@ function setActiveView(view){
     read: 'btnRead',
     daily: 'btnDaily',
     calendar: 'calendarBtn',
+    'biblical-characters': 'biblicalCharactersBtnV2242',
     random: 'btnRandom',
     titles: 'btnTitles',
     edit: 'btnEdit',
@@ -3818,7 +3820,7 @@ function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(IN
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})
 document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,700);document.getElementById("installBtn").addEventListener("click", async ()=>{if(!deferredPrompt){toast("Usa el menú del navegador: Añadir a pantalla de inicio");return}deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;document.getElementById("installBanner").classList.add("hidden")});document.getElementById("editTitle").addEventListener("input",scheduleAutosave);document.getElementById("editText").addEventListener("input",scheduleAutosave);const input=document.getElementById("jsonFileInput");if(input)input.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Backup seleccionado: "+file.name;importBackupFromFile(file);input.value=""});const versesInput=document.getElementById("versesFileInput");if(versesInput)versesInput.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Versículos seleccionados: "+file.name;importVersesFromFile(file);versesInput.value=""});if(isStandalone()) document.body.classList.add("standalone")})
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-240-referencia-fija-versiculo-dinamico",{updateViaCache:"none"})})}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-241-actualizaciones-v2-256",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){
@@ -4019,7 +4021,7 @@ async function shareVerseCard(cardStyle="classic"){
         const im=new Image();
         im.onload=()=>resolve(im);
         im.onerror=reject;
-        im.src=selectedBackgroundV2219+"?v=v3-1-240-referencia-fija-versiculo-dinamico";
+        im.src=selectedBackgroundV2219+"?v=v3-1-241-actualizaciones-v2-256";
       });
       ctx.drawImage(cardBackground,0,0,1080,1920);
     }catch(e){
@@ -4125,10 +4127,10 @@ async function shareVerseCard(cardStyle="classic"){
     ctx.textAlign="center";
     ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1045:742);
 
-    // V3.1.240 — referencia bíblica con tamaño fijo y uniforme.
+    // V3.1.241 — referencia bíblica fija, conservando las actualizaciones de V2.256.
     // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.
-    const REFERENCE_FONT_SIZE_V3240=74;
-    ctx.font="bold "+REFERENCE_FONT_SIZE_V3240+"px Georgia, serif";
+    const REFERENCE_FONT_SIZE_V3241=74;
+    ctx.font="bold "+REFERENCE_FONT_SIZE_V3241+"px Georgia, serif";
     ctx.fillText(ref,540,usesNewTextLayoutV2231?1145:865);
 
     // Línea decorativa azul tenue con cruz central
@@ -4147,10 +4149,10 @@ async function shareVerseCard(cardStyle="classic"){
 
     const textLayout=usesNewTextLayoutV2231 ? getThematicCardTextLayoutV2220(body) : getCardTextLayout(body);
 
-    // V3.1.239 — ajuste dinámico real del versículo.
+    // V3.1.241 — ajuste dinámico real del versículo conservado desde V3.1.240.
     // Se mide el texto completo con el ancho disponible y se reduce la fuente
     // solo lo necesario hasta que la última línea quede sobre la bendición.
-    function splitTextIntoLinesV3239(ctx,text,maxWidth){
+    function splitTextIntoLinesV2241(ctx,text,maxWidth){
       const words=String(text||"").replace(/\s+/g," ").trim().split(" ").filter(Boolean);
       const lines=[];
       let line="";
@@ -4167,14 +4169,14 @@ async function shareVerseCard(cardStyle="classic"){
       return lines;
     }
 
-    function fitVerseTextV3239(ctx,text,initialFont,startY,maxWidth,maxBottomY){
+    function fitVerseTextV2241(ctx,text,initialFont,startY,maxWidth,maxBottomY){
       let font=Math.max(28,Math.round(initialFont));
       let lineHeight=0;
       let lines=[];
       while(font>=28){
         lineHeight=Math.round(font*1.39);
         ctx.font="italic "+font+"px Georgia, serif";
-        lines=splitTextIntoLinesV3239(ctx,text,maxWidth);
+        lines=splitTextIntoLinesV2241(ctx,text,maxWidth);
         const lastBaseline=startY+Math.max(0,lines.length-1)*lineHeight;
         if(lastBaseline<=maxBottomY) break;
         font--;
@@ -4183,7 +4185,7 @@ async function shareVerseCard(cardStyle="classic"){
     }
 
     if(usesNewTextLayoutV2231){
-      const fitted=fitVerseTextV3239(ctx,body,textLayout.font,textLayout.y,930,1640);
+      const fitted=fitVerseTextV2241(ctx,body,textLayout.font,textLayout.y,930,1640);
       ctx.font="italic "+fitted.font+"px Georgia, serif";
       let verseY=textLayout.y;
       fitted.lines.forEach(line=>{

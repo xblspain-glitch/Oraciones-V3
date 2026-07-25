@@ -2,7 +2,7 @@
   "name": "Oraciones V3",
   "short_name": "Oraciones V3",
   "id": "./oraciones-v3-lab",
-  "start_url": "./?v=v3-1-232-marca-agua-copiada-exacta-v2",
+  "start_url": "./?v=v3-1-241-actualizaciones-v2-256",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -22,6 +22,6 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "3.1.224",
-  "build": "v3-1-232-marca-agua-copiada-exacta-v2"
+  "version": "3.1.241",
+  "build": "v3-1-241-actualizaciones-v2-256"
 }

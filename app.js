@@ -3864,11 +3864,11 @@ function getThematicCardTextLayoutV2220(txt){
   const n=String(txt||"").length;
   // V2.220 — texto completamente debajo de la ilustración.
   // Los pasajes largos se compactan y se limitan para conservar una tarjeta limpia.
-  if(n<=150) return {font:50,line:68,max:5,y:1285};
-  if(n<=240) return {font:44,line:60,max:6,y:1285};
-  if(n<=340) return {font:39,line:53,max:7,y:1275};
-  if(n<=480) return {font:35,line:47,max:8,y:1265};
-  return {font:31,line:41,max:9,y:1255};
+  if(n<=150) return {font:54,line:72,max:5,y:1285};
+  if(n<=240) return {font:48,line:64,max:6,y:1285};
+  if(n<=340) return {font:42,line:57,max:7,y:1275};
+  if(n<=480) return {font:38,line:51,max:8,y:1265};
+  return {font:34,line:45,max:9,y:1255};
 }
 
 function getNewJerusalemCardTextLayoutV2217(txt){

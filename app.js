@@ -3824,11 +3824,11 @@ applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont(
 function getCardTextLayout(txt){
   const n = String(txt || "").length;
   // V2.218 — aumenta únicamente el cuerpo del versículo en la tarjeta Biblia.
-  if(n <= 150) return {font:54, line:77, max:7, y:1015};
+  if(n <= 150) return {font:60, line:77, max:7, y:1015};
   if(n <= 240) return {font:50, line:71, max:9, y:1015};
   if(n <= 340) return {font:45, line:64, max:11, y:1000};
   if(n <= 480) return {font:41, line:58, max:13, y:985};
-  return {font:38, line:53, max:15, y:970};
+  return {font:43, line:53, max:15, y:970};
 }
 
 function markCurrentVerseCardSentDirect(){
@@ -3864,11 +3864,11 @@ function getThematicCardTextLayoutV2220(txt){
   const n=String(txt||"").length;
   // V2.220 — texto completamente debajo de la ilustración.
   // Los pasajes largos se compactan y se limitan para conservar una tarjeta limpia.
-  if(n<=150) return {font:54,line:72,max:5,y:1285};
-  if(n<=240) return {font:48,line:64,max:6,y:1285};
-  if(n<=340) return {font:42,line:57,max:7,y:1275};
-  if(n<=480) return {font:38,line:51,max:8,y:1265};
-  return {font:34,line:45,max:9,y:1255};
+  if(n<=150) return {font:60,line:72,max:5,y:1285};
+  if(n<=240) return {font:54,line:64,max:6,y:1285};
+  if(n<=340) return {font:47,line:57,max:7,y:1275};
+  if(n<=480) return {font:43,line:51,max:8,y:1265};
+  return {font:38,line:45,max:9,y:1255};
 }
 
 function getNewJerusalemCardTextLayoutV2217(txt){
@@ -3876,10 +3876,10 @@ function getNewJerusalemCardTextLayoutV2217(txt){
   // V2.218 — cuerpo del versículo algo mayor y comienzo más bajo
   // para que respire respecto a la línea decorativa con la cruz.
   if(n<=150) return {font:52,line:73,max:7,y:1190};
-  if(n<=240) return {font:48,line:67,max:9,y:1180};
+  if(n<=240) return {font:54,line:67,max:9,y:1180};
   if(n<=340) return {font:43,line:60,max:11,y:1170};
   if(n<=480) return {font:39,line:54,max:13,y:1160};
-  return {font:34,line:47,max:15,y:1150};
+  return {font:38,line:47,max:15,y:1150};
 }
 
 function openCardStyleSelectorV2217(){

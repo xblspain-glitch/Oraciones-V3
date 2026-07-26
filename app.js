@@ -3553,7 +3553,7 @@ async function exportAllZip(){
     toast("Preparando ZIP completo…");
     const ZipClass=window.JSZip || JSZip;
     const zip = new ZipClass();
-    const payload = buildCompleteBackupPayloadV31245();
+    const payload = await buildCompleteBackupPayloadV31245();
     zip.file("backup_completo.json", JSON.stringify(payload, null, 2));
     try{ zip.file("catalogos/personajes_biblicos_409.json", await (await fetch("biblical-characters-v2261.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
     try{ zip.file("catalogos/diccionario_biblico_433.json", await (await fetch("biblical-dictionary-v2264.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
@@ -3580,6 +3580,44 @@ async function exportAllZip(){
   }catch(e){
     console.error("Error al exportar ZIP completo",e);
     alert("No se pudo exportar el ZIP completo: "+(e&&e.message?e.message:"error desconocido"));
+  }
+}
+
+
+/* ===== V3.1.247 · Descargar copia de la aplicación instalada ===== */
+const INSTALLED_APP_FILES_V31247 = ["LEEME_V3_243_REVISION_FINAL.txt", "LEEME_V3_244_DICCIONARIO.txt", "app.js", "bg-day.webp", "bg-morning.webp", "bg-night.webp", "bg-sunset.webp", "biblical-characters-v2243.css", "biblical-characters-v2243.js", "biblical-characters-v2261.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "card-alabanza-v2219.jpg", "card-amor-v2219.jpg", "card-cristo-es-dios-v2230.jpg", "card-esperanza-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-fe-v2219.jpg", "card-fortaleza-v2219.jpg", "card-header-sky-v3197.webp", "card-juicio-v2219.jpg", "card-misericordia-v2219.jpg", "card-oracion-v2219.jpg", "card-reino-dios-v2230.jpg", "card-sabiduria-v2235.png", "card-sabiduria-v2237.jpg", "card-sabiduria-v2239.jpg", "card-sabiduria-v2240.jpg", "card-salvacion-v2219.jpg", "card-santidad-v2230.jpg", "card-santidad-v2237.jpg", "card-segunda-venida-v2219.jpg", "config.js", "counters-v3182.js", "counters-v3183.js", "cross-ethiopian-mask.png", "icon-192.png", "icon-512.png", "icon-guia-detallado-v2210.png", "icon-notas-detallado-v2210.png", "icon-personajes-biblicos-v2255.png", "index.html", "jszip.min.js", "manifest.json", "moments.js", "patches.js", "recent.js", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "routines.js", "shared-card-bible-v2217.png", "shared-card-new-jerusalem-v2217.png", "styles.css", "sw.js", "theme-mode.js", "themes.css", "utils.js", "versiculos.js", "welcome.js"];
+async function exportInstalledAppZipV31247(){
+  const filename="oraciones_v3_1_247_copia_app_instalada.zip";
+  try{
+    if(typeof window.JSZip === "undefined" && typeof JSZip === "undefined") throw new Error("JSZip no está disponible");
+    toast("Preparando copia de la aplicación instalada…");
+    const ZipClass=window.JSZip || JSZip;
+    const zip=new ZipClass();
+    const missing=[];
+    for(const fileName of INSTALLED_APP_FILES_V31247){
+      try{
+        const response=await fetch(fileName,{cache:"no-store"});
+        if(!response.ok) throw new Error(String(response.status));
+        zip.file(fileName,await response.arrayBuffer());
+      }catch(e){missing.push(fileName);}
+    }
+    const info={
+      type:"oraciones-v3-app-instalada",
+      appVersion:"3.1.247",
+      exportedAt:new Date().toISOString(),
+      includedFiles:INSTALLED_APP_FILES_V31247.filter(x=>!missing.includes(x)),
+      missingFiles:missing,
+      note:"Copia del código y los recursos de la versión servida/instalada. Los datos personales se guardan mediante el backup completo."
+    };
+    zip.file("INFORMACION_COPIA_APP.json",JSON.stringify(info,null,2));
+    zip.file("LEEME.txt","ORACIONES V3 · COPIA DE LA APLICACIÓN INSTALADA\n\nVersión: 3.1.247\n\nEste ZIP contiene el código y los recursos de la aplicación.\nLos datos personales deben restaurarse con el archivo backup_completo_oraciones_v3_*.json.\n\nArchivos no disponibles durante la exportación: "+(missing.length?missing.join(", "):"ninguno")+".\n");
+    const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});
+    if(!downloadBlob(filename,blob)) throw new Error("No se pudo iniciar la descarga");
+    saveBackupStatusV3149("Copia de la app instalada",filename);
+    toast(missing.length?"Copia creada con "+missing.length+" archivo(s) no disponible(s)":"Copia de la app instalada descargada");
+  }catch(e){
+    console.error("No se pudo exportar la aplicación instalada",e);
+    alert("No se pudo descargar la copia de la aplicación instalada: "+(e&&e.message?e.message:"error desconocido"));
   }
 }
 
@@ -3702,7 +3740,7 @@ function renderBackupStatusV3149(){
 
 /* ===== V3.1.245 · Backup integral de toda la aplicación ===== */
 const COMPLETE_BACKUP_TYPE_V31245 = "oraciones-v3-backup-completo";
-const COMPLETE_BACKUP_VERSION_V31245 = 31245;
+const COMPLETE_BACKUP_VERSION_V31245 = 31247;
 
 function readAllAppStorageV31245(){
   const data = {};
@@ -3734,25 +3772,39 @@ function completeBackupCountsV31245(){
   };
 }
 
-function buildCompleteBackupPayloadV31245(){
+async function loadCompleteCatalogsV31247(){
+  const result={biblicalCharacters:null,biblicalDictionary:null};
+  const load=async function(url){
+    const response=await fetch(url,{cache:"no-store"});
+    if(!response.ok) throw new Error("No se pudo cargar "+url);
+    return await response.json();
+  };
+  result.biblicalCharacters=await load("biblical-characters-v2261.json");
+  result.biblicalDictionary=await load("biblical-dictionary-v2264.json");
+  return result;
+}
+
+async function buildCompleteBackupPayloadV31245(){
+  const fullCatalogs=await loadCompleteCatalogsV31247();
   return {
     type: COMPLETE_BACKUP_TYPE_V31245,
-    version: COMPLETE_BACKUP_VERSION_V31245,
+    version: 31247,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.245",
-    description: "Copia integral: oraciones, notas, guía, versículos, parábolas, salmos, personajes, diccionario, calendario, día/noche, momentos y ajustes.",
+    appVersion: "3.1.247",
+    description: "Copia integral y autosuficiente: datos, ajustes, 409 personajes completos y 433 entradas completas del diccionario.",
     state: JSON.parse(JSON.stringify(state||{})),
     localStorage: readAllAppStorageV31245(),
     catalogs: {
-      biblicalCharacters: {file:"biblical-characters-v2261.json", entries:409},
-      biblicalDictionary: {file:"biblical-dictionary-v2264.json", entries:433}
+      biblicalCharacters: fullCatalogs.biblicalCharacters,
+      biblicalDictionary: fullCatalogs.biblicalDictionary
     },
     counts: completeBackupCountsV31245()
   };
 }
 
-function buildBackupText(){
-  const text=JSON.stringify(buildCompleteBackupPayloadV31245(),null,2);
+async function buildBackupText(){
+  const payload=await buildCompleteBackupPayloadV31245();
+  const text=JSON.stringify(payload,null,2);
   const box=document.getElementById("backupText");if(box)box.value=text;
   return text;
 }
@@ -3761,32 +3813,37 @@ function backupFilename(){
   const stamp=now.getFullYear().toString()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0")+"_"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
   return "backup_completo_oraciones_v3_"+stamp+".json";
 }
-function downloadBackupJson(){
+async function downloadBackupJson(){
   try{
-    const text=buildBackupText(),filename=backupFilename();
+    toast("Preparando backup completo…");
+    const text=await buildBackupText(),filename=backupFilename();
     const ok=downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));
     if(!ok) throw new Error("download-failed");
-    saveBackupStatusV3149("Descarga backup completo",filename);
+    saveBackupStatusV3149("Descarga backup completo autosuficiente",filename);
     toast("Backup completo descargado");
   }catch(e){
     console.error("No se pudo crear el backup completo",e);
-    alert("No se pudo descargar el backup completo. Cierra y vuelve a abrir la aplicación y prueba de nuevo.");
+    alert("No se pudo descargar el backup completo: "+(e&&e.message?e.message:"error desconocido"));
   }
 }
 async function copyBackupJson(){
-  const text=buildBackupText();
-  try{await navigator.clipboard.writeText(cleanTextBreaks(text));saveBackupStatusV3149("Copia backup completo","Backup completo copiado");toast("Backup completo copiado");}
-  catch(e){alert("No se pudo copiar automáticamente. El backup queda visible para copiarlo manualmente.");}
+  try{
+    toast("Preparando backup completo…");
+    const text=await buildBackupText();
+    await navigator.clipboard.writeText(cleanTextBreaks(text));
+    saveBackupStatusV3149("Copia backup completo","Backup completo copiado");toast("Backup completo copiado");
+  }catch(e){alert("No se pudo copiar automáticamente. El backup queda visible para copiarlo manualmente.");}
 }
 async function shareBackupJson(){
-  const text=buildBackupText(),filename=backupFilename(),file=new File([text],filename,{type:"application/json"});
   try{
-    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Backup completo Oraciones V3",text:"Copia integral de toda la aplicación",files:[file]});saveBackupStatusV3149("Compartir backup completo",filename);toast("Backup completo compartido");return;}
+    toast("Preparando backup completo…");
+    const text=await buildBackupText(),filename=backupFilename(),file=new File([text],filename,{type:"application/json"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Backup completo Oraciones V3",text:"Copia integral y autosuficiente de toda la aplicación",files:[file]});saveBackupStatusV3149("Compartir backup completo",filename);toast("Backup completo compartido");return;}
     if(navigator.share){await navigator.share({title:"Backup completo Oraciones V3",text:text});saveBackupStatusV3149("Compartir backup como texto",filename);toast("Compartido como texto");return;}
     downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));saveBackupStatusV3149("Descarga backup completo",filename);alert("Tu navegador no permite compartir desde aquí. Se ha descargado el backup completo.");
-  }catch(e){if(e&&e.name==='AbortError'){toast("Compartir cancelado");return;}downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));saveBackupStatusV3149("Descarga backup completo",filename);toast("Se ha descargado el backup completo");}
+  }catch(e){if(e&&e.name==='AbortError'){toast("Compartir cancelado");return;}console.error(e);alert("No se pudo compartir el backup completo.");}
 }
-async function exportBackup(){downloadBackupJson();}
+async function exportBackup(){await downloadBackupJson();}
 
 function normalizeImportedStateV31245(parsed){
   const src=(parsed&&parsed.type===COMPLETE_BACKUP_TYPE_V31245&&parsed.state)?parsed.state:parsed;
@@ -3829,12 +3886,15 @@ document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,70
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
 window.downloadBackupJson=downloadBackupJson;
 window.exportAllZip=exportAllZip;
+window.exportInstalledAppZipV31247=exportInstalledAppZipV31247;
 
 document.addEventListener("DOMContentLoaded",()=>{
   const backupBtn=document.getElementById("downloadCompleteBackupBtnV31246");
   if(backupBtn) backupBtn.addEventListener("click",downloadBackupJson);
   const zipBtn=document.getElementById("exportCompleteZipBtnV31246");
   if(zipBtn) zipBtn.addEventListener("click",exportAllZip);
+  const appZipBtn=document.getElementById("exportInstalledAppBtnV31247");
+  if(appZipBtn) appZipBtn.addEventListener("click",exportInstalledAppZipV31247);
 });
 
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-246-download-fix",{updateViaCache:"none"})})}

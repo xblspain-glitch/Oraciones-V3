@@ -2709,14 +2709,24 @@ function openBackup(){
   if(cal) cal.classList.add("hidden");
 }
 function downloadBlob(filename, blob){
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(url), 1500);
+  try{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.rel = "noopener";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.dispatchEvent(new MouseEvent("click", {bubbles:true, cancelable:true, view:window}));
+    setTimeout(()=>{
+      try{ a.remove(); }catch(e){}
+      try{ URL.revokeObjectURL(url); }catch(e){}
+    }, 15000);
+    return true;
+  }catch(e){
+    console.error("Error al descargar", e);
+    return false;
+  }
 }
 function buildReadingHTML(item, folderLabel, code){const title=item.favorite?'⭐ '+item.title:item.title;const bg=document.body.classList.contains("dark") ? "#111111" : "#f8f6f1";const card=document.body.classList.contains("dark") ? "#1a1a1a" : "#ffffff";const text=document.body.classList.contains("dark") ? "#f2eee7" : "#181818";return `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><title>${escapeHtml(item.title)}</title><style>body{margin:0;background:${bg};color:${text};font-family:Arial,sans-serif}.wrap{max-width:900px;margin:0 auto;padding:24px}.card{background:${card};border-radius:20px;padding:24px}.badge{font-size:13px;opacity:.7;margin-bottom:10px}h1{font-size:24px;margin:0 0 18px 0}.content{white-space:pre-wrap;font-size:${readerSize}px;line-height:2.05}body.dark .segment button{color:var(--text)}body.dark .segment button.active{color:var(--text)}
 .category-grid{padding:12px;display:flex;flex-direction:column;gap:10px}
@@ -3535,36 +3545,42 @@ async function exportCurrentHTML(){
   toast("Lectura exportada");
 }
 async function exportAllZip(){
-  if(typeof JSZip === "undefined"){
-    alert("No se pudo cargar el exportador ZIP.");
-    return;
-  }
+  const filename="exportacion_completa_oraciones_v3.zip";
+  try{
+    if(typeof window.JSZip === "undefined" && typeof JSZip === "undefined"){
+      throw new Error("JSZip no está disponible");
+    }
+    toast("Preparando ZIP completo…");
+    const ZipClass=window.JSZip || JSZip;
+    const zip = new ZipClass();
+    const payload = buildCompleteBackupPayloadV31245();
+    zip.file("backup_completo.json", JSON.stringify(payload, null, 2));
+    try{ zip.file("catalogos/personajes_biblicos_409.json", await (await fetch("biblical-characters-v2261.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
+    try{ zip.file("catalogos/diccionario_biblico_433.json", await (await fetch("biblical-dictionary-v2264.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
 
-  const zip = new JSZip();
-  const payload = buildCompleteBackupPayloadV31245();
-  zip.file("backup_completo.json", JSON.stringify(payload, null, 2));
-  try{ zip.file("catalogos/personajes_biblicos_409.json", await (await fetch("biblical-characters-v2261.json",{cache:"no-store"})).text()); }catch(e){}
-  try{ zip.file("catalogos/diccionario_biblico_433.json", await (await fetch("biblical-dictionary-v2264.json",{cache:"no-store"})).text()); }catch(e){}
-
-  const folders = [
-    ["oraciones", state.prayers, "Oración", "O"],
-    ["notas", state.notes, "Nota", "N"],
-    ["papelera/oraciones", state.trashPrayers, "Oración eliminada", "O"],
-    ["papelera/notas", state.trashNotes, "Nota eliminada", "N"]
-  ];
-
-  folders.forEach(([folder, items, label, prefix]) => {
-    items.forEach((item, idx) => {
-      const code = prefix + (idx + 1);
-      const name = (code + "-" + slugify(item.title)) + ".html";
-      zip.folder(folder).file(name, buildReadingHTML(item, label, code));
+    const folders = [
+      ["oraciones", state.prayers, "Oración", "O"],
+      ["notas", state.notes, "Nota", "N"],
+      ["papelera/oraciones", state.trashPrayers, "Oración eliminada", "O"],
+      ["papelera/notas", state.trashNotes, "Nota eliminada", "N"]
+    ];
+    folders.forEach(([folder, items, label, prefix]) => {
+      (Array.isArray(items)?items:[]).forEach((item, idx) => {
+        const code = prefix + (idx + 1);
+        const name = (code + "-" + slugify(item.title||"sin-titulo")) + ".html";
+        zip.folder(folder).file(name, buildReadingHTML(item, label, code));
+      });
     });
-  });
 
-  const blob = await zip.generateAsync({type:"blob"});
-  downloadBlob("exportacion_completa_oraciones_v3.zip", blob);
-  saveBackupStatusV3149("Exportación ZIP completa", "exportacion_completa_oraciones_v3.zip");
-  toast("ZIP completo exportado");
+    const blob = await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});
+    const ok=downloadBlob(filename, blob);
+    if(!ok) throw new Error("No se pudo iniciar la descarga");
+    saveBackupStatusV3149("Exportación ZIP completa", filename);
+    toast("ZIP completo exportado");
+  }catch(e){
+    console.error("Error al exportar ZIP completo",e);
+    alert("No se pudo exportar el ZIP completo: "+(e&&e.message?e.message:"error desconocido"));
+  }
 }
 
 /* ===== v3.1.52 - Estado de copia de seguridad pulido ===== */
@@ -3746,9 +3762,16 @@ function backupFilename(){
   return "backup_completo_oraciones_v3_"+stamp+".json";
 }
 function downloadBackupJson(){
-  const text=buildBackupText(),filename=backupFilename();
-  downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));
-  saveBackupStatusV3149("Descarga backup completo",filename);toast("Backup completo descargado");
+  try{
+    const text=buildBackupText(),filename=backupFilename();
+    const ok=downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));
+    if(!ok) throw new Error("download-failed");
+    saveBackupStatusV3149("Descarga backup completo",filename);
+    toast("Backup completo descargado");
+  }catch(e){
+    console.error("No se pudo crear el backup completo",e);
+    alert("No se pudo descargar el backup completo. Cierra y vuelve a abrir la aplicación y prueba de nuevo.");
+  }
 }
 async function copyBackupJson(){
   const text=buildBackupText();
@@ -3804,7 +3827,17 @@ function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(IN
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})
 document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,700);document.getElementById("installBtn").addEventListener("click", async ()=>{if(!deferredPrompt){toast("Usa el menú del navegador: Añadir a pantalla de inicio");return}deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;document.getElementById("installBanner").classList.add("hidden")});document.getElementById("editTitle").addEventListener("input",scheduleAutosave);document.getElementById("editText").addEventListener("input",scheduleAutosave);const input=document.getElementById("jsonFileInput");if(input)input.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Backup seleccionado: "+file.name;importBackupFromFile(file);input.value=""});const versesInput=document.getElementById("versesFileInput");if(versesInput)versesInput.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Versículos seleccionados: "+file.name;importVersesFromFile(file);versesInput.value=""});if(isStandalone()) document.body.classList.add("standalone")})
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-245-backup-integral",{updateViaCache:"none"})})}
+window.downloadBackupJson=downloadBackupJson;
+window.exportAllZip=exportAllZip;
+
+document.addEventListener("DOMContentLoaded",()=>{
+  const backupBtn=document.getElementById("downloadCompleteBackupBtnV31246");
+  if(backupBtn) backupBtn.addEventListener("click",downloadBackupJson);
+  const zipBtn=document.getElementById("exportCompleteZipBtnV31246");
+  if(zipBtn) zipBtn.addEventListener("click",exportAllZip);
+});
+
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-246-download-fix",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){

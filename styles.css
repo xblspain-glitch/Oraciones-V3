@@ -5021,6 +5021,14 @@ body.view-switching-v3189 #homeView{
 }
 
 
+
+/* ===== V3.1.252 — transición sin destello de la botonera de Inicio ===== */
+body.view-switching-v3189 .topbar{
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+
 /* ===== V3.1.190 — imágenes aprobadas para Mañana y Noche ===== */
 .routine-hub-image-wrap-v3190{
   width:112px!important;

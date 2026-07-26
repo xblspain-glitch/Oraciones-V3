@@ -2,7 +2,7 @@
   "name": "Oraciones V3",
   "short_name": "Oraciones V3",
   "id": "./oraciones-v3-lab",
-  "start_url": "./?v=v3-1-251-counter-icons-version",
+  "start_url": "./?v=v3-1-252-stable-transition-daynight-icon",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -22,6 +22,6 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "3.1.251",
-  "build": "v3-1-251-counter-icons-version"
+  "version": "3.1.252",
+  "build": "v3-1-252-stable-transition-daynight-icon"
 }

@@ -3541,8 +3541,10 @@ async function exportAllZip(){
   }
 
   const zip = new JSZip();
-  const payload = {"exportedAt":new Date().toISOString(), ...state};
-  zip.file("backup.json", JSON.stringify(payload, null, 2));
+  const payload = buildCompleteBackupPayloadV31245();
+  zip.file("backup_completo.json", JSON.stringify(payload, null, 2));
+  try{ zip.file("catalogos/personajes_biblicos_409.json", await (await fetch("biblical-characters-v2261.json",{cache:"no-store"})).text()); }catch(e){}
+  try{ zip.file("catalogos/diccionario_biblico_433.json", await (await fetch("biblical-dictionary-v2264.json",{cache:"no-store"})).text()); }catch(e){}
 
   const folders = [
     ["oraciones", state.prayers, "Oración", "O"],
@@ -3560,8 +3562,9 @@ async function exportAllZip(){
   });
 
   const blob = await zip.generateAsync({type:"blob"});
-  downloadBlob("exportacion_oraciones_notas.zip", blob);
-  toast("ZIP exportado");
+  downloadBlob("exportacion_completa_oraciones_v3.zip", blob);
+  saveBackupStatusV3149("Exportación ZIP completa", "exportacion_completa_oraciones_v3.zip");
+  toast("ZIP completo exportado");
 }
 
 /* ===== v3.1.52 - Estado de copia de seguridad pulido ===== */
@@ -3681,140 +3684,120 @@ function renderBackupStatusV3149(){
     '</div>';
 }
 
-function buildBackupText(){
-  const payload = {
-    "exportedAt": new Date().toISOString(),
-    ...state
-  };
+/* ===== V3.1.245 · Backup integral de toda la aplicación ===== */
+const COMPLETE_BACKUP_TYPE_V31245 = "oraciones-v3-backup-completo";
+const COMPLETE_BACKUP_VERSION_V31245 = 31245;
 
-  const text = JSON.stringify(payload, null, 2);
-  document.getElementById("backupText").value = text;
+function readAllAppStorageV31245(){
+  const data = {};
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(!key) continue;
+      if(key.indexOf("oraciones_")===0 || key.indexOf("biblical_")===0){
+        data[key]=localStorage.getItem(key);
+      }
+    }
+  }catch(e){}
+  return data;
+}
+
+function completeBackupCountsV31245(){
+  const count=a=>Array.isArray(a)?a.length:0;
+  let dictionaryCustom=0,dictionaryEdited=0,dictionaryDeleted=0;
+  try{dictionaryCustom=count(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_custom_v264')||'[]'));}catch(e){}
+  try{dictionaryEdited=Object.keys(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_overrides_v264')||'{}')||{}).length;}catch(e){}
+  try{dictionaryDeleted=count(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_deleted_v264')||'[]'));}catch(e){}
+  return {
+    prayers:count(state&&state.prayers), notes:count(state&&state.notes), guides:count(state&&state.guides),
+    verses:count(state&&state.verses), parables:count(state&&state.parables), psalms:count(state&&state.psalms),
+    characters:409, dictionary:433, dictionaryCustom, dictionaryEdited, dictionaryDeleted,
+    calendarNotes:Object.keys((()=>{try{return JSON.parse(localStorage.getItem('oraciones_festivity_notes_v44')||'{}')||{}}catch(e){return {}}})()).length,
+    routines:state&&state.dailyRoutinesV3192?Object.values(state.dailyRoutinesV3192).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0):0,
+    moments:count(state&&state.customMomentsV31106)
+  };
+}
+
+function buildCompleteBackupPayloadV31245(){
+  return {
+    type: COMPLETE_BACKUP_TYPE_V31245,
+    version: COMPLETE_BACKUP_VERSION_V31245,
+    exportedAt: new Date().toISOString(),
+    appVersion: "3.1.245",
+    description: "Copia integral: oraciones, notas, guía, versículos, parábolas, salmos, personajes, diccionario, calendario, día/noche, momentos y ajustes.",
+    state: JSON.parse(JSON.stringify(state||{})),
+    localStorage: readAllAppStorageV31245(),
+    catalogs: {
+      biblicalCharacters: {file:"biblical-characters-v2261.json", entries:409},
+      biblicalDictionary: {file:"biblical-dictionary-v2264.json", entries:433}
+    },
+    counts: completeBackupCountsV31245()
+  };
+}
+
+function buildBackupText(){
+  const text=JSON.stringify(buildCompleteBackupPayloadV31245(),null,2);
+  const box=document.getElementById("backupText");if(box)box.value=text;
   return text;
 }
 function backupFilename(){
-  const now = new Date();
-  const stamp =
-    now.getFullYear().toString() +
-    String(now.getMonth() + 1).padStart(2, "0") +
-    String(now.getDate()).padStart(2, "0") +
-    "_" +
-    String(now.getHours()).padStart(2, "0") +
-    String(now.getMinutes()).padStart(2, "0");
-
-  return "backup_oraciones_notas_" + stamp + ".json";
+  const now=new Date();
+  const stamp=now.getFullYear().toString()+String(now.getMonth()+1).padStart(2,"0")+String(now.getDate()).padStart(2,"0")+"_"+String(now.getHours()).padStart(2,"0")+String(now.getMinutes()).padStart(2,"0");
+  return "backup_completo_oraciones_v3_"+stamp+".json";
 }
 function downloadBackupJson(){
-  const text = buildBackupText();
-  const filename = backupFilename();
-  downloadBlob(
-    filename,
-    new Blob([text], {type: "application/json;charset=utf-8"})
-  );
-  saveBackupStatusV3149("Descarga JSON", filename);
-  toast("JSON descargado");
+  const text=buildBackupText(),filename=backupFilename();
+  downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));
+  saveBackupStatusV3149("Descarga backup completo",filename);toast("Backup completo descargado");
 }
 async function copyBackupJson(){
   const text=buildBackupText();
-  try{
-    await navigator.clipboard.writeText(cleanTextBreaks(text));
-    saveBackupStatusV3149("Copia JSON", "JSON copiado al portapapeles");
-    toast("JSON copiado");
-  }catch(e){
-    alert("No se pudo copiar automáticamente. El JSON queda visible para copiarlo manualmente.");
-  }
+  try{await navigator.clipboard.writeText(cleanTextBreaks(text));saveBackupStatusV3149("Copia backup completo","Backup completo copiado");toast("Backup completo copiado");}
+  catch(e){alert("No se pudo copiar automáticamente. El backup queda visible para copiarlo manualmente.");}
 }
 async function shareBackupJson(){
-  const text=buildBackupText();
-  const filename=backupFilename();
-  const file=new File([text], filename, {type:"application/json"});
+  const text=buildBackupText(),filename=backupFilename(),file=new File([text],filename,{type:"application/json"});
   try{
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({title:"Backup Oraciones y Notas", text:"Backup de Oraciones y Notas", files:[file]});
-      saveBackupStatusV3149("Compartir JSON", filename);
-      toast("Compartido");
-      return;
-    }
-    if(navigator.share){
-      await navigator.share({title:"Backup Oraciones y Notas", text:text});
-      saveBackupStatusV3149("Compartir JSON como texto", filename);
-      toast("Compartido como texto");
-      return;
-    }
-    downloadBlob(filename, new Blob([text],{type:"application/json;charset=utf-8"}));
-    saveBackupStatusV3149("Descarga JSON", filename);
-    alert("Tu navegador no permite compartir desde aquí. Se ha descargado el JSON.");
-  }catch(e){
-    downloadBlob(filename, new Blob([text],{type:"application/json;charset=utf-8"}));
-    saveBackupStatusV3149("Descarga JSON", filename);
-    toast("Compartir cancelado o no disponible");
-  }
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Backup completo Oraciones V3",text:"Copia integral de toda la aplicación",files:[file]});saveBackupStatusV3149("Compartir backup completo",filename);toast("Backup completo compartido");return;}
+    if(navigator.share){await navigator.share({title:"Backup completo Oraciones V3",text:text});saveBackupStatusV3149("Compartir backup como texto",filename);toast("Compartido como texto");return;}
+    downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));saveBackupStatusV3149("Descarga backup completo",filename);alert("Tu navegador no permite compartir desde aquí. Se ha descargado el backup completo.");
+  }catch(e){if(e&&e.name==='AbortError'){toast("Compartir cancelado");return;}downloadBlob(filename,new Blob([text],{type:"application/json;charset=utf-8"}));saveBackupStatusV3149("Descarga backup completo",filename);toast("Se ha descargado el backup completo");}
 }
-async function exportBackup(){
-  downloadBackupJson();
+async function exportBackup(){downloadBackupJson();}
+
+function normalizeImportedStateV31245(parsed){
+  const src=(parsed&&parsed.type===COMPLETE_BACKUP_TYPE_V31245&&parsed.state)?parsed.state:parsed;
+  if(!src||!Array.isArray(src.prayers)||!Array.isArray(src.notes))throw new Error("bad");
+  return Object.assign({},src,{
+    section:src.section||"prayers",
+    currentPrayerId:src.currentPrayerId||(src.prayers[0]&&src.prayers[0].id)||null,
+    currentNoteId:src.currentNoteId||(src.notes[0]&&src.notes[0].id)||null,
+    guides:Array.isArray(src.guides)?src.guides:[],verses:Array.isArray(src.verses)?src.verses:[],parables:Array.isArray(src.parables)?src.parables:[],psalms:Array.isArray(src.psalms)?src.psalms:[],
+    verseCategories:Array.isArray(src.verseCategories)?src.verseCategories:[],trashPrayers:Array.isArray(src.trashPrayers)?src.trashPrayers:[],trashNotes:Array.isArray(src.trashNotes)?src.trashNotes:[],trashGuides:Array.isArray(src.trashGuides)?src.trashGuides:[],trashVerses:Array.isArray(src.trashVerses)?src.trashVerses:[],trashParables:Array.isArray(src.trashParables)?src.trashParables:[],trashPsalms:Array.isArray(src.trashPsalms)?src.trashPsalms:[],
+    titleSeparatorsV3171:src.titleSeparatorsV3171&&typeof src.titleSeparatorsV3171==="object"?src.titleSeparatorsV3171:{}
+  });
 }
 function applyImportedData(parsed){
-  if(!Array.isArray(parsed.prayers)||!Array.isArray(parsed.notes)) throw new Error("bad");
-  state={
-    "section":parsed.section||"prayers",
-    "currentPrayerId":parsed.currentPrayerId||(parsed.prayers[0]&&parsed.prayers[0].id)||null,
-    "currentNoteId":parsed.currentNoteId||(parsed.notes[0]&&parsed.notes[0].id)||null,
-    "currentGuideId":parsed.currentGuideId||(Array.isArray(parsed.guides)&&parsed.guides[0]&&parsed.guides[0].id)||null,
-    "currentVerseId":parsed.currentVerseId||(Array.isArray(parsed.verses)&&parsed.verses[0]&&parsed.verses[0].id)||null,
-    "currentParableId":parsed.currentParableId||(Array.isArray(parsed.parables)&&parsed.parables[0]&&parsed.parables[0].id)||null,
-    "currentPsalmId":parsed.currentPsalmId||(Array.isArray(parsed.psalms)&&parsed.psalms[0]&&parsed.psalms[0].id)||null,
-    "prayers":parsed.prayers,
-    "notes":parsed.notes,
-    "guides":Array.isArray(parsed.guides)?parsed.guides:[],
-    "verses":Array.isArray(parsed.verses)?parsed.verses:[],
-    "parables":Array.isArray(parsed.parables)?parsed.parables:[],
-    "psalms":Array.isArray(parsed.psalms)?parsed.psalms:[],
-    "verseCategories":Array.isArray(parsed.verseCategories)?parsed.verseCategories:[],
-    "trashPrayers":Array.isArray(parsed.trashPrayers)?parsed.trashPrayers:[],
-    "trashNotes":Array.isArray(parsed.trashNotes)?parsed.trashNotes:[],
-    "trashGuides":Array.isArray(parsed.trashGuides)?parsed.trashGuides:[],
-    "trashVerses":Array.isArray(parsed.trashVerses)?parsed.trashVerses:[],
-    "trashParables":Array.isArray(parsed.trashParables)?parsed.trashParables:[],
-    "trashPsalms":Array.isArray(parsed.trashPsalms)?parsed.trashPsalms:[],
-    "titleSeparatorsV3171":parsed.titleSeparatorsV3171&&typeof parsed.titleSeparatorsV3171==="object"?parsed.titleSeparatorsV3171:{}
-  };
-  normalizeGuides();
-  if(typeof normalizeVerses==="function") normalizeVerses();
-  if(typeof ensureVerseCategories==="function") ensureVerseCategories();
-  if(typeof ensureParablesState==="function") ensureParablesState();
-  if(typeof ensurePsalmsStateV3176==="function") ensurePsalmsStateV3176();
-  saveState();
-  section=state.section;
-  syncTabs();
-  renderList();
-  renderReader();
-  openReader();
-  toast("Backup importado")
+  const complete=parsed&&parsed.type===COMPLETE_BACKUP_TYPE_V31245;
+  const importedState=normalizeImportedStateV31245(parsed);
+  if(complete&&parsed.localStorage&&typeof parsed.localStorage==='object'){
+    Object.keys(parsed.localStorage).forEach(key=>{
+      if(key.indexOf('oraciones_')===0||key.indexOf('biblical_')===0){
+        const value=parsed.localStorage[key];if(value===null||typeof value==='undefined')localStorage.removeItem(key);else localStorage.setItem(key,String(value));
+      }
+    });
+  }
+  state=importedState;
+  normalizeGuides();if(typeof normalizeVerses==="function")normalizeVerses();if(typeof ensureVerseCategories==="function")ensureVerseCategories();if(typeof ensureParablesState==="function")ensureParablesState();if(typeof ensurePsalmsStateV3176==="function")ensurePsalmsStateV3176();
+  saveState();section=state.section;syncTabs();renderList();renderReader();
+  if(complete){toast("Backup completo restaurado");setTimeout(()=>location.reload(),650);}else{openReader();toast("Backup importado");}
 }
 function importBackupFromText(){
-  const text = document.getElementById("backupText").value.trim();
-  if(!text) return alert("Pega primero una copia.");
-
-  try{
-    applyImportedData(JSON.parse(text));
-  }catch(e){
-    alert("La copia no es válida.");
-  }
+  const text=document.getElementById("backupText").value.trim();if(!text)return alert("Pega primero una copia.");
+  try{applyImportedData(JSON.parse(text));}catch(e){alert("La copia no es válida.");}
 }
 function importBackupFromFile(file){
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    try{
-      const text = String(reader.result || "");
-      document.getElementById("backupText").value = text;
-      applyImportedData(JSON.parse(text));
-    }catch(e){
-      alert("El archivo no es un JSON válido.");
-    }
-  };
-
-  reader.onerror = () => alert("No se pudo leer el archivo.");
-  reader.readAsText(file, "utf-8");
+  const reader=new FileReader();reader.onload=()=>{try{const text=String(reader.result||"");document.getElementById("backupText").value=text;applyImportedData(JSON.parse(text));}catch(e){alert("El archivo no es un backup JSON válido.");}};reader.onerror=()=>alert("No se pudo leer el archivo.");reader.readAsText(file,"utf-8");
 }
 function dismissInstall(){localStorage.setItem(INSTALL_DISMISSED_KEY,"1");document.getElementById("installBanner").classList.add("hidden")}
 function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(INSTALL_DISMISSED_KEY)==="1") return;document.getElementById("installBanner").classList.remove("hidden");const help=document.getElementById("installHelp");if(deferredPrompt) help.textContent="Pulsa Instalar. Si no te deja, usa el menú del navegador y elige Añadir a pantalla de inicio.";else help.textContent="Si no aparece el instalador automático, usa el menú del navegador y elige Añadir a pantalla de inicio."}
@@ -12012,159 +11995,4 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     obs.observe(document.body,{childList:true,subtree:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
-})();
-
-/* V3.1.245 · Backup integral de toda la aplicación */
-(function(){
-  'use strict';
-  const COMPLETE_MARK='oraciones-backup-integral';
-  const COMPLETE_VERSION=3245;
-  const INCLUDED_SECTIONS=[
-    'oraciones','notas','guia','versiculos','parabolas','salmos',
-    'personajes','diccionario','calendario','dia-noche','momentos'
-  ];
-
-  function snapshotLocalStorageV3245(){
-    const out={};
-    for(let i=0;i<localStorage.length;i++){
-      const key=localStorage.key(i);
-      if(key!==null){
-        try{out[key]=localStorage.getItem(key)}catch(e){}
-      }
-    }
-    return out;
-  }
-
-  function countJsonArrayKeyV3245(key){
-    try{
-      const v=JSON.parse(localStorage.getItem(key)||'[]');
-      return Array.isArray(v)?v.length:0;
-    }catch(e){return 0}
-  }
-
-  function completeCountsV3245(){
-    const base=(typeof backupCountsV3149==='function')?backupCountsV3149():{};
-    let characters=409;
-    try{if(Array.isArray(window.BIBLICAL_CHARACTERS_V2242)&&window.BIBLICAL_CHARACTERS_V2242.length)characters=window.BIBLICAL_CHARACTERS_V2242.length}catch(e){}
-    let dictionary=433;
-    dictionary += countJsonArrayKeyV3245('oraciones_biblical_dictionary_custom_v264');
-    dictionary -= countJsonArrayKeyV3245('oraciones_biblical_dictionary_deleted_v264');
-    return Object.assign({},base,{
-      characters:Math.max(0,characters),
-      dictionary:Math.max(0,dictionary),
-      calendar:1,
-      dayNight:1,
-      moments:1
-    });
-  }
-
-  function makeCompletePayloadV3245(){
-    return Object.assign({
-      exportedAt:new Date().toISOString(),
-      backupType:COMPLETE_MARK,
-      backupVersion:COMPLETE_VERSION,
-      appVersion:'V3.1.245',
-      includedSections:INCLUDED_SECTIONS.slice(),
-      completeBackupV3245:{
-        localStorage:snapshotLocalStorageV3245(),
-        counts:completeCountsV3245(),
-        note:'Incluye todo el contenido editable y todas las preferencias guardadas de la aplicación. Los catálogos originales de Personajes y Diccionario forman parte de la propia aplicación; sus cambios personales quedan incluidos en localStorage.'
-      }
-    },state||{});
-  }
-
-  window.buildCompleteBackupPayloadV3245=makeCompletePayloadV3245;
-
-  window.buildBackupText=buildBackupText=function(){
-    const text=JSON.stringify(makeCompletePayloadV3245(),null,2);
-    const area=document.getElementById('backupText');if(area)area.value=text;
-    return text;
-  };
-
-  window.backupFilename=backupFilename=function(){
-    const now=new Date();
-    const stamp=now.getFullYear().toString()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
-    return 'backup_completo_oraciones_'+stamp+'.json';
-  };
-
-  const oldApply=applyImportedData;
-  window.applyImportedData=applyImportedData=function(parsed){
-    if(!parsed||typeof parsed!=='object')throw new Error('bad');
-    const snapshot=parsed.completeBackupV3245&&parsed.completeBackupV3245.localStorage;
-    oldApply(parsed);
-    if(snapshot&&typeof snapshot==='object'){
-      Object.keys(snapshot).forEach(function(key){
-        try{
-          const value=snapshot[key];
-          if(value===null||typeof value==='undefined')localStorage.removeItem(key);
-          else localStorage.setItem(key,String(value));
-        }catch(e){}
-      });
-      try{saveState()}catch(e){}
-      try{toast('Backup completo importado. Reiniciando…')}catch(e){}
-      setTimeout(function(){location.reload()},700);
-    }
-  };
-
-  window.backupCountsV3149=backupCountsV3149=function(){return completeCountsV3245()};
-  window.backupTotalV3149=backupTotalV3149=function(c){
-    c=c||completeCountsV3245();
-    return (c.prayers||0)+(c.notes||0)+(c.guides||0)+(c.verses||0)+(c.parables||0)+(c.psalms||0)+(c.characters||0)+(c.dictionary||0);
-  };
-
-  window.renderBackupStatusV3149=renderBackupStatusV3149=function(){
-    const box=document.getElementById('backupStatusV3149');if(!box)return;
-    const data=readBackupStatusV3149();
-    const age=backupAgeTextV3149(data&&data.exportedAt);
-    const counts=(data&&data.counts)||completeCountsV3245();
-    const total=(data&&typeof data.total==='number')?data.total:backupTotalV3149(counts);
-    const file=data&&data.filename?data.filename:'Aún no hay archivo registrado';
-    box.innerHTML='<div class="backup-status-card-v3149 backup-status-'+age.tone+'-v3149">'+
-      '<div class="backup-status-title-v3149">💾 Estado de la copia completa</div>'+
-      '<div class="backup-status-state-v3150">'+backupStatusLabelV3150(age)+'</div>'+
-      '<div class="backup-status-row-v3149"><strong>Última exportación:</strong><br>'+formatBackupDateV3149(data&&data.exportedAt)+'</div>'+
-      '<div class="backup-status-row-v3149"><strong>Antigüedad:</strong> '+age.text+'</div>'+
-      '<div class="backup-status-row-v3149"><strong>Método:</strong> '+((data&&data.method)?data.method:'Aún no registrado')+'</div>'+
-      '<div class="backup-status-row-v3149"><strong>Archivo:</strong><br><span class="backup-status-file-v3149">'+file+'</span></div>'+
-      '<div class="backup-status-grid-v3149">'+
-        '<span>🙏🏾 Oraciones: <strong>'+(counts.prayers||0)+'</strong></span>'+
-        '<span>📝 Notas: <strong>'+(counts.notes||0)+'</strong></span>'+
-        '<span>🧭 Guía: <strong>'+(counts.guides||0)+'</strong></span>'+
-        '<span>📖 Versículos: <strong>'+(counts.verses||0)+'</strong></span>'+
-        '<span>📚 Parábolas: <strong>'+(counts.parables||0)+'</strong></span>'+
-        '<span>♫ Salmos: <strong>'+(counts.psalms||0)+'</strong></span>'+
-        '<span>👥 Personajes: <strong>'+(counts.characters||409)+'</strong></span>'+
-        '<span>📘 Diccionario: <strong>'+(counts.dictionary||433)+'</strong></span>'+
-        '<span>📅 Calendario: <strong>incluido</strong></span>'+
-        '<span>🌅 Día/Noche: <strong>incluido</strong></span>'+
-        '<span>✨ Momentos: <strong>incluido</strong></span>'+
-        '<span>📦 Entradas: <strong>'+total+'</strong></span>'+
-      '</div><div class="backup-status-advice-v3149">La copia integral guarda todo el contenido, las ediciones y las preferencias de la aplicación.</div></div>';
-  };
-
-  window.exportAllZip=exportAllZip=async function(){
-    if(typeof JSZip==='undefined'){alert('No se pudo cargar el exportador ZIP.');return}
-    const zip=new JSZip();
-    const payload=makeCompletePayloadV3245();
-    zip.file('backup_completo.json',JSON.stringify(payload,null,2));
-    const folders=[
-      ['oraciones',state.prayers,'Oración','O'],['notas',state.notes,'Nota','N'],
-      ['guia',state.guides,'Guía','G'],['versiculos',state.verses,'Versículo','V'],
-      ['parabolas',state.parables,'Parábola','P'],['salmos',state.psalms,'Salmo','S'],
-      ['papelera/oraciones',state.trashPrayers,'Oración eliminada','O'],['papelera/notas',state.trashNotes,'Nota eliminada','N']
-    ];
-    folders.forEach(function(row){
-      const folder=row[0],items=Array.isArray(row[1])?row[1]:[],label=row[2],prefix=row[3];
-      items.forEach(function(item,idx){
-        const name=prefix+(idx+1)+'-'+slugify(item.title||label)+'.html';
-        zip.folder(folder).file(name,buildReadingHTML(item,label,prefix+(idx+1)));
-      });
-    });
-    zip.file('INCLUYE_TODO.txt','Oraciones, notas, guía, versículos, parábolas, salmos, personajes, diccionario, calendario, día/noche y momentos.\nLas preferencias y ediciones personales están dentro de backup_completo.json.');
-    const blob=await zip.generateAsync({type:'blob'});
-    const filename='exportacion_completa_oraciones.zip';
-    downloadBlob(filename,blob);saveBackupStatusV3149('Exportación ZIP completa',filename);toast('ZIP completo exportado');
-  };
-
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(renderBackupStatusV3149,350)});
 })();

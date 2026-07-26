@@ -1540,6 +1540,8 @@ body.dark .topbar-row #tabParables.active-view{
   text-overflow:ellipsis!important;
   white-space:nowrap!important;
   text-align:right!important;
+  position:relative;
+  left:-10px!important;
   padding-right:2px!important;
   box-sizing:border-box!important;
 }
@@ -4949,6 +4951,8 @@ body.dark-mode.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.acti
 /* ===== V3.1.182 — iconos propios en contadores, posición original ===== */
 #counterInfo.counter-v66{
   text-align:right!important;
+  position:relative;
+  left:-10px!important;
   white-space:nowrap!important;
   overflow:visible!important;
   text-overflow:clip!important;

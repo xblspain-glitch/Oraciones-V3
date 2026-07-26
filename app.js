@@ -3821,7 +3821,7 @@ function maybeShowInstall(){if(isStandalone()) return;if(localStorage.getItem(IN
 window.addEventListener("beforeinstallprompt", e=>{e.preventDefault();deferredPrompt=e;maybeShowInstall()})
 document.addEventListener("DOMContentLoaded",()=>{setTimeout(maybeShowInstall,700);document.getElementById("installBtn").addEventListener("click", async ()=>{if(!deferredPrompt){toast("Usa el menú del navegador: Añadir a pantalla de inicio");return}deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null;document.getElementById("installBanner").classList.add("hidden")});document.getElementById("editTitle").addEventListener("input",scheduleAutosave);document.getElementById("editText").addEventListener("input",scheduleAutosave);const input=document.getElementById("jsonFileInput");if(input)input.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Backup seleccionado: "+file.name;importBackupFromFile(file);input.value=""});const versesInput=document.getElementById("versesFileInput");if(versesInput)versesInput.addEventListener("change",(e)=>{const file=e.target.files && e.target.files[0];if(!file) return;document.getElementById("fileNameInfo").textContent="Versículos seleccionados: "+file.name;importVersesFromFile(file);versesInput.value=""});if(isStandalone()) document.body.classList.add("standalone")})
 window.addEventListener("appinstalled",()=>{document.getElementById("installBanner").classList.add("hidden");toast("App instalada")})
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-244-diccionario-433-editable",{updateViaCache:"none"})})}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-245-backup-integral",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){
@@ -12012,4 +12012,159 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     obs.observe(document.body,{childList:true,subtree:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+})();
+
+/* V3.1.245 · Backup integral de toda la aplicación */
+(function(){
+  'use strict';
+  const COMPLETE_MARK='oraciones-backup-integral';
+  const COMPLETE_VERSION=3245;
+  const INCLUDED_SECTIONS=[
+    'oraciones','notas','guia','versiculos','parabolas','salmos',
+    'personajes','diccionario','calendario','dia-noche','momentos'
+  ];
+
+  function snapshotLocalStorageV3245(){
+    const out={};
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key!==null){
+        try{out[key]=localStorage.getItem(key)}catch(e){}
+      }
+    }
+    return out;
+  }
+
+  function countJsonArrayKeyV3245(key){
+    try{
+      const v=JSON.parse(localStorage.getItem(key)||'[]');
+      return Array.isArray(v)?v.length:0;
+    }catch(e){return 0}
+  }
+
+  function completeCountsV3245(){
+    const base=(typeof backupCountsV3149==='function')?backupCountsV3149():{};
+    let characters=409;
+    try{if(Array.isArray(window.BIBLICAL_CHARACTERS_V2242)&&window.BIBLICAL_CHARACTERS_V2242.length)characters=window.BIBLICAL_CHARACTERS_V2242.length}catch(e){}
+    let dictionary=433;
+    dictionary += countJsonArrayKeyV3245('oraciones_biblical_dictionary_custom_v264');
+    dictionary -= countJsonArrayKeyV3245('oraciones_biblical_dictionary_deleted_v264');
+    return Object.assign({},base,{
+      characters:Math.max(0,characters),
+      dictionary:Math.max(0,dictionary),
+      calendar:1,
+      dayNight:1,
+      moments:1
+    });
+  }
+
+  function makeCompletePayloadV3245(){
+    return Object.assign({
+      exportedAt:new Date().toISOString(),
+      backupType:COMPLETE_MARK,
+      backupVersion:COMPLETE_VERSION,
+      appVersion:'V3.1.245',
+      includedSections:INCLUDED_SECTIONS.slice(),
+      completeBackupV3245:{
+        localStorage:snapshotLocalStorageV3245(),
+        counts:completeCountsV3245(),
+        note:'Incluye todo el contenido editable y todas las preferencias guardadas de la aplicación. Los catálogos originales de Personajes y Diccionario forman parte de la propia aplicación; sus cambios personales quedan incluidos en localStorage.'
+      }
+    },state||{});
+  }
+
+  window.buildCompleteBackupPayloadV3245=makeCompletePayloadV3245;
+
+  window.buildBackupText=buildBackupText=function(){
+    const text=JSON.stringify(makeCompletePayloadV3245(),null,2);
+    const area=document.getElementById('backupText');if(area)area.value=text;
+    return text;
+  };
+
+  window.backupFilename=backupFilename=function(){
+    const now=new Date();
+    const stamp=now.getFullYear().toString()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0')+'_'+String(now.getHours()).padStart(2,'0')+String(now.getMinutes()).padStart(2,'0');
+    return 'backup_completo_oraciones_'+stamp+'.json';
+  };
+
+  const oldApply=applyImportedData;
+  window.applyImportedData=applyImportedData=function(parsed){
+    if(!parsed||typeof parsed!=='object')throw new Error('bad');
+    const snapshot=parsed.completeBackupV3245&&parsed.completeBackupV3245.localStorage;
+    oldApply(parsed);
+    if(snapshot&&typeof snapshot==='object'){
+      Object.keys(snapshot).forEach(function(key){
+        try{
+          const value=snapshot[key];
+          if(value===null||typeof value==='undefined')localStorage.removeItem(key);
+          else localStorage.setItem(key,String(value));
+        }catch(e){}
+      });
+      try{saveState()}catch(e){}
+      try{toast('Backup completo importado. Reiniciando…')}catch(e){}
+      setTimeout(function(){location.reload()},700);
+    }
+  };
+
+  window.backupCountsV3149=backupCountsV3149=function(){return completeCountsV3245()};
+  window.backupTotalV3149=backupTotalV3149=function(c){
+    c=c||completeCountsV3245();
+    return (c.prayers||0)+(c.notes||0)+(c.guides||0)+(c.verses||0)+(c.parables||0)+(c.psalms||0)+(c.characters||0)+(c.dictionary||0);
+  };
+
+  window.renderBackupStatusV3149=renderBackupStatusV3149=function(){
+    const box=document.getElementById('backupStatusV3149');if(!box)return;
+    const data=readBackupStatusV3149();
+    const age=backupAgeTextV3149(data&&data.exportedAt);
+    const counts=(data&&data.counts)||completeCountsV3245();
+    const total=(data&&typeof data.total==='number')?data.total:backupTotalV3149(counts);
+    const file=data&&data.filename?data.filename:'Aún no hay archivo registrado';
+    box.innerHTML='<div class="backup-status-card-v3149 backup-status-'+age.tone+'-v3149">'+
+      '<div class="backup-status-title-v3149">💾 Estado de la copia completa</div>'+
+      '<div class="backup-status-state-v3150">'+backupStatusLabelV3150(age)+'</div>'+
+      '<div class="backup-status-row-v3149"><strong>Última exportación:</strong><br>'+formatBackupDateV3149(data&&data.exportedAt)+'</div>'+
+      '<div class="backup-status-row-v3149"><strong>Antigüedad:</strong> '+age.text+'</div>'+
+      '<div class="backup-status-row-v3149"><strong>Método:</strong> '+((data&&data.method)?data.method:'Aún no registrado')+'</div>'+
+      '<div class="backup-status-row-v3149"><strong>Archivo:</strong><br><span class="backup-status-file-v3149">'+file+'</span></div>'+
+      '<div class="backup-status-grid-v3149">'+
+        '<span>🙏🏾 Oraciones: <strong>'+(counts.prayers||0)+'</strong></span>'+
+        '<span>📝 Notas: <strong>'+(counts.notes||0)+'</strong></span>'+
+        '<span>🧭 Guía: <strong>'+(counts.guides||0)+'</strong></span>'+
+        '<span>📖 Versículos: <strong>'+(counts.verses||0)+'</strong></span>'+
+        '<span>📚 Parábolas: <strong>'+(counts.parables||0)+'</strong></span>'+
+        '<span>♫ Salmos: <strong>'+(counts.psalms||0)+'</strong></span>'+
+        '<span>👥 Personajes: <strong>'+(counts.characters||409)+'</strong></span>'+
+        '<span>📘 Diccionario: <strong>'+(counts.dictionary||433)+'</strong></span>'+
+        '<span>📅 Calendario: <strong>incluido</strong></span>'+
+        '<span>🌅 Día/Noche: <strong>incluido</strong></span>'+
+        '<span>✨ Momentos: <strong>incluido</strong></span>'+
+        '<span>📦 Entradas: <strong>'+total+'</strong></span>'+
+      '</div><div class="backup-status-advice-v3149">La copia integral guarda todo el contenido, las ediciones y las preferencias de la aplicación.</div></div>';
+  };
+
+  window.exportAllZip=exportAllZip=async function(){
+    if(typeof JSZip==='undefined'){alert('No se pudo cargar el exportador ZIP.');return}
+    const zip=new JSZip();
+    const payload=makeCompletePayloadV3245();
+    zip.file('backup_completo.json',JSON.stringify(payload,null,2));
+    const folders=[
+      ['oraciones',state.prayers,'Oración','O'],['notas',state.notes,'Nota','N'],
+      ['guia',state.guides,'Guía','G'],['versiculos',state.verses,'Versículo','V'],
+      ['parabolas',state.parables,'Parábola','P'],['salmos',state.psalms,'Salmo','S'],
+      ['papelera/oraciones',state.trashPrayers,'Oración eliminada','O'],['papelera/notas',state.trashNotes,'Nota eliminada','N']
+    ];
+    folders.forEach(function(row){
+      const folder=row[0],items=Array.isArray(row[1])?row[1]:[],label=row[2],prefix=row[3];
+      items.forEach(function(item,idx){
+        const name=prefix+(idx+1)+'-'+slugify(item.title||label)+'.html';
+        zip.folder(folder).file(name,buildReadingHTML(item,label,prefix+(idx+1)));
+      });
+    });
+    zip.file('INCLUYE_TODO.txt','Oraciones, notas, guía, versículos, parábolas, salmos, personajes, diccionario, calendario, día/noche y momentos.\nLas preferencias y ediciones personales están dentro de backup_completo.json.');
+    const blob=await zip.generateAsync({type:'blob'});
+    const filename='exportacion_completa_oraciones.zip';
+    downloadBlob(filename,blob);saveBackupStatusV3149('Exportación ZIP completa',filename);toast('ZIP completo exportado');
+  };
+
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(renderBackupStatusV3149,350)});
 })();

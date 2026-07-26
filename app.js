@@ -1495,7 +1495,7 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.252";
+const APP_VERSION_LABEL = "v3.1.253";
 const APP_VERSION_ZIP = "oraciones_v3_1_251_contadores_iconos_version.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
@@ -3584,8 +3584,8 @@ async function exportAllZip(){
 }
 
 
-/* ===== V3.1.252 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.252";
+/* ===== V3.1.253 · Descargar copia autosuficiente de la aplicación ===== */
+const APP_VERSION_V31249 = "3.1.253";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3643,7 +3643,7 @@ async function exportInstalledAppZipV31249(){
       includedFiles:INSTALLED_APP_FILES_V31249,complete:true,
       pendingOptionalIcons:FUTURE_HOME_ICONS_V31249
     },null,2));
-    zip.file("LEEME_COPIA_APP.txt","ORACIONES V3 · COPIA AUTOSUFICIENTE\n\nVersión: 3.1.252\n\nIncluye todos los recursos activos de esta versión y no incluye archivos históricos sin uso.\nLos iconos propios de Versículo del día y Diccionario están preparados en el código, pero se integrarán cuando estén disponibles.\n");
+    zip.file("LEEME_COPIA_APP.txt","ORACIONES V3 · COPIA AUTOSUFICIENTE\n\nVersión: 3.1.253\n\nIncluye todos los recursos activos de esta versión y no incluye archivos históricos sin uso.\nLos iconos propios de Versículo del día y Diccionario están preparados en el código, pero se integrarán cuando estén disponibles.\n");
     const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});
     if(!downloadBlob(filename,blob)) throw new Error("No se pudo iniciar la descarga");
     saveBackupStatusV3149("Copia de la aplicación",filename);
@@ -3825,7 +3825,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31249,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.252",
+    appVersion: "3.1.253",
     description: "Copia integral y autosuficiente: datos, ajustes, 409 personajes completos y 433 entradas completas del diccionario.",
     state: JSON.parse(JSON.stringify(state||{})),
     localStorage: readAllAppStorageV31245(),

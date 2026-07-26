@@ -6,6 +6,7 @@ const CUSTOM_KEY='oraciones_biblical_dictionary_custom_v264';
 const OVERRIDES_KEY='oraciones_biblical_dictionary_overrides_v264';
 const DELETED_KEY='oraciones_biblical_dictionary_deleted_v264';
 let builtins=[];
+window.getBiblicalDictionaryCountV31249=function(){try{return getAll().length}catch(e){return builtins.length||433}};
 let loaded=false;
 let currentCategory='Todos';
 let currentId=null;

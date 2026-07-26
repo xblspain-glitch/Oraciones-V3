@@ -1,4 +1,4 @@
-/* V3.1.183 — contadores con iconos reales y conteos correctos */
+/* V3.1.249 — contadores con iconos reales y conteos correctos */
 (function(){
   'use strict';
   if(window.__v3183CountersInstalled) return;
@@ -32,7 +32,9 @@
         '<span class="counter-separator-v3182">|</span>'+
         '<span class="counter-entry-v3182" title="Parábolas"><span class="counter-symbol-v3182">🌱</span><b>'+len(s.parables)+'</b></span>'+
         '<span class="counter-separator-v3182">|</span>'+
-        '<span class="counter-entry-v3182" title="Personajes bíblicos"><span class="counter-symbol-v3182">👥</span><b>'+((window.BIBLICAL_CHARACTERS_V2242&&window.BIBLICAL_CHARACTERS_V2242.length)||181)+'</b></span>'+
+        '<span class="counter-entry-v3182" title="Personajes bíblicos"><span class="counter-symbol-v3182">👥</span><b>'+((window.BIBLICAL_CHARACTERS_V2242&&window.BIBLICAL_CHARACTERS_V2242.length)||409)+'</b></span>'+
+        '<span class="counter-separator-v3182">|</span>'+
+        '<span class="counter-entry-v3182" title="Diccionario bíblico"><span class="counter-symbol-v3182">📜</span><b>'+((window.getBiblicalDictionaryCountV31249&&window.getBiblicalDictionaryCountV31249())||433)+'</b></span>'+
         '<span class="counter-separator-v3182">|</span>'+
         '<span class="counter-entry-v3182" title="Salmos"><span class="counter-symbol-v3182 counter-psalm-v3182">♫</span><b>'+len(s.psalms)+'</b></span>'+
         '<span class="counter-separator-v3182">|</span>'+

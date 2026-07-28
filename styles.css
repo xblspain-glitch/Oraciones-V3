@@ -5155,3 +5155,17 @@ body.dark .biblical-map-v2247{background:rgba(80,65,105,.28);border-color:rgba(1
 .card-style-preview-v2217.santidad-v2230{background-image:url('card-santidad-v2230.jpg?v=v3-1-241-actualizaciones-v2-256')}
 .card-style-preview-v2217.cristo-es-dios-v2230{background-image:url('card-cristo-es-dios-v2230.jpg?v=v3-1-241-actualizaciones-v2-256')}
 img.card-style-preview-v2217.classic-v2217{display:block;width:100%;height:auto;aspect-ratio:9/12;object-fit:cover;object-position:center top;}
+
+/* ===== V3.1.258 — Lora únicamente en el contenido de lectura ===== */
+@font-face{font-family:'Lora';src:url('./Lora-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Lora';src:url('./Lora-Bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:'Lora';src:url('./Lora-Italic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
+@font-face{font-family:'Lora';src:url('./Lora-BoldItalic.woff2') format('woff2');font-style:italic;font-weight:700;font-display:swap}
+
+/* Solo títulos y cuerpos de lectura; toda la interfaz conserva su tipografía original. */
+#readerView .reader-title,
+#readerView .reader-text,
+#routineReaderV3192 .routine-reader-title-v3192,
+#routineReaderV3192 .routine-reader-text-v3192{
+  font-family:'Lora',Georgia,serif;
+}

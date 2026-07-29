@@ -167,8 +167,6 @@ function setActiveView(view){
     read: 'btnRead',
     daily: 'btnDaily',
     calendar: 'calendarBtn',
-    'biblical-characters': 'biblicalCharactersBtnV2242',
-    'biblical-dictionary': 'biblicalDictionaryBtnV2264',
     random: 'btnRandom',
     titles: 'btnTitles',
     edit: 'btnEdit',
@@ -1495,8 +1493,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.258";
-const APP_VERSION_ZIP = "oraciones_v3_1_258_lora_solo_textos_offline.zip";
+const APP_VERSION_LABEL = "v3.1.259";
+const APP_VERSION_ZIP = "Oraciones_V3.1.259_SIN_MODULOS_ESTUDIO_LORA_FILAS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -1515,7 +1513,7 @@ function openAppCredits(){
       '<div class="app-credits-line"><strong>Versión instalada:</strong> '+APP_VERSION_LABEL+'</div>' +
       '<div class="app-credits-line"><strong>ZIP:</strong></div>' +
       '<div class="app-credits-zip">'+APP_VERSION_ZIP+'</div>' +
-      '<div class="app-credits-line">App personal de oraciones, notas, guía, versículos y parábolas.</div>' +
+      '<div class="app-credits-line">App personal de oraciones, notas, salmos y versículos.</div>' +
       '<div class="app-credits-line">Desarrollada y perfeccionada versión a versión. 🙏🏾</div>' +
       '<div class="app-credits-line">✨ Gracias por formar parte de este proyecto.</div>' +
       '<button class="btn soft" type="button" onclick="closeAppCredits()">Cerrar</button>' +
@@ -3664,9 +3662,7 @@ function backupCountsV3149(){
   return {
     prayers: count(state && state.prayers),
     notes: count(state && state.notes),
-    guides: count(state && state.guides),
     verses: count(state && state.verses),
-    parables: count(state && state.parables),
     psalms: count(state && state.psalms)
   };
 }
@@ -3763,10 +3759,8 @@ function renderBackupStatusV3149(){
       '<div class="backup-status-grid-v3149">' +
         '<span>🙏🏾 Oraciones: <strong>' + (counts.prayers||0) + '</strong></span>' +
         '<span>📖 Versículos: <strong>' + (counts.verses||0) + '</strong></span>' +
-        '<span>📚 Parábolas: <strong>' + (counts.parables||0) + '</strong></span>' +
         '<span>♫ Salmos: <strong>' + (counts.psalms||0) + '</strong></span>' +
         '<span>📝 Notas: <strong>' + (counts.notes||0) + '</strong></span>' +
-        '<span>🧭 Guía: <strong>' + (counts.guides||0) + '</strong></span>' +
         '<span>📦 Total: <strong>' + total + '</strong></span>' +
       '</div>' +
       '<div class="backup-status-advice-v3149">' + backupAdviceV3149(age) + '</div>' +
@@ -3934,7 +3928,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(appZipBtn) appZipBtn.addEventListener("click",exportInstalledAppZipV31249);
 });
 
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-258-lora-solo-textos-offline",{updateViaCache:"none"})})}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-259-sin-estudio-lora-filas",{updateViaCache:"none"})})}
 applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();updateCalendarAlert();maybeShowInstall();
 
 function getCardTextLayout(txt){
@@ -11826,9 +11820,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       {key:'prayers',label:'✝️ Oraciones',items:(state&&state.prayers)||[],title:function(x){return x.title||'Oración sin título';}},
       {key:'psalms',label:'♫ Salmos',items:(state&&state.psalms)||[],title:function(x,i){return x.title||('Salmo '+(i+1));}},
       {key:'verses',label:'❤️ Versículos',items:(state&&state.verses)||[],title:function(x){return x.reference||x.title||'Versículo';}},
-      {key:'notes',label:'📝 Notas',items:(state&&state.notes)||[],title:function(x){return x.title||'Nota sin título';}},
-      {key:'parables',label:'🌱 Parábolas',items:(state&&state.parables)||[],title:function(x){return x.title||'Parábola sin título';}},
-      {key:'guides',label:'📜 Guía',items:(state&&state.guides)||[],title:function(x){return x.title||'Guía sin título';}}
+      {key:'notes',label:'📝 Notas',items:(state&&state.notes)||[],title:function(x){return x.title||'Nota sin título';}}
     ];
   }
   window.openGlobalSearchV3177=function(){
@@ -12125,4 +12117,37 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     obs.observe(document.body,{childList:true,subtree:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true}); else start();
+})();
+
+
+/* ===== V3.1.259 · Retirada definitiva de Guía y Parábolas ===== */
+(function(){
+  'use strict';
+  var retired={guides:true,parables:true};
+  function cleanRetiredState(){
+    try{
+      if(!window.state || typeof window.state!=='object') return;
+      delete window.state.guides; delete window.state.trashGuides; delete window.state.currentGuideId;
+      delete window.state.parables; delete window.state.trashParables; delete window.state.currentParableId;
+      if(retired[window.state.section]) window.state.section='prayers';
+      if(typeof window.section!=='undefined' && retired[window.section]) window.section='prayers';
+    }catch(e){}
+  }
+  cleanRetiredState();
+  var oldSwitch=window.switchSection||(typeof switchSection!=='undefined'?switchSection:null);
+  window.switchSection=function(section){ if(retired[section]) section='prayers'; return typeof oldSwitch==='function'?oldSwitch.call(this,section):undefined; };
+  try{switchSection=window.switchSection;}catch(e){}
+  var oldSwitchRead=window.switchSectionAndReadV90187||(typeof switchSectionAndReadV90187!=='undefined'?switchSectionAndReadV90187:null);
+  window.switchSectionAndReadV90187=function(section){ if(retired[section]) section='prayers'; return typeof oldSwitchRead==='function'?oldSwitchRead.call(this,section):undefined; };
+  try{switchSectionAndReadV90187=window.switchSectionAndReadV90187;}catch(e){}
+  function removeRetiredUi(){
+    ['tabGuides','tabParables'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+    document.querySelectorAll('[data-filter="guides"],[data-filter="parables"]').forEach(function(el){el.remove();});
+    var input=document.getElementById('globalSearchInputV3177');
+    if(input) input.placeholder='Buscar oraciones, salmos, versículos y notas…';
+    cleanRetiredState();
+    if(typeof window.renderHomeCountersV3183==='function') window.renderHomeCountersV3183();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',removeRetiredUi); else removeRetiredUi();
+  setTimeout(removeRetiredUi,100); setTimeout(removeRetiredUi,700);
 })();

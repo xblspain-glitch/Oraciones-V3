@@ -1540,8 +1540,6 @@ body.dark .topbar-row #tabParables.active-view{
   text-overflow:ellipsis!important;
   white-space:nowrap!important;
   text-align:right!important;
-  position:relative;
-  left:-10px!important;
   padding-right:2px!important;
   box-sizing:border-box!important;
 }
@@ -4951,8 +4949,6 @@ body.dark-mode.home-active-v9019 .segment #tabVerses.tab-verses-heart-v3176.acti
 /* ===== V3.1.182 — iconos propios en contadores, posición original ===== */
 #counterInfo.counter-v66{
   text-align:right!important;
-  position:relative;
-  left:-10px!important;
   white-space:nowrap!important;
   overflow:visible!important;
   text-overflow:clip!important;
@@ -5026,7 +5022,8 @@ body.view-switching-v3189 #homeView{
 
 
 
-/* ===== V3.1.255 — transición sin destello de la botonera de Inicio ===== */
+
+/* ===== V2.266 — transición sin destello de la botonera de Inicio ===== */
 body.view-switching-v3189 .topbar{
   visibility:hidden!important;
   opacity:0!important;
@@ -5149,23 +5146,35 @@ body.dark .biblical-map-v2247{background:rgba(80,65,105,.28);border-color:rgba(1
 /* V2.248 — grosor uniforme: todos los marcos de secciones igual que Personajes */
 #tabPrayers.section-frame-blue-v245,#tabNotes.section-frame-yellow-v245,#tabVerses.section-frame-green-verses-v245,#btnMomentsV31102.section-frame-green-moments-v245,#tabParables.section-frame-green-parables-v245,#btnDaily.section-frame-lavender-v245,#tabGuides.section-frame-gold-guide-v247,#btnDailyRoutinesV3192.section-frame-blue-routines-v247,#calendarBtn.section-frame-orange-calendar-v247,#tabPsalms.section-frame-peach-psalms-v247,#btnMainMark.section-frame-pink-mark-v247{border-width:2px!important}
 
+/* ===== V2.267 — contador completo en pantallas estrechas ===== */
+@media (max-width:430px){
+  body.home-active-v9019 #counterInfo.counter-v66 .counter-items-v3182{
+    position:relative!important;
+    left:-10px!important;
+  }
+}
 
-/* V3.1.241 — reglas de previsualización conservadas de V3.1.240 */
-.card-style-preview-v2217.reino-dios-v2230{background-image:url('card-reino-dios-v2230.jpg?v=v3-1-241-actualizaciones-v2-256')}
-.card-style-preview-v2217.santidad-v2230{background-image:url('card-santidad-v2230.jpg?v=v3-1-241-actualizaciones-v2-256')}
-.card-style-preview-v2217.cristo-es-dios-v2230{background-image:url('card-cristo-es-dios-v2230.jpg?v=v3-1-241-actualizaciones-v2-256')}
-img.card-style-preview-v2217.classic-v2217{display:block;width:100%;height:auto;aspect-ratio:9/12;object-fit:cover;object-position:center top;}
 
-/* ===== V3.1.258 — Lora únicamente en el contenido de lectura ===== */
+
+/* V3.1.259 — Lora offline únicamente en el contenido de lectura. */
 @font-face{font-family:'Lora';src:url('./Lora-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
 @font-face{font-family:'Lora';src:url('./Lora-Bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
 @font-face{font-family:'Lora';src:url('./Lora-Italic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
 @font-face{font-family:'Lora';src:url('./Lora-BoldItalic.woff2') format('woff2');font-style:italic;font-weight:700;font-display:swap}
 
-/* Solo títulos y cuerpos de lectura; toda la interfaz conserva su tipografía original. */
+/* Títulos y cuerpos de lectura; botones, menús, etiquetas y controles conservan Arial. */
 #readerView .reader-title,
 #readerView .reader-text,
 #routineReaderV3192 .routine-reader-title-v3192,
 #routineReaderV3192 .routine-reader-text-v3192{
-  font-family:'Lora',Georgia,serif;
+  font-family:'Lora',Georgia,serif!important;
+}
+
+/* V3.1.259 — primera de las dos filas finales equilibrada en tres botones. */
+.home-fixed-row-three-v31763 > #calendarBtn,
+.home-fixed-row-three-v31763 > #tabPsalms,
+.home-fixed-row-three-v31763 > #btnMainMark{
+  flex:1 1 0!important;
+  text-align:center!important;
+  justify-content:center!important;
 }

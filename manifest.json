@@ -2,7 +2,7 @@
   "name": "Oraciones V3",
   "short_name": "Oraciones V3",
   "id": "./oraciones-v3-lab",
-  "start_url": "./?v=v3-1-258-lora-solo-textos-offline",
+  "start_url": "./?v=v3-1-259-sin-estudio-lora-filas",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -22,6 +22,6 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "3.1.258",
-  "build": "v3-1-258-lora-solo-textos-offline"
+  "version": "3.1.259",
+  "build": "v3-1-259-sin-estudio-lora-filas"
 }

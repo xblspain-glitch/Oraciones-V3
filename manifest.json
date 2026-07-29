@@ -2,7 +2,7 @@
   "name": "Oraciones V3",
   "short_name": "Oraciones V3",
   "id": "./oraciones-v3-lab",
-  "start_url": "./?v=v3-1-259-sin-estudio-lora-filas",
+  "start_url": "./?v=v3-1-260-sin-modulos-estudio-limpieza-fisica",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -22,6 +22,6 @@
       "purpose": "any maskable"
     }
   ],
-  "version": "3.1.259",
-  "build": "v3-1-259-sin-estudio-lora-filas"
+  "version": "3.1.260",
+  "build": "v3-1-260-sin-modulos-estudio-limpieza-fisica"
 }

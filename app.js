@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.274 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.272 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 let backupTrackingReadyV31268 = false;
 
@@ -499,7 +499,7 @@ function highlightBibleReferencesV49(text){
     const cleanRef=String(ref||"").replace(/\s+/g," ").trim();
     return pre+'<span class="bible-ref-highlight">📖 '+cleanRef+'</span>';
   });
-  // V3.1.274: permite destacar la numeración migrada, por ejemplo **1.**
+  // V3.1.139: permite destacar la numeración migrada, por ejemplo **1.**
   return rendered.replace(/\*\*(\d{1,3}\.)\*\*/g,'<strong class="note-number-v3139">$1</strong>');
 }
 function renderCollapsibleBlocksV864(text){
@@ -926,7 +926,7 @@ function toggleReadingUI(){
   const willHide = !document.body.classList.contains("hide-reading-ui");
   document.body.classList.toggle("hide-reading-ui");
 
-  // V3.1.274: al ocultar la botonera, acerca automáticamente el inicio
+  // V3.1.126: al ocultar la botonera, acerca automáticamente el inicio
   // de la lectura a la parte superior. Los versículos conservan su
   // comportamiento anterior y al volver a mostrar la botonera no se mueve.
   if(!willHide || section === "verses") return;
@@ -1551,7 +1551,7 @@ function openMoreMenu(ev){
 }
 
 const APP_VERSION_LABEL = "v3.1.259";
-const APP_VERSION_ZIP = "Oraciones_V3.1.274_SIN_MODULOS_ESTUDIO_LORA_FILAS.zip";
+const APP_VERSION_ZIP = "Oraciones_V3.1.259_SIN_MODULOS_ESTUDIO_LORA_FILAS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -2309,7 +2309,7 @@ function changeReaderSize(delta){
   renderReader();
 }
 
-/* V3.1.274 · Calendario trasladado a Mi Biblia de Estudio. */
+/* V3.1.267 · Calendario trasladado a Mi Biblia de Estudio. */
 function removeLegacyCalendarDataV31263(){
   try{ localStorage.removeItem("oraciones_festivity_notes_v44"); }catch(e){}
   try{
@@ -3193,6 +3193,7 @@ async function exportAllZip(){
     const zip = new ZipClass();
     const payload = await buildCompleteBackupPayloadV31245();
     zip.file("backup_completo.json", JSON.stringify(payload, null, 2));
+    try{ zip.file("catalogos/diccionario_biblico_433.json", await (await fetch("biblical-dictionary-v2264.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
 
     const folders = [
       ["oraciones", state.prayers, "Oración", "O"],
@@ -3220,13 +3221,13 @@ async function exportAllZip(){
 }
 
 
-/* ===== V3.1.274 · Descargar copia autosuficiente de la aplicación ===== */
+/* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
 const APP_VERSION_V31249 = "3.1.272";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
 });
-const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2"];
+const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2"];
 
 async function readInstalledAppFileV31249(fileName){
   const cleanName=String(fileName||"").replace(/^\.\//,"");
@@ -3406,7 +3407,7 @@ function renderBackupStatusV3149(){
     '</div>';
 }
 
-/* ===== V3.1.274 · Backup integral de toda la aplicación ===== */
+/* ===== V3.1.245 · Backup integral de toda la aplicación ===== */
 const COMPLETE_BACKUP_TYPE_V31245 = "oraciones-v3-backup-completo";
 const COMPLETE_BACKUP_VERSION_V31245 = 31263;
 
@@ -3426,20 +3427,33 @@ function readAllAppStorageV31245(){
 
 function completeBackupCountsV31245(){
   const count=a=>Array.isArray(a)?a.length:0;
-  let=0,=0,=0;
-  try{=count(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_custom_v264')||'[]'));}catch(e){}
-  try{=Object.keys(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_overrides_v264')||'{}')||{}).length;}catch(e){}
-  try{=count(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_deleted_v264')||'[]'));}catch(e){}
+  let dictionaryCustom=0,dictionaryEdited=0,dictionaryDeleted=0;
+  try{dictionaryCustom=count(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_custom_v264')||'[]'));}catch(e){}
+  try{dictionaryEdited=Object.keys(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_overrides_v264')||'{}')||{}).length;}catch(e){}
+  try{dictionaryDeleted=count(JSON.parse(localStorage.getItem('oraciones_biblical_dictionary_deleted_v264')||'[]'));}catch(e){}
   return {
     prayers:count(state&&state.prayers), notes:count(state&&state.notes), guides:count(state&&state.guides),
     verses:count(state&&state.verses), parables:count(state&&state.parables), psalms:count(state&&state.psalms),
+    dictionary:433, dictionaryCustom, dictionaryEdited, dictionaryDeleted,
     routines:state&&state.dailyRoutinesV3192?Object.values(state.dailyRoutinesV3192).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0):0,
     moments:count(state&&state.customMomentsV31106)
   };
 }
 
 async function loadCompleteCatalogsV31247(){
-  return {};
+  const result={biblicalDictionary:null};
+  const loadOptional=async function(url){
+    try{
+      const response=await fetch(url,{cache:"no-store"});
+      if(!response.ok) return null;
+      return await response.json();
+    }catch(e){
+      console.warn("Catálogo opcional no disponible:",url,e);
+      return null;
+    }
+  };
+  result.biblicalDictionary=await loadOptional("biblical-dictionary-v2264.json");
+  return result;
 }
 
 function removeObsoleteCharactersDataV31272(value){
@@ -3447,7 +3461,7 @@ function removeObsoleteCharactersDataV31272(value){
   if(!value || typeof value!=="object") return value;
   const clean={};
   Object.keys(value).forEach(function(key){
-    if(/character|characters|personaje|personajes|dictionary|diccionario|parable|parables|parabola|parabolas|guide|guides|guia|guias/i.test(key)) return;
+    if(/character|characters|personaje|personajes/i.test(key)) return;
     clean[key]=removeObsoleteCharactersDataV31272(value[key]);
   });
   return clean;
@@ -3456,7 +3470,7 @@ function removeObsoleteCharactersDataV31272(value){
 function cleanBackupStorageV31272(storageData){
   const clean={};
   Object.keys(storageData||{}).forEach(function(key){
-    if(/character|characters|personaje|personajes|dictionary|diccionario|parable|parables|parabola|parabolas|guide|guides|guia|guias/i.test(key)) return;
+    if(/character|characters|personaje|personajes/i.test(key)) return;
     clean[key]=storageData[key];
   });
   return clean;
@@ -3468,11 +3482,13 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.274",
-    description: "Copia integral de Oraciones, Notas, Versículos, Salmos, favoritos, categorías, papelera, ajustes y estado de restauración.",
+    appVersion: "3.1.272",
+    description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
-    catalogs: {},
+    catalogs: {
+      biblicalDictionary: fullCatalogs.biblicalDictionary
+    },
     counts: completeBackupCountsV31245()
   };
 }
@@ -3618,7 +3634,7 @@ function markCurrentVerseCardSentDirect(){
 
 function getThematicCardTextLayoutV2220(txt){
   const n=String(txt||"").length;
-  // V3.1.274 — tamaño inicial generoso. El ajuste definitivo se calcula
+  // V3.1.239 — tamaño inicial generoso. El ajuste definitivo se calcula
   // con la anchura y la altura reales disponibles, sin cortar el versículo.
   if(n<=150) return {font:57,y:1285};
   if(n<=240) return {font:51,y:1285};
@@ -3770,7 +3786,7 @@ async function shareVerseCard(cardStyle="classic"){
     canvas.height=1920;
     const ctx=canvas.getContext("2d");
 
-    // V3.1.274 — fondo completo corregido: el azul continúa hasta el borde inferior, sin franja gris.
+    // V3.1.197 — fondo completo corregido: el azul continúa hasta el borde inferior, sin franja gris.
     // La app conserva por encima todos los elementos dinámicos: borde, marca de agua, textos y pie.
     try{
       const cardBackground=await new Promise((resolve,reject)=>{
@@ -3875,7 +3891,7 @@ async function shareVerseCard(cardStyle="classic"){
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
     ctx.fillText(fecha,540,usesNewTextLayoutV2231?965:655);
 
-    // V3.1.274 — categoría sin icono, en mayúsculas y centrada.
+    // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
     const categoryTextV3200=String(category||"")
       .replace(/^[^\p{L}\p{N}]+\s*/u,"")
       .toLocaleUpperCase("es-ES");
@@ -3905,7 +3921,7 @@ async function shareVerseCard(cardStyle="classic"){
 
     const textLayout=usesNewTextLayoutV2231 ? getThematicCardTextLayoutV2220(body) : getCardTextLayout(body);
 
-    // V3.1.274 — ajuste dinámico real del versículo conservado desde V3.1.274.
+    // V3.1.241 — ajuste dinámico real del versículo conservado desde V3.1.240.
     // Se mide el texto completo con el ancho disponible y se reduce la fuente
     // solo lo necesario hasta que la última línea quede sobre la bendición.
     function splitTextIntoLinesV2241(ctx,text,maxWidth){
@@ -10366,7 +10382,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   else setTimeout(initV31116,0);
 })();
 
-/* ===== V3.1.274 - Recomendaciones completas sin espera fija ===== */
+/* ===== V3.1.134 - Recomendaciones completas sin espera fija ===== */
 (function(){
   if(window.__v31134ReadingComfortInstalled) return;
   window.__v31134ReadingComfortInstalled=true;
@@ -10515,7 +10531,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.274 - Migración única de flechas antiguas en Notas ===== */
+/* ===== V3.1.140 - Migración única de flechas antiguas en Notas ===== */
 (function(){
   if(window.__v31140NoteArrowMigrationInstalled) return;
   window.__v31140NoteArrowMigrationInstalled=true;
@@ -10608,7 +10624,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.274 - Migración única de 🔟 ===== */
+/* ===== V3.1.141 - Migración única de 🔟 ===== */
 (function(){
  if(window.__v31141TenMigrationInstalled)return;
  window.__v31141TenMigrationInstalled=true;
@@ -10636,7 +10652,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
  else setTimeout(run,500);
 })();
 
-/* ===== V3.1.274 - Posición estable sin pequeño salto ===== */
+/* ===== V3.1.143 - Posición estable sin pequeño salto ===== */
 (function(){
   if(window.__v31143ScrollStable) return;
   window.__v31143ScrollStable = true;
@@ -10725,7 +10741,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   },300);
 })();
 
-/* ===== V3.1.274 - Emergentes: conservar posición desde pointerdown ===== */
+/* ===== V3.1.144 - Emergentes: conservar posición desde pointerdown ===== */
 (function(){
   if(window.__v31144PopupPointerScrollFix) return;
   window.__v31144PopupPointerScrollFix = true;
@@ -10867,7 +10883,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   try{closeReaderPopupBlockV908=window.closeReaderPopupBlockV908;}catch(e){}
 })();
 
-/* ===== V3.1.274 - Emergente persistente con fondo inmóvil sin overflow:hidden ===== */
+/* ===== V3.1.153 - Emergente persistente con fondo inmóvil sin overflow:hidden ===== */
 (function(){
   if(window.__v31148StablePopup) return;
   window.__v31148StablePopup=true;
@@ -10929,7 +10945,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
     try{
       if(p.host && p.host.style){
         p.host.style.overflowAnchor='none';
-        /* V3.1.274: no tocar overflow del contenedor raíz. En Android,
+        /* V3.1.152: no tocar overflow del contenedor raíz. En Android,
            overflow:hidden iniciaba un desplazamiento nativo diferido que
            luego era corregido por el temporizador, produciendo el temblor. */
       }
@@ -10997,7 +11013,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   document.addEventListener('touchstart',preCapture,{capture:true,passive:true});
   document.addEventListener('mousedown',preCapture,true);
 
-  /* V3.1.274: bloquear únicamente los gestos que intentarían desplazar el
+  /* V3.1.153: bloquear únicamente los gestos que intentarían desplazar el
      documento situado detrás del emergente. No se cambia overflow, position,
      height ni scrollTop del fondo, por lo que su posición permanece intacta. */
   var lastTouchY=null;
@@ -11103,7 +11119,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   else setTimeout(install,380);
 })();
 
-/* ===== V3.1.274 - MODO RESCATE DE EMERGENTES GUARDADOS ===== */
+/* ===== V3.1.167 - MODO RESCATE DE EMERGENTES GUARDADOS ===== */
 (function(){
   'use strict';
   function getCurrentTextSafe(){
@@ -11162,15 +11178,15 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
         if(Math.abs(now-before)>0.5) window.scrollTo(0,before);
       });
     }catch(e){
-      console.error('V3.1.274 rescue popup',e);
+      console.error('V3.1.167 rescue popup',e);
       alert('No se pudo abrir este emergente. Puede estar dañado, pero sus datos no se han borrado.');
     }
   };
 })();
 
-/* ===== V3.1.274 · Corrección de posición al cerrar recomendaciones ===== */
+/* ===== V3.1.171 · Corrección de posición al cerrar recomendaciones ===== */
 
-/* ===== V3.1.274 · BUSCADOR GENERAL ===== */
+/* ===== V3.1.170 · BUSCADOR GENERAL ===== */
 (function(){
   var filterV3177='all';
   function escV3177(v){
@@ -11359,7 +11375,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
       return;
     }
 
-    /* V3.1.274: el parche de transición oculta la tarjeta antes del click.
+    /* V3.1.212: el parche de transición oculta la tarjeta antes del click.
        La clase home-active conserva la intención real de volver al inicio. */
     if((snapshot.bodyClass || '').split(/\s+/).indexOf('home-active-v9019') !== -1){
       document.body.classList.remove('utility-fullscreen-v2189','special-view-only','backup-only');
@@ -11409,7 +11425,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   try{ openTrash = window.openTrash; }catch(e){}
 })();
 
-/* ===== V3.1.274 — evita el pequeño salto al abrir algunas secciones ===== */
+/* ===== V3.1.189 — evita el pequeño salto al abrir algunas secciones ===== */
 (function(){
   if(window.__v3189StableViewSwitch) return;
   window.__v3189StableViewSwitch = true;
@@ -11439,7 +11455,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.274 — iconos ilustrados globales: Mañana, Noche y Cruz ===== */
+/* ===== V3.1.193 — iconos ilustrados globales: Mañana, Noche y Cruz ===== */
 (function(){
   const ICONS={
     '✝️':{kind:'cross',cls:'inline-faith-cross-v3193',label:'Cruz'},
@@ -11487,7 +11503,7 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
 })();
 
 
-/* ===== V3.1.274 · Retirada definitiva de Guía y Parábolas ===== */
+/* ===== V3.1.259 · Retirada definitiva de Guía y Parábolas ===== */
 (function(){
   'use strict';
   var retired={guides:true,parables:true};

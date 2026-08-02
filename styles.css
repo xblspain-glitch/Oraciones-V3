@@ -5130,12 +5130,12 @@ body.dark .biblical-map-v2247{background:rgba(80,65,105,.28);border-color:rgba(1
 }
 
 
-/* V3.1.265 · Salmos y Marca ocupan la fila liberada */
+/* V3.1.266 · Salmos y Marca ocupan la fila liberada */
 .home-fixed-row-two-v31263 > #tabPsalms,
 .home-fixed-row-two-v31263 > #btnMainMark{flex:1 1 0!important;text-align:center!important;justify-content:center!important}
 
 
-/* V3.1.265 · Fila 2 igual de ancha que la fila 1 */
+/* V3.1.266 · Fila 2 igual de ancha que la fila 1 */
 .home-daily-row,
 .home-daily-actions,
 .home-row-daily,
@@ -5166,7 +5166,7 @@ body.dark .biblical-map-v2247{background:rgba(80,65,105,.28);border-color:rgba(1
 }
 
 
-/* V3.1.265 · Fila 2 real: Versículo del día y Día/Noche al 50 % */
+/* V3.1.266 · Fila 2 real: Versículo del día y Día/Noche al 50 % */
 body.home-active-v9019 .topbar-row > #btnDaily,
 body.home-active-v9019 .topbar-row > #btnDailyRoutinesV3192{
   flex:1 1 calc(50% - 4px)!important;
@@ -5189,6 +5189,28 @@ body.home-active-v9019 .topbar-row > #btnMomentsV31102{
 @media(max-width:420px){
   body.home-active-v9019 .topbar-row > #btnDaily,
   body.home-active-v9019 .topbar-row > #btnDailyRoutinesV3192{
+    flex-basis:calc(50% - 3px)!important;
+    width:calc(50% - 3px)!important;
+    max-width:calc(50% - 3px)!important;
+  }
+}
+
+
+/* V3.1.266 · Fila 3: Momentos y Buscar al 50 % */
+body.home-active-v9019 .topbar-row > #btnMomentsV31102,
+body.home-active-v9019 .topbar-row > #btnGlobalSearchV3177{
+  flex:1 1 calc(50% - 4px)!important;
+  width:calc(50% - 4px)!important;
+  min-width:0!important;
+  max-width:calc(50% - 4px)!important;
+  box-sizing:border-box!important;
+  justify-content:center!important;
+  text-align:center!important;
+}
+
+@media(max-width:420px){
+  body.home-active-v9019 .topbar-row > #btnMomentsV31102,
+  body.home-active-v9019 .topbar-row > #btnGlobalSearchV3177{
     flex-basis:calc(50% - 3px)!important;
     width:calc(50% - 3px)!important;
     max-width:calc(50% - 3px)!important;

@@ -5130,6 +5130,37 @@ body.dark .biblical-map-v2247{background:rgba(80,65,105,.28);border-color:rgba(1
 }
 
 
-/* V3.1.263 · Salmos y Marca ocupan la fila liberada */
+/* V3.1.264 · Salmos y Marca ocupan la fila liberada */
 .home-fixed-row-two-v31263 > #tabPsalms,
 .home-fixed-row-two-v31263 > #btnMainMark{flex:1 1 0!important;text-align:center!important;justify-content:center!important}
+
+
+/* V3.1.264 · Fila 2 igual de ancha que la fila 1 */
+.home-daily-row,
+.home-daily-actions,
+.home-row-daily,
+.home-verse-theme-row{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  width:100%!important;
+}
+.home-daily-row > *,
+.home-daily-actions > *,
+.home-row-daily > *,
+.home-verse-theme-row > *{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  flex:1 1 0!important;
+}
+#dailyVerseBtn,
+#dayNightBtn,
+#themeBtn,
+#verseOfDayBtn{
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  flex:1 1 0!important;
+  box-sizing:border-box!important;
+}

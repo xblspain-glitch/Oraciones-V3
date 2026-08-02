@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.268 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.269 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 let backupTrackingReadyV31268 = false;
 
@@ -1001,6 +1001,7 @@ function saveCurrentOriginal(stay, silent){
   setSaveStatus("Guardado");
 
   saveState();
+  setBackupPendingV31268(true);
   renderList();
   renderReader();
 
@@ -1268,6 +1269,7 @@ function newItem(){
   setCurrentId(id);
   normalizeGuides();
   saveState();
+  setBackupPendingV31268(true);
   renderList();
   renderReader();
   openEditor();

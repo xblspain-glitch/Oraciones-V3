@@ -5238,3 +5238,18 @@ body.home-active-v9019 .topbar-row > #btnGlobalSearchV3177{
   -webkit-text-fill-color:#3a1b00!important;
   text-shadow:none!important;
 }
+
+
+/* V3.1.271 · Selector exacto del botón Backup pendiente */
+html body.home-active-v9019 .topbar-row > button#btnBackup.backup-pending-v31268,
+html body:not(.dark).home-active-v9019 .topbar-row > button#btnBackup.backup-pending-v31268,
+html body.dark.home-active-v9019 .topbar-row > button#btnBackup.backup-pending-v31268,
+html body .topbar-row > button#btnBackup.backup-pending-v31268.active-view{
+  background:linear-gradient(135deg,#ff9f1a 0%,#f47b00 100%)!important;
+  color:#2b1600!important;
+  -webkit-text-fill-color:#2b1600!important;
+  text-shadow:none!important;
+  border-color:#d76500!important;
+  box-shadow:0 6px 18px rgba(244,123,0,.42)!important;
+  font-weight:800!important;
+}

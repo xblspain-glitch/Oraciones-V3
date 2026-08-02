@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.270 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.271 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 let backupTrackingReadyV31268 = false;
 
@@ -72,6 +72,24 @@ function renderBackupPendingV31268(){
   btn.classList.toggle("backup-pending-v31268", pending);
   btn.setAttribute("aria-label", pending ? "Backup: hay cambios pendientes de exportar" : "Backup");
   btn.title = pending ? "Hay cambios pendientes de exportar" : "Backup";
+
+  if(pending){
+    btn.style.setProperty("background", "linear-gradient(135deg,#ff9f1a 0%,#f47b00 100%)", "important");
+    btn.style.setProperty("color", "#2b1600", "important");
+    btn.style.setProperty("-webkit-text-fill-color", "#2b1600", "important");
+    btn.style.setProperty("text-shadow", "none", "important");
+    btn.style.setProperty("border-color", "#d76500", "important");
+    btn.style.setProperty("box-shadow", "0 6px 18px rgba(244,123,0,.42)", "important");
+    btn.style.setProperty("font-weight", "800", "important");
+  }else{
+    btn.style.removeProperty("background");
+    btn.style.removeProperty("color");
+    btn.style.removeProperty("-webkit-text-fill-color");
+    btn.style.removeProperty("text-shadow");
+    btn.style.removeProperty("border-color");
+    btn.style.removeProperty("box-shadow");
+    btn.style.removeProperty("font-weight");
+  }
 }
 
 function saveState(){

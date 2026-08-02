@@ -5216,3 +5216,17 @@ body.home-active-v9019 .topbar-row > #btnGlobalSearchV3177{
     max-width:calc(50% - 3px)!important;
   }
 }
+
+
+/* V3.1.268 · Botón Backup naranja cuando hay cambios pendientes */
+#btnBackup.backup-pending-v31268{
+  background:linear-gradient(135deg,#f5a12a,#d96f0b)!important;
+  color:#fff!important;
+  border-color:#bd5d08!important;
+  box-shadow:0 6px 18px rgba(224,118,13,.38)!important;
+  font-weight:800!important;
+}
+#btnBackup.backup-pending-v31268:hover,
+#btnBackup.backup-pending-v31268:focus{
+  background:linear-gradient(135deg,#ffb342,#e57a10)!important;
+}

@@ -41,11 +41,50 @@ function normalizeGuides(){
   normalizeVerses();
 }
 
+
+/* ===== V3.1.268 · Aviso naranja de copia pendiente ===== */
+const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
+let backupTrackingReadyV31268 = false;
+
+function backupComparableStateV31268(value){
+  try{
+    const src = typeof value === "string" ? JSON.parse(value) : (value || {});
+    const copy = JSON.parse(JSON.stringify(src));
+    delete copy.section;
+    delete copy.currentPrayerId;
+    delete copy.currentNoteId;
+    delete copy.currentGuideId;
+    delete copy.currentVerseId;
+    return JSON.stringify(copy);
+  }catch(e){ return String(value || ""); }
+}
+function setBackupPendingV31268(pending){
+  try{ localStorage.setItem(BACKUP_PENDING_KEY_V31268, pending ? "1" : "0"); }catch(e){}
+  renderBackupPendingV31268();
+}
+function isBackupPendingV31268(){
+  try{ return localStorage.getItem(BACKUP_PENDING_KEY_V31268) === "1"; }catch(e){ return false; }
+}
+function renderBackupPendingV31268(){
+  const btn=document.getElementById("btnBackup");
+  if(!btn) return;
+  const pending=isBackupPendingV31268();
+  btn.classList.toggle("backup-pending-v31268", pending);
+  btn.setAttribute("aria-label", pending ? "Backup: hay cambios pendientes de exportar" : "Backup");
+  btn.title = pending ? "Hay cambios pendientes de exportar" : "Backup";
+}
+
 function saveState(){
   cleanAllVerseBreaks();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  const nextState = JSON.stringify(state);
+  let previousState = null;
+  try{ previousState = localStorage.getItem(STORAGE_KEY); }catch(e){}
+  localStorage.setItem(STORAGE_KEY, nextState);
   const backup = {"exportedAt": new Date().toISOString(), ...state};
   localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify(backup));
+  if(backupTrackingReadyV31268 && backupComparableStateV31268(previousState) !== backupComparableStateV31268(nextState)){
+    setBackupPendingV31268(true);
+  }
 }
 
 function loadState(){
@@ -3318,6 +3357,7 @@ function saveBackupStatusV3149(method, filename){
     total: backupTotalV3149(counts)
   };
   localStorage.setItem(BACKUP_EXPORT_STATUS_KEY_V3149, JSON.stringify(payload));
+  setBackupPendingV31268(false);
   renderBackupStatusV3149();
 }
 
@@ -3509,7 +3549,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-261-tarjetas-fe-dios-sin-iconos",{updateViaCache:"none"})})}
-applyTheme();loadState();syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();maybeShowInstall();
+applyTheme();loadState();backupTrackingReadyV31268=true;syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();renderBackupPendingV31268();maybeShowInstall();
 
 function getCardTextLayout(txt){
   const n = String(txt || "").length;

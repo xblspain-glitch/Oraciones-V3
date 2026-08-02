@@ -42,8 +42,9 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.272 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.275 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
+const BACKUP_EXPORTED_FINGERPRINT_KEY_V31275 = "oraciones_backup_exported_fingerprint_v31275";
 let backupTrackingReadyV31268 = false;
 
 function backupComparableStateV31268(value){
@@ -58,8 +59,38 @@ function backupComparableStateV31268(value){
     return JSON.stringify(copy);
   }catch(e){ return String(value || ""); }
 }
+function currentBackupFingerprintV31275(){
+  try{
+    return backupComparableStateV31268(state || {});
+  }catch(e){
+    return "";
+  }
+}
+
 function setBackupPendingV31268(pending){
-  try{ localStorage.setItem(BACKUP_PENDING_KEY_V31268, pending ? "1" : "0"); }catch(e){}
+  try{
+    const currentFingerprint = currentBackupFingerprintV31275();
+
+    if(!pending){
+      localStorage.setItem(BACKUP_EXPORTED_FINGERPRINT_KEY_V31275, currentFingerprint);
+      localStorage.setItem(BACKUP_PENDING_KEY_V31268, "0");
+    }else{
+      let exportedFingerprint = localStorage.getItem(BACKUP_EXPORTED_FINGERPRINT_KEY_V31275);
+
+      /* Primera apertura tras actualizar:
+         si la copia figuraba al día, toma el estado actual como referencia
+         para que los guardados automáticos de inicio no enciendan el aviso. */
+      if(!exportedFingerprint && localStorage.getItem(BACKUP_PENDING_KEY_V31268) !== "1"){
+        exportedFingerprint = currentFingerprint;
+        localStorage.setItem(BACKUP_EXPORTED_FINGERPRINT_KEY_V31275, currentFingerprint);
+      }
+
+      localStorage.setItem(
+        BACKUP_PENDING_KEY_V31268,
+        currentFingerprint !== exportedFingerprint ? "1" : "0"
+      );
+    }
+  }catch(e){}
   renderBackupPendingV31268();
 }
 function isBackupPendingV31268(){
@@ -3482,7 +3513,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.272",
+    appVersion: "3.1.275",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
@@ -3591,7 +3622,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-261-tarjetas-fe-dios-sin-iconos",{updateViaCache:"none"})})}
-applyTheme();loadState();backupTrackingReadyV31268=true;syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();renderBackupPendingV31268();maybeShowInstall();
+applyTheme();loadState();backupTrackingReadyV31268=true;setBackupPendingV31268(isBackupPendingV31268());syncTabs();renderList();renderReader();applyReaderFont();openReader();updateSearchForReaderV26();renderBackupPendingV31268();maybeShowInstall();
 
 function getCardTextLayout(txt){
   const n = String(txt || "").length;

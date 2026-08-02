@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.271 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.272 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 let backupTrackingReadyV31268 = false;
 
@@ -3193,7 +3193,6 @@ async function exportAllZip(){
     const zip = new ZipClass();
     const payload = await buildCompleteBackupPayloadV31245();
     zip.file("backup_completo.json", JSON.stringify(payload, null, 2));
-    try{ zip.file("catalogos/personajes_biblicos_409.json", await (await fetch("biblical-characters-v2261.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
     try{ zip.file("catalogos/diccionario_biblico_433.json", await (await fetch("biblical-dictionary-v2264.json",{cache:"no-store"})).text()); }catch(e){ console.warn(e); }
 
     const folders = [
@@ -3223,12 +3222,12 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.267";
+const APP_VERSION_V31249 = "3.1.272";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
 });
-const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-characters-v2243.css", "biblical-characters-v2243.js", "biblical-characters-v2261.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-personajes-biblicos-v2255.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2"];
+const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2"];
 
 async function readInstalledAppFileV31249(fileName){
   const cleanName=String(fileName||"").replace(/^\.\//,"");
@@ -3435,36 +3434,59 @@ function completeBackupCountsV31245(){
   return {
     prayers:count(state&&state.prayers), notes:count(state&&state.notes), guides:count(state&&state.guides),
     verses:count(state&&state.verses), parables:count(state&&state.parables), psalms:count(state&&state.psalms),
-    characters:409, dictionary:433, dictionaryCustom, dictionaryEdited, dictionaryDeleted,
+    dictionary:433, dictionaryCustom, dictionaryEdited, dictionaryDeleted,
     routines:state&&state.dailyRoutinesV3192?Object.values(state.dailyRoutinesV3192).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0):0,
     moments:count(state&&state.customMomentsV31106)
   };
 }
 
 async function loadCompleteCatalogsV31247(){
-  const result={biblicalCharacters:null,biblicalDictionary:null};
-  const load=async function(url){
-    const response=await fetch(url,{cache:"no-store"});
-    if(!response.ok) throw new Error("No se pudo cargar "+url);
-    return await response.json();
+  const result={biblicalDictionary:null};
+  const loadOptional=async function(url){
+    try{
+      const response=await fetch(url,{cache:"no-store"});
+      if(!response.ok) return null;
+      return await response.json();
+    }catch(e){
+      console.warn("Catálogo opcional no disponible:",url,e);
+      return null;
+    }
   };
-  result.biblicalCharacters=await load("biblical-characters-v2261.json");
-  result.biblicalDictionary=await load("biblical-dictionary-v2264.json");
+  result.biblicalDictionary=await loadOptional("biblical-dictionary-v2264.json");
   return result;
+}
+
+function removeObsoleteCharactersDataV31272(value){
+  if(Array.isArray(value)) return value.map(removeObsoleteCharactersDataV31272);
+  if(!value || typeof value!=="object") return value;
+  const clean={};
+  Object.keys(value).forEach(function(key){
+    if(/character|characters|personaje|personajes/i.test(key)) return;
+    clean[key]=removeObsoleteCharactersDataV31272(value[key]);
+  });
+  return clean;
+}
+
+function cleanBackupStorageV31272(storageData){
+  const clean={};
+  Object.keys(storageData||{}).forEach(function(key){
+    if(/character|characters|personaje|personajes/i.test(key)) return;
+    clean[key]=storageData[key];
+  });
+  return clean;
 }
 
 async function buildCompleteBackupPayloadV31245(){
   const fullCatalogs=await loadCompleteCatalogsV31247();
   return {
     type: COMPLETE_BACKUP_TYPE_V31245,
-    version: 31263,
+    version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.267",
-    description: "Copia integral y autosuficiente: datos, ajustes, 409 personajes completos y 433 entradas completas del diccionario.",
-    state: JSON.parse(JSON.stringify(state||{})),
-    localStorage: readAllAppStorageV31245(),
+    appVersion: "3.1.272",
+    description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
+    state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
+    localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
     catalogs: {
-      biblicalCharacters: fullCatalogs.biblicalCharacters,
       biblicalDictionary: fullCatalogs.biblicalDictionary
     },
     counts: completeBackupCountsV31245()
@@ -3877,7 +3899,7 @@ async function shareVerseCard(cardStyle="classic"){
     ctx.textAlign="center";
     ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1045:742);
 
-    // V3.1.243 — referencia bíblica fija y sección final de 409 personajes.
+    // Referencia bíblica fija.
     // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.
     const REFERENCE_FONT_SIZE_V3241=74;
     ctx.font="bold "+REFERENCE_FONT_SIZE_V3241+"px Georgia, serif";

@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.269 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.270 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 let backupTrackingReadyV31268 = false;
 

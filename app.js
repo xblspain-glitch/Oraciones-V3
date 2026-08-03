@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.278 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.279 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 const BACKUP_EXPORTED_FINGERPRINT_KEY_V31275 = "oraciones_backup_exported_fingerprint_v31275";
 let backupTrackingReadyV31268 = false;
@@ -116,6 +116,32 @@ function setBackupPendingV31268(pending){
 }
 function isBackupPendingV31268(){
   try{ return localStorage.getItem(BACKUP_PENDING_KEY_V31268) === "1"; }catch(e){ return false; }
+}
+
+/* Guarda ajustes técnicos producidos al navegar o normalizar datos.
+   No los considera cambios del usuario y, si la copia estaba al día,
+   actualiza la huella de referencia para evitar falsos avisos posteriores. */
+function saveTechnicalStateV31279(){
+  const wasTracking = backupTrackingReadyV31268;
+  const wasPending = isBackupPendingV31268();
+
+  try{
+    backupTrackingReadyV31268 = false;
+    saveState();
+
+    if(!wasPending){
+      localStorage.setItem(
+        BACKUP_EXPORTED_FINGERPRINT_KEY_V31275,
+        currentBackupFingerprintV31275()
+      );
+      localStorage.setItem(BACKUP_PENDING_KEY_V31268, "0");
+    }
+  }catch(e){
+    console.warn("No se pudo guardar el estado técnico", e);
+  }finally{
+    backupTrackingReadyV31268 = wasTracking;
+    renderBackupPendingV31268();
+  }
 }
 function renderBackupPendingV31268(){
   const btn=document.getElementById("btnBackup");
@@ -3536,7 +3562,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.278",
+    appVersion: "3.1.279",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
@@ -5123,7 +5149,7 @@ setInterval(updateVersePositionCounter, 1000);
     state.section="verses";
     currentVerseCategory=currentVerseCategory||"sin_categoria";
     normalizeVerses();
-    saveState();
+    saveTechnicalStateV31279();
     syncTabs();
     renderList();
 

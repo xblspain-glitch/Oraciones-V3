@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.276 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.277 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 const BACKUP_EXPORTED_FINGERPRINT_KEY_V31275 = "oraciones_backup_exported_fingerprint_v31275";
 let backupTrackingReadyV31268 = false;
@@ -50,13 +50,25 @@ let backupTrackingReadyV31268 = false;
 function backupComparableStateV31268(value){
   try{
     const src = typeof value === "string" ? JSON.parse(value) : (value || {});
-    const copy = JSON.parse(JSON.stringify(src));
-    delete copy.section;
-    delete copy.currentPrayerId;
-    delete copy.currentNoteId;
-    delete copy.currentGuideId;
-    delete copy.currentVerseId;
-    return JSON.stringify(copy);
+
+    /* Solo comparamos contenido respaldable. La sección abierta, el elemento
+       seleccionado y los modos de navegación cambian al explorar la app,
+       pero no representan información nueva que requiera otra copia. */
+    function cleanNavigationStateV31277(input){
+      if(Array.isArray(input)) return input.map(cleanNavigationStateV31277);
+      if(!input || typeof input !== "object") return input;
+
+      const clean = {};
+      Object.keys(input).forEach(function(key){
+        if(key === "section") return;
+        if(/^current.*(?:Id|Mode|View|Category)$/i.test(key)) return;
+        if(/^(?:navigationMode|readerMode|specialVerseMode|searchQuery|activeView|selectedTab)$/i.test(key)) return;
+        clean[key] = cleanNavigationStateV31277(input[key]);
+      });
+      return clean;
+    }
+
+    return JSON.stringify(cleanNavigationStateV31277(src));
   }catch(e){ return String(value || ""); }
 }
 function currentBackupFingerprintV31275(){
@@ -3513,7 +3525,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.276",
+    appVersion: "3.1.277",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),

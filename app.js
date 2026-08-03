@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.279 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.280 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 const BACKUP_EXPORTED_FINGERPRINT_KEY_V31275 = "oraciones_backup_exported_fingerprint_v31275";
 let backupTrackingReadyV31268 = false;
@@ -50,34 +50,13 @@ let backupTrackingReadyV31268 = false;
 function backupComparableStateV31268(value){
   try{
     const src = typeof value === "string" ? JSON.parse(value) : (value || {});
-
-    /* Solo comparamos contenido respaldable. La sección abierta, el elemento
-       seleccionado y los modos de navegación cambian al explorar la app,
-       pero no representan información nueva que requiera otra copia. */
-    function cleanNavigationStateV31277(input){
-      if(Array.isArray(input)) return input.map(cleanNavigationStateV31277);
-      if(!input || typeof input !== "object") return input;
-
-      const clean = {};
-      Object.keys(input).forEach(function(key){
-        if(key === "section") return;
-        if(/^current.*(?:Id|Mode|View|Category)$/i.test(key)) return;
-        if(/^(?:navigationMode|readerMode|specialVerseMode|searchQuery|activeView|selectedTab)$/i.test(key)) return;
-
-        /* Estados que se crean o actualizan al abrir botones, pero no son
-           contenido nuevo del usuario ni requieren una nueva copia. */
-        if(/^(?:dailyVerse|dailyRoutinesV3192)$/i.test(key)) return;
-
-        /* Las categorías predeterminadas se inicializan al abrir Versículos.
-           Se controlan aparte cuando el usuario realmente las modifica. */
-        if(/^verseCategories$/i.test(key)) return;
-
-        clean[key] = cleanNavigationStateV31277(input[key]);
-      });
-      return clean;
-    }
-
-    return JSON.stringify(cleanNavigationStateV31277(src));
+    const copy = JSON.parse(JSON.stringify(src));
+    delete copy.section;
+    delete copy.currentPrayerId;
+    delete copy.currentNoteId;
+    delete copy.currentGuideId;
+    delete copy.currentVerseId;
+    return JSON.stringify(copy);
   }catch(e){ return String(value || ""); }
 }
 function currentBackupFingerprintV31275(){
@@ -117,32 +96,6 @@ function setBackupPendingV31268(pending){
 function isBackupPendingV31268(){
   try{ return localStorage.getItem(BACKUP_PENDING_KEY_V31268) === "1"; }catch(e){ return false; }
 }
-
-/* Guarda ajustes técnicos producidos al navegar o normalizar datos.
-   No los considera cambios del usuario y, si la copia estaba al día,
-   actualiza la huella de referencia para evitar falsos avisos posteriores. */
-function saveTechnicalStateV31279(){
-  const wasTracking = backupTrackingReadyV31268;
-  const wasPending = isBackupPendingV31268();
-
-  try{
-    backupTrackingReadyV31268 = false;
-    saveState();
-
-    if(!wasPending){
-      localStorage.setItem(
-        BACKUP_EXPORTED_FINGERPRINT_KEY_V31275,
-        currentBackupFingerprintV31275()
-      );
-      localStorage.setItem(BACKUP_PENDING_KEY_V31268, "0");
-    }
-  }catch(e){
-    console.warn("No se pudo guardar el estado técnico", e);
-  }finally{
-    backupTrackingReadyV31268 = wasTracking;
-    renderBackupPendingV31268();
-  }
-}
 function renderBackupPendingV31268(){
   const btn=document.getElementById("btnBackup");
   if(!btn) return;
@@ -173,14 +126,9 @@ function renderBackupPendingV31268(){
 function saveState(){
   cleanAllVerseBreaks();
   const nextState = JSON.stringify(state);
-  let previousState = null;
-  try{ previousState = localStorage.getItem(STORAGE_KEY); }catch(e){}
   localStorage.setItem(STORAGE_KEY, nextState);
   const backup = {"exportedAt": new Date().toISOString(), ...state};
   localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify(backup));
-  if(backupTrackingReadyV31268 && backupComparableStateV31268(previousState) !== backupComparableStateV31268(nextState)){
-    setBackupPendingV31268(true);
-  }
 }
 
 function loadState(){
@@ -1819,7 +1767,6 @@ function createVerseCategory(){
 
   state.verseCategories.push({id:id,label:(emoji+" "+name).trim()});
   saveState();
-  setBackupPendingV31268(true);
   renderVerseCategories();
   toast("Categoría creada");
 }
@@ -1839,7 +1786,6 @@ function renameVerseCategory(){
 
   state.verseCategories[idx].label=nuevo;
   saveState();
-  setBackupPendingV31268(true);
   renderVerseCategories();
   toast("Categoría renombrada");
 }
@@ -3562,7 +3508,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.279",
+    appVersion: "3.1.280",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
@@ -5149,7 +5095,7 @@ setInterval(updateVersePositionCounter, 1000);
     state.section="verses";
     currentVerseCategory=currentVerseCategory||"sin_categoria";
     normalizeVerses();
-    saveTechnicalStateV31279();
+    saveState();
     syncTabs();
     renderList();
 
@@ -11650,3 +11596,86 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',removeRetiredUi); else removeRetiredUi();
   setTimeout(removeRetiredUi,100); setTimeout(removeRetiredUi,700);
 })();
+
+
+/* ===== V3.1.280 · Backup solo por cambios reales =====
+   Navegar, abrir pantallas o normalizar datos no activa el aviso.
+   Únicamente se comparan el estado anterior y posterior de acciones
+   concretas que pueden modificar contenido del usuario. */
+(function installExplicitBackupTrackingV31280(){
+  const mutationFunctions = [
+    "saveCurrent",
+    "saveCurrentOriginal",
+    "newItem",
+    "moveToTrash",
+    "restoreFromTrash",
+    "deleteForever",
+    "emptyTrash",
+    "toggleFavorite",
+    "createVerseCategory",
+    "renameVerseCategory",
+    "deleteVerseCategory",
+    "moveVerseToCategory",
+    "saveCollapsibleBlockV864",
+    "setCurrentContentTextV865",
+    "saveMomentCatalogV31102",
+    "markCurrentVerseCardSentDirect",
+    "clearSentMark",
+    "createSeparatorV3171",
+    "renameSeparatorV3171",
+    "deleteSeparatorV3171",
+    "moveV3171",
+    "savePrayerCategoriesV3180"
+  ];
+
+  function snapshot(){
+    try{
+      return JSON.stringify(state || {});
+    }catch(e){
+      return "";
+    }
+  }
+
+  function wrap(name){
+    const original = window[name];
+    if(typeof original !== "function" || original.__backupWrappedV31280) return;
+
+    function wrapped(){
+      const before = snapshot();
+      const result = original.apply(this, arguments);
+
+      const finish = function(){
+        const after = snapshot();
+        if(before !== after){
+          setBackupPendingV31268(true);
+        }
+      };
+
+      if(result && typeof result.then === "function"){
+        return result.then(function(value){
+          finish();
+          return value;
+        }, function(error){
+          finish();
+          throw error;
+        });
+      }
+
+      finish();
+      return result;
+    }
+
+    wrapped.__backupWrappedV31280 = true;
+    window[name] = wrapped;
+  }
+
+  function install(){
+    mutationFunctions.forEach(wrap);
+  }
+
+  install();
+  document.addEventListener("DOMContentLoaded", install, {once:true});
+  setTimeout(install, 500);
+  setTimeout(install, 1800);
+})();
+

@@ -42,7 +42,7 @@ function normalizeGuides(){
 }
 
 
-/* ===== V3.1.277 · Aviso naranja de copia pendiente ===== */
+/* ===== V3.1.278 · Aviso naranja de copia pendiente ===== */
 const BACKUP_PENDING_KEY_V31268 = "oraciones_backup_pending_v31268";
 const BACKUP_EXPORTED_FINGERPRINT_KEY_V31275 = "oraciones_backup_exported_fingerprint_v31275";
 let backupTrackingReadyV31268 = false;
@@ -63,6 +63,15 @@ function backupComparableStateV31268(value){
         if(key === "section") return;
         if(/^current.*(?:Id|Mode|View|Category)$/i.test(key)) return;
         if(/^(?:navigationMode|readerMode|specialVerseMode|searchQuery|activeView|selectedTab)$/i.test(key)) return;
+
+        /* Estados que se crean o actualizan al abrir botones, pero no son
+           contenido nuevo del usuario ni requieren una nueva copia. */
+        if(/^(?:dailyVerse|dailyRoutinesV3192)$/i.test(key)) return;
+
+        /* Las categorías predeterminadas se inicializan al abrir Versículos.
+           Se controlan aparte cuando el usuario realmente las modifica. */
+        if(/^verseCategories$/i.test(key)) return;
+
         clean[key] = cleanNavigationStateV31277(input[key]);
       });
       return clean;
@@ -1784,6 +1793,7 @@ function createVerseCategory(){
 
   state.verseCategories.push({id:id,label:(emoji+" "+name).trim()});
   saveState();
+  setBackupPendingV31268(true);
   renderVerseCategories();
   toast("Categoría creada");
 }
@@ -1803,6 +1813,7 @@ function renameVerseCategory(){
 
   state.verseCategories[idx].label=nuevo;
   saveState();
+  setBackupPendingV31268(true);
   renderVerseCategories();
   toast("Categoría renombrada");
 }
@@ -3525,7 +3536,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.277",
+    appVersion: "3.1.278",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),

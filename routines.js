@@ -41,7 +41,13 @@
   function persist(d){
     d=normalizeData(d);
     try{localStorage.setItem(STORE,JSON.stringify(d));}catch(e){}
-    try{ if(typeof state!=='undefined'&&state){state.dailyRoutinesV3192=d;if(typeof saveState==='function')saveState();} }catch(e){}
+    try{
+      if(typeof state!=='undefined'&&state){
+        state.dailyRoutinesV3192=d;
+        if(typeof saveState==='function')saveState();
+        if(typeof setBackupPendingV31268==='function')setBackupPendingV31268(true);
+      }
+    }catch(e){}
   }
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function byType(type){

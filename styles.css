@@ -5253,30 +5253,3 @@ html body .topbar-row > button#btnBackup.backup-pending-v31268.active-view{
   box-shadow:0 6px 18px rgba(244,123,0,.42)!important;
   font-weight:800!important;
 }
-
-
-/* V3.1.281 · Formato de lectura: solo cuerpo de las oraciones */
-body[data-section="prayers"][data-prayer-format="normal"] #readerText.reader-text{
-  line-height:1.58!important;
-}
-body[data-section="prayers"][data-prayer-format="compact"] #readerText.reader-text{
-  line-height:1.32!important;
-}
-/* Solemne no declara line-height: conserva exactamente todas las reglas actuales. */
-
-.prayer-format-dialog-v31281{
-  width:min(90vw,430px);padding:0;border:1px solid var(--line);border-radius:20px;
-  background:var(--panel);color:var(--text);box-shadow:0 24px 70px rgba(0,0,0,.45);
-}
-.prayer-format-dialog-v31281::backdrop{background:rgba(0,0,0,.58);backdrop-filter:blur(3px)}
-.prayer-format-card-v31281{padding:20px}
-.prayer-format-head-v31281{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
-.prayer-format-head-v31281 small{color:var(--muted);font-weight:700}
-.prayer-format-head-v31281 h2{margin:3px 0 0;font-size:26px}
-.prayer-format-close-v31281{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:28px;line-height:1;cursor:pointer}
-.prayer-format-help-v31281{margin:14px 0 16px;color:var(--muted);line-height:1.45}
-.prayer-format-options-v31281{display:grid;gap:10px}
-.prayer-format-options-v31281 button{display:grid;gap:4px;width:100%;text-align:left;padding:14px 15px;border:1px solid var(--line);border-radius:15px;background:var(--bg);color:var(--text);cursor:pointer}
-.prayer-format-options-v31281 button strong{font-size:16px}
-.prayer-format-options-v31281 button span{font-size:13px;color:var(--muted);line-height:1.35}
-.prayer-format-options-v31281 button.active{border-color:var(--primary);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 28%,transparent);background:color-mix(in srgb,var(--primary) 9%,var(--bg))}

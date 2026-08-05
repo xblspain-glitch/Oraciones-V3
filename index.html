@@ -238,6 +238,7 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
           <span class="font-combo-separator-v31" aria-hidden="true"></span>
           <button class="btn soft font-half-v27" type="button" onclick="changeReaderFont(2)">A+</button>
         </span>
+        <button id="prayerFormatButtonV31281" class="btn soft" type="button" onclick="openPrayerFormatV31281()">Formato</button>
         <button class="btn soft" type="button" onclick="copyCurrentReference()">📋 Ref</button>
         <button class="btn soft" type="button" onclick="copyCurrent()">📋 Copiar</button><button id="moveVerseBtn" class="btn soft" type="button" onclick="moveVerseToCategory()">📂 Mover</button>
         <span class="toolbar-break-v68"></span>
@@ -452,6 +453,25 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
   </div>
 </div>
 
+
+<dialog id="prayerFormatDialogV31281" class="prayer-format-dialog-v31281">
+  <div class="prayer-format-card-v31281">
+    <div class="prayer-format-head-v31281">
+      <div>
+        <small>Lectura de oraciones</small>
+        <h2>Formato</h2>
+      </div>
+      <button class="prayer-format-close-v31281" type="button" onclick="closePrayerFormatV31281()" aria-label="Cerrar">×</button>
+    </div>
+    <p class="prayer-format-help-v31281">Elige la separación entre líneas del texto de la oración.</p>
+    <div class="prayer-format-options-v31281" role="radiogroup" aria-label="Formato de lectura">
+      <button type="button" data-prayer-format-option="solemn" onclick="setPrayerFormatV31281('solemn')"><strong>Formato solemne</strong><span>Aspecto original de la aplicación</span></button>
+      <button type="button" data-prayer-format-option="normal" onclick="setPrayerFormatV31281('normal')"><strong>Formato normal</strong><span>Lectura cómoda y algo más compacta</span></button>
+      <button type="button" data-prayer-format-option="compact" onclick="setPrayerFormatV31281('compact')"><strong>Formato compacto</strong><span>Más texto visible en pantalla</span></button>
+    </div>
+  </div>
+</dialog>
+
 <div id="toast" class="toast">Guardado</div>
 
 
@@ -462,7 +482,7 @@ button .inline-faith-cross-v3193{width:1em;height:1.12em}
 <script src="versiculos.js?v=v3-1-64-share-history-persistence-fix"></script>
 <script src="theme-mode.js?v=v3-1-54-new-verse-category-choice"></script>
 <script src="jszip.min.js?v=v3-1-63-share-history-persist"></script>
-<script src="app.js?v=3.1.268"></script>
+<script src="app.js?v=3.1.281"></script>
 <script src="patches.js?v=v3-1-63-share-history-persist"></script>
 <script src="routines.js?v=v2-215-busqueda-tarjeta-fix-directo"></script>
 <script src="moments.js?v=v3-1-123-catalogacion-mejorada"></script>

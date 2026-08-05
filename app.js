@@ -3497,6 +3497,7 @@ function cleanBackupStorageV31272(storageData){
   const clean={};
   Object.keys(storageData||{}).forEach(function(key){
     if(/character|characters|personaje|personajes/i.test(key)) return;
+    if(key===PRAYER_FORMAT_KEY_V31281) return;
     clean[key]=storageData[key];
   });
   return clean;
@@ -3508,7 +3509,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.280",
+    appVersion: "3.1.281",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
@@ -11679,3 +11680,44 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   setTimeout(install, 1800);
 })();
 
+
+
+/* ===== V3.1.281 · Formato de lectura de oraciones ===== */
+const PRAYER_FORMAT_KEY_V31281 = "oraciones_prayer_format_v31281";
+const PRAYER_FORMATS_V31281 = new Set(["solemn","normal","compact"]);
+
+function getPrayerFormatV31281(){
+  try{
+    const value=localStorage.getItem(PRAYER_FORMAT_KEY_V31281)||"solemn";
+    return PRAYER_FORMATS_V31281.has(value)?value:"solemn";
+  }catch(e){ return "solemn"; }
+}
+function applyPrayerFormatV31281(value=getPrayerFormatV31281()){
+  const format=PRAYER_FORMATS_V31281.has(value)?value:"solemn";
+  document.body.dataset.prayerFormat=format;
+  document.querySelectorAll("[data-prayer-format-option]").forEach(button=>{
+    const active=button.dataset.prayerFormatOption===format;
+    button.classList.toggle("active",active);
+    button.setAttribute("aria-checked",active?"true":"false");
+  });
+}
+function setPrayerFormatV31281(value){
+  const format=PRAYER_FORMATS_V31281.has(value)?value:"solemn";
+  try{ localStorage.setItem(PRAYER_FORMAT_KEY_V31281,format); }catch(e){}
+  applyPrayerFormatV31281(format);
+  closePrayerFormatV31281();
+}
+function openPrayerFormatV31281(){
+  applyPrayerFormatV31281();
+  const dialog=document.getElementById("prayerFormatDialogV31281");
+  if(dialog&&!dialog.open)dialog.showModal();
+}
+function closePrayerFormatV31281(){
+  const dialog=document.getElementById("prayerFormatDialogV31281");
+  if(dialog?.open)dialog.close();
+}
+window.openPrayerFormatV31281=openPrayerFormatV31281;
+window.closePrayerFormatV31281=closePrayerFormatV31281;
+window.setPrayerFormatV31281=setPrayerFormatV31281;
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",()=>applyPrayerFormatV31281(),{once:true});
+else applyPrayerFormatV31281();

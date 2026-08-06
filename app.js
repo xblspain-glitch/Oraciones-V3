@@ -3248,7 +3248,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.282";
+const APP_VERSION_V31249 = "3.1.283";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3508,7 +3508,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.282",
+    appVersion: "3.1.283",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
@@ -3716,7 +3716,7 @@ function getNewJerusalemCardTextLayoutV2217(txt){
   return {font:34,line:47,max:15,y:1150};
 }
 
-/* ===== V3.1.282 · Tarjetas organizadas por categoría ===== */
+/* ===== V3.1.283 · Tarjetas organizadas por categoría ===== */
 const CARD_CATEGORY_CATALOG_V31282=[
   {id:'sabiduria',label:'Sabiduría',designs:[{style:'classic',src:'card-sabiduria-v2240.jpg'},{style:'sabiduria-2',src:'card-sabiduria-2-v31282.png'}]},
   {id:'vida-eterna',label:'Vida eterna',designs:[{style:'jerusalem',src:'shared-card-new-jerusalem-v2217.png'},{style:'vida-eterna-2',src:'card-vida-eterna-2-v31282.png'}]},
@@ -3738,6 +3738,7 @@ const CARD_CATEGORY_CATALOG_V31282=[
   {id:'dios',label:'Dios',designs:[{style:'dios',src:'card-dios-v3261.png'},{style:'dios-2',src:'card-dios-2-v31282.png'}]}
 ];
 const CARD_STYLE_BACKGROUNDS_V31282=Object.fromEntries(CARD_CATEGORY_CATALOG_V31282.flatMap(category=>category.designs.map(design=>[design.style,design.src])));
+const CARD_STYLE_CATEGORY_LABELS_V31283=Object.fromEntries(CARD_CATEGORY_CATALOG_V31282.flatMap(category=>category.designs.map(design=>[design.style,category.label])));
 let activeCardCategoryV31282=null;
 
 function cardCategoryEscapeV31282(value){
@@ -3757,7 +3758,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><img src="${first.src}?v=3.1.282" alt="" aria-hidden="true"><span><strong>${cardCategoryEscapeV31282(category.label)}</strong><small>${category.designs.length} diseños</small></span><b aria-hidden="true">›</b></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><img src="${first.src}?v=3.1.283" alt="" aria-hidden="true"><span><strong>${cardCategoryEscapeV31282(category.label)}</strong><small>${category.designs.length} diseños</small></span><b aria-hidden="true">›</b></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3774,7 +3775,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.282" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.283" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 
@@ -3820,12 +3821,16 @@ async function shareVerseCard(cardStyle="classic"){
     const code = codeEl ? codeEl.textContent : "";
     const ref = cleanTextBreaks((item && (item.reference || item.title)) || (titleEl ? titleEl.textContent : "Sin referencia"));
     const body = cleanTextBreaks((item && (item.text || item.content)) || (textEl ? textEl.textContent : ""));
-    let category = "📖 Versículo";
+    let category = CARD_STYLE_CATEGORY_LABELS_V31283[cardStyle] || "📖 Versículo";
 
-    if(typeof verseCategoryLabel === "function" && item){
-      category = verseCategoryLabel(item.category);
-    }else if(code.includes("·")){
-      category = code.split("·").pop().trim();
+    /* V3.1.283: el rótulo de la tarjeta corresponde siempre a la
+       categoría visual elegida, no a la categoría del versículo abierto. */
+    if(!CARD_STYLE_CATEGORY_LABELS_V31283[cardStyle]){
+      if(typeof verseCategoryLabel === "function" && item){
+        category = verseCategoryLabel(item.category);
+      }else if(code.includes("·")){
+        category = code.split("·").pop().trim();
+      }
     }
 
     if(!ref || !body){

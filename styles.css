@@ -5344,3 +5344,6 @@ body.dark .card-category-option-v31282,body.dark .card-design-option-v31282,body
     font-size:15px!important;
   }
 }
+
+/* V3.1.289 cabecera */
+.shared-card-header .verse-day-title,.shared-card-header .verse-day-date,.shared-card-header .verse-day-category,.verse-day-title,.verse-day-date,.verse-day-category{position:relative;top:10px!important;}

@@ -4000,7 +4000,7 @@ async function shareVerseCard(cardStyle="classic"){
     const ds=new Date();
     const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
-    ctx.fillText(fecha,540,usesNewTextLayoutV2231?985:675);
+    ctx.fillText(fecha,540,usesNewTextLayoutV2231?975:665);
 
     // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
     const categoryTextV3200=String(category||"")
@@ -4008,11 +4008,11 @@ async function shareVerseCard(cardStyle="classic"){
       .toLocaleUpperCase("es-ES");
     ctx.font="44px Georgia, serif";
     ctx.textAlign="center";
-    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1065:762);
+    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1048:745);
 
     // Referencia bíblica fija.
     // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.
-    const REFERENCE_FONT_SIZE_V3241=74;
+    const REFERENCE_FONT_SIZE_V3241=70;
     ctx.font="bold "+REFERENCE_FONT_SIZE_V3241+"px Georgia, serif";
     ctx.fillText(ref,540,usesNewTextLayoutV2231?1145:865);
 

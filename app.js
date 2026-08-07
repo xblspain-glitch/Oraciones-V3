@@ -3758,7 +3758,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.289" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.288" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3775,7 +3775,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.289" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.288" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 
@@ -3995,12 +3995,12 @@ async function shareVerseCard(cardStyle="classic"){
     // La cabecera visual (sol, nubes y Biblia) ya forma parte del fondo.
     // No se dibuja ningún icono superpuesto, evitando el efecto de pegatina.
     ctx.font="italic 56px Georgia, serif";
-    ctx.fillText("Versículo del día",540,usesNewTextLayoutV2231?900:590);
+    ctx.fillText("Versículo del día",540,usesNewTextLayoutV2231?920:610);
     ctx.font="34px Georgia, serif";
     const ds=new Date();
     const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
     const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
-    ctx.fillText(fecha,540,usesNewTextLayoutV2231?965:655);
+    ctx.fillText(fecha,540,usesNewTextLayoutV2231?985:675);
 
     // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
     const categoryTextV3200=String(category||"")
@@ -4008,7 +4008,7 @@ async function shareVerseCard(cardStyle="classic"){
       .toLocaleUpperCase("es-ES");
     ctx.font="44px Georgia, serif";
     ctx.textAlign="center";
-    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1045:742);
+    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1065:762);
 
     // Referencia bíblica fija.
     // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.

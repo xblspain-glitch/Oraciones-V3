@@ -4008,7 +4008,7 @@ async function shareVerseCard(cardStyle="classic"){
       .toLocaleUpperCase("es-ES");
     ctx.font="44px Georgia, serif";
     ctx.textAlign="center";
-    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1048:745);
+    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1044:741);
 
     // Referencia bíblica fija.
     // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.
@@ -11727,4 +11727,3 @@ window.__renderTitlesBeforeV3171 = window.renderTitles || (typeof renderTitles!=
   setTimeout(install, 500);
   setTimeout(install, 1800);
 })();
-

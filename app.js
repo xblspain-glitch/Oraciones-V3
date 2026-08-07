@@ -3661,7 +3661,7 @@ function getCardTextLayout(txt){
   if(n <= 150) return {font:52, line:77, max:7, y:1015};
   if(n <= 240) return {font:50, line:71, max:9, y:1015};
   if(n <= 340) return {font:45, line:64, max:11, y:1000};
-  if(n <= 480) return {font:41, line:58, max:13, y:990};
+  if(n <= 480) return {font:41, line:58, max:13, y:985};
   return {font:37, line:53, max:15, y:970};
 }
 
@@ -3894,7 +3894,7 @@ async function shareVerseCard(cardStyle="classic"){
 
     const canvas=document.createElement("canvas");
     canvas.width=1080;
-    canvas.height=1928;
+    canvas.height=1920;
     const ctx=canvas.getContext("2d");
 
     // V3.1.197 — fondo completo corregido: el azul continúa hasta el borde inferior, sin franja gris.
@@ -4008,7 +4008,7 @@ async function shareVerseCard(cardStyle="classic"){
       .toLocaleUpperCase("es-ES");
     ctx.font="44px Georgia, serif";
     ctx.textAlign="center";
-    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1068:762);
+    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1065:762);
 
     // Referencia bíblica fija.
     // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.

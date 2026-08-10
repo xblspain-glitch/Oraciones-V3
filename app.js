@@ -1576,8 +1576,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.297";
-const APP_VERSION_ZIP = "Oraciones_V3.1.297_AVISO_ACTUALIZACION_CORREGIDO.zip";
+const APP_VERSION_LABEL = "v3.1.298";
+const APP_VERSION_ZIP = "Oraciones_V3.1.298_AVISO_ACTUALIZACION_ESTILO_ORACIONES.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3701,7 +3701,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.297',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.298',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{

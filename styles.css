@@ -5344,3 +5344,23 @@ body.dark .card-category-option-v31282,body.dark .card-design-option-v31282,body
     font-size:15px!important;
   }
 }
+
+
+/* V3.1.296 · Google Drive y aviso de actualización */
+.drive-backup-status-v31296{
+  margin:12px 6px 22px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.14);
+  text-align:center;
+  color:var(--muted);
+  font-size:.94rem;
+  line-height:1.4;
+}
+.drive-backup-status-v31296.error{color:#ef5350;}
+.update-modal-v31296{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(0,0,0,.62);}
+.update-modal-v31296.hidden{display:none;}
+.update-sheet-v31296{width:min(92vw,430px);border:1px solid rgba(212,175,55,.55);border-radius:22px;padding:22px;background:var(--panel,#17181c);box-shadow:0 18px 55px rgba(0,0,0,.5);text-align:center;}
+.update-sheet-v31296 h2{margin:0 0 10px;font-size:1.35rem;}
+.update-sheet-v31296 p{margin:0 0 20px;color:var(--muted);line-height:1.45;}
+.update-actions-v31296{display:flex;gap:12px;}
+.update-actions-v31296 .btn{flex:1;}

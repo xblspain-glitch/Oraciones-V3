@@ -3508,7 +3508,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31272,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.285",
+    appVersion: "3.1.296",
     description: "Copia integral y autosuficiente: datos, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
     localStorage: cleanBackupStorageV31272(readAllAppStorageV31245()),
@@ -3616,7 +3616,77 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(appZipBtn) appZipBtn.addEventListener("click",exportInstalledAppZipV31249);
 });
 
-if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js?v=v3-1-261-tarjetas-fe-dios-sin-iconos",{updateViaCache:"none"})})}
+// V3.1.296 · Copia directa a Google Drive. El backup tradicional se conserva intacto.
+const DRIVE_CLIENT_ID_V31296='333858553743-4uc2ficqa4842d25d97gina24jgpuqb4.apps.googleusercontent.com';
+const DRIVE_SCOPE_V31296='https://www.googleapis.com/auth/drive.file';
+const DRIVE_BACKUP_FOLDER_V31296='Oraciones - Backups';
+const DRIVE_FOLDER_ID_KEY_V31296='oracionesDriveBackupFolderIdV31296';
+const DRIVE_LAST_BACKUP_KEY_V31296='oracionesLastDriveBackupAtV31296';
+let driveAccessTokenV31296='';
+let driveAccessTokenExpiresAtV31296=0;
+function driveStampV31296(){return new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');}
+function setDriveBackupStatusV31296(message,isError=false){const el=document.getElementById('driveBackupStatus');if(!el)return;el.textContent=message||'';el.classList.toggle('error',!!isError);}
+function refreshDriveBackupStatusV31296(){
+  const raw=localStorage.getItem(DRIVE_LAST_BACKUP_KEY_V31296);
+  if(!raw){setDriveBackupStatusV31296(`Destino: Mi unidad / ${DRIVE_BACKUP_FOLDER_V31296}`);return;}
+  const d=new Date(raw);const formatted=Number.isNaN(d.getTime())?'':new Intl.DateTimeFormat('es-ES',{dateStyle:'medium',timeStyle:'short'}).format(d);
+  setDriveBackupStatusV31296(formatted?`Última copia en Drive: ${formatted}`:`Destino: Mi unidad / ${DRIVE_BACKUP_FOLDER_V31296}`);
+}
+function requestDriveAccessTokenV31296(forceAccountSelection=false){
+  if(!forceAccountSelection&&driveAccessTokenV31296&&Date.now()<driveAccessTokenExpiresAtV31296-30000)return Promise.resolve(driveAccessTokenV31296);
+  if(forceAccountSelection){driveAccessTokenV31296='';driveAccessTokenExpiresAtV31296=0;}
+  return new Promise((resolve,reject)=>{
+    if(!window.google?.accounts?.oauth2){reject(new Error('No se pudo cargar el acceso de Google. Comprueba tu conexión e inténtalo de nuevo.'));return;}
+    const tokenClient=google.accounts.oauth2.initTokenClient({client_id:DRIVE_CLIENT_ID_V31296,scope:DRIVE_SCOPE_V31296,callback:response=>{
+      if(response?.error){reject(new Error(response.error_description||response.error));return;}
+      if(!response?.access_token){reject(new Error('Google no devolvió autorización para Drive.'));return;}
+      driveAccessTokenV31296=response.access_token;driveAccessTokenExpiresAtV31296=Date.now()+(Math.max(60,Number(response.expires_in)||3600)*1000);resolve(driveAccessTokenV31296);
+    },error_callback:error=>reject(new Error(error?.message||error?.type||'No se pudo abrir la autorización de Google.'))});
+    tokenClient.requestAccessToken({prompt:forceAccountSelection?'select_account':''});
+  });
+}
+async function driveFetchV31296(url,options={}){const token=await requestDriveAccessTokenV31296();const headers=new Headers(options.headers||{});headers.set('Authorization',`Bearer ${token}`);const response=await fetch(url,{...options,headers});if(response.status===401){driveAccessTokenV31296='';driveAccessTokenExpiresAtV31296=0;}if(!response.ok){let detail='';try{detail=(await response.json())?.error?.message||''}catch(_){ }throw new Error(detail||`Google Drive respondió con error ${response.status}`);}return response;}
+async function getStoredDriveFolderV31296(){const id=localStorage.getItem(DRIVE_FOLDER_ID_KEY_V31296);if(!id)return null;try{const r=await driveFetchV31296(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?fields=id,name,mimeType,trashed`);const f=await r.json();if(!f.trashed&&f.mimeType==='application/vnd.google-apps.folder')return f;}catch(_){ }localStorage.removeItem(DRIVE_FOLDER_ID_KEY_V31296);return null;}
+async function findOrCreateDriveFolderV31296(){
+  const stored=await getStoredDriveFolderV31296();if(stored)return stored;
+  const q=`name = '${DRIVE_BACKUP_FOLDER_V31296.replace(/'/g,"\\'")}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`;
+  try{const r=await driveFetchV31296(`https://www.googleapis.com/drive/v3/files?spaces=drive&pageSize=10&fields=files(id,name,mimeType)&q=${encodeURIComponent(q)}`);const data=await r.json();const f=data.files?.[0];if(f){localStorage.setItem(DRIVE_FOLDER_ID_KEY_V31296,f.id);return f;}}catch(_){ }
+  const r=await driveFetchV31296('https://www.googleapis.com/drive/v3/files?fields=id,name,mimeType',{method:'POST',headers:{'Content-Type':'application/json;charset=UTF-8'},body:JSON.stringify({name:DRIVE_BACKUP_FOLDER_V31296,mimeType:'application/vnd.google-apps.folder',appProperties:{app:'oraciones-v3',purpose:'backup'}})});const f=await r.json();localStorage.setItem(DRIVE_FOLDER_ID_KEY_V31296,f.id);return f;
+}
+async function uploadBackupToDriveV31296(folderId,name,backup){const boundary=`oraciones_backup_${Date.now().toString(16)}_${Math.random().toString(16).slice(2)}`;const metadata={name,mimeType:'application/json',parents:[folderId],appProperties:{app:'oraciones-v3',purpose:'complete-backup'}};const body=new Blob([`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`,JSON.stringify(metadata),`\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`,JSON.stringify(backup,null,2),`\r\n--${boundary}--`],{type:`multipart/related; boundary=${boundary}`});const r=await driveFetchV31296('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{method:'POST',headers:{'Content-Type':`multipart/related; boundary=${boundary}`},body});return r.json();}
+document.addEventListener('DOMContentLoaded',()=>{
+  refreshDriveBackupStatusV31296();
+  document.getElementById('saveDriveBackup')?.addEventListener('click',async()=>{
+    const button=document.getElementById('saveDriveBackup');const originalText=button?.textContent||'Guardar copia en Google Drive';if(button){button.disabled=true;button.textContent='Guardando en Drive…';}setDriveBackupStatusV31296('Conectando con Google Drive…');
+    try{
+      // Una selección de cuenta por copia; el mismo token se reutiliza hasta terminarla.
+      await requestDriveAccessTokenV31296(true);
+      const folder=await findOrCreateDriveFolderV31296();const backup=await buildCompleteBackupPayloadV31245();const fileName=`Oraciones_V3_backup_${driveStampV31296()}.json`;await uploadBackupToDriveV31296(folder.id,fileName,backup);
+      const now=new Date().toISOString();localStorage.setItem(DRIVE_LAST_BACKUP_KEY_V31296,now);setBackupPendingV31268(false);saveBackupStatusV3149('Copia en Google Drive',fileName);refreshDriveBackupStatusV31296();toast('Copia guardada en Google Drive');
+    }catch(error){console.error('No se pudo guardar la copia en Drive',error);setDriveBackupStatusV31296(error?.message||'No se pudo guardar la copia en Google Drive.',true);toast('No se pudo guardar la copia en Drive');}
+    finally{if(button){button.disabled=false;button.textContent=originalText;}}
+  });
+});
+
+// V3.1.296 · Aviso de nueva versión con «Actualizar» y «Más tarde».
+let updateNoticeShownV31296=false;
+function showUpdateNoticeV31296(){
+  if(updateNoticeShownV31296)return;updateNoticeShownV31296=true;
+  let modal=document.getElementById('updateModalV31296');
+  if(!modal){modal=document.createElement('div');modal.id='updateModalV31296';modal.className='update-modal-v31296';modal.innerHTML='<div class="update-sheet-v31296" role="dialog" aria-modal="true"><h2>Nueva actualización disponible</h2><p>Hay una nueva versión de Oraciones preparada.</p><div class="update-actions-v31296"><button id="updateLaterV31296" class="btn soft" type="button">Más tarde</button><button id="updateNowV31296" class="btn primary" type="button">Actualizar</button></div></div>';document.body.appendChild(modal);}
+  document.getElementById('updateLaterV31296').onclick=()=>modal.classList.add('hidden');
+  document.getElementById('updateNowV31296').onclick=()=>location.reload();
+}
+if('serviceWorker' in navigator){window.addEventListener('load',async()=>{
+  try{
+    const reg=await navigator.serviceWorker.register('sw.js?v=3.1.296',{updateViaCache:'none'});
+    const watch=worker=>{if(!worker)return;worker.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller)showUpdateNoticeV31296();});};
+    reg.addEventListener('updatefound',()=>watch(reg.installing));
+    setInterval(()=>reg.update().catch(()=>{}),60000);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)reg.update().catch(()=>{});});
+  }catch(e){console.warn('No se pudo comprobar la actualización',e);}
+});}
+
 applyTheme();
 backupTrackingReadyV31268=false;
 loadState();

@@ -1576,8 +1576,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.298";
-const APP_VERSION_ZIP = "Oraciones_V3.1.298_AVISO_ACTUALIZACION_ESTILO_ORACIONES.zip";
+const APP_VERSION_LABEL = "v3.1.300";
+const APP_VERSION_ZIP = "Oraciones_V3.1.300_MARCA_Y_PAGINAS_CORREGIDAS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3248,7 +3248,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.297";
+const APP_VERSION_V31249 = "3.1.300";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3740,7 +3740,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.299',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.300',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3758,6 +3758,1136 @@ function showUpdateNoticeV31297(worker){
       document.addEventListener('visibilitychange',()=>{if(!document.hidden){reg.update().then(detectWaiting).catch(()=>{});}});
     }catch(e){console.warn('No se pudo comprobar la actualización',e);}
   },{once:true});
+})();
+
+(function(){
+ function appendReaderEnd(){
+  try{
+   if(section==="verses") return;
+   const el=document.getElementById("readerText");
+   if(!el||el.querySelector(".reader-end-card")) return;
+   const d=document.createElement("div");
+   d.className="reader-end-card";
+   d.innerHTML='<div class="line"></div><div class="title">✝️ Fin de la lectura</div><div class="msg">Que la paz de Cristo permanezca en su corazón.</div><div class="line"></div>';
+   el.appendChild(d);
+  }catch(e){}
+ }
+ const old=window.renderReader||(typeof renderReader!=="undefined"?renderReader:null);
+ if(old&&!window.__endCardWrapped){
+  window.__endCardWrapped=true;
+  window.renderReader=function(){old.apply(this,arguments);setTimeout(appendReaderEnd,30);}
+  try{renderReader=window.renderReader}catch(e){}
+ }
+ document.addEventListener("DOMContentLoaded",function(){setTimeout(appendReaderEnd,300)});
+})();
+
+(function(){
+ const old=window.renderReader||(typeof renderReader!=="undefined"?renderReader:null);
+ if(old&&!window.__readerTransitionV52){
+   window.__readerTransitionV52=true;
+   window.renderReader=function(){
+      const view=document.getElementById("readerView");
+      const title=document.getElementById("readerTitle");
+      const text=document.getElementById("readerText");
+      if(view){
+        view.classList.remove("reader-fade-in");
+        view.classList.add("reader-fade-out");
+      }
+      setTimeout(function(){
+        old.apply(this,arguments);
+        try{window.scrollTo({top:0,behavior:"instant"})}catch(e){window.scrollTo(0,0)}
+        if(title) title.style.opacity="1";
+        if(text) text.style.opacity="0";
+        requestAnimationFrame(function(){
+          if(view){
+            view.classList.remove("reader-fade-out");
+            view.classList.add("reader-fade-in");
+          }
+          setTimeout(function(){
+            if(text) text.style.opacity="1";
+          },35);
+        });
+      },120);
+   };
+   try{renderReader=window.renderReader}catch(e){}
+ }
+})();
+
+function getCardTextLayout(txt){
+  const n = String(txt || "").length;
+  // V2.218 — aumenta únicamente el cuerpo del versículo en la tarjeta Biblia.
+  if(n <= 150) return {font:52, line:77, max:7, y:1015};
+  if(n <= 240) return {font:50, line:71, max:9, y:1015};
+  if(n <= 340) return {font:45, line:64, max:11, y:1000};
+  if(n <= 480) return {font:41, line:58, max:13, y:985};
+  return {font:37, line:53, max:15, y:970};
+}
+
+function markCurrentVerseCardSentDirect(){
+  try{
+    if(typeof section !== "undefined" && section !== "verses") return;
+    if(!state || !Array.isArray(state.verses)) return;
+
+    let id = state.currentVerseId;
+    let v = state.verses.find(x => x.id === id);
+
+    // Fallback por si currentVerseId no está actualizado
+    if(!v && typeof currentItem === "function"){
+      const ci = currentItem();
+      if(ci && ci.id){
+        v = state.verses.find(x => x.id === ci.id) || ci;
+      }
+    }
+
+    if(!v) return;
+
+    v.shared = true;
+    v.lastCardSentAt = Date.now();
+
+    if(typeof saveState === "function") saveState();
+    if(typeof renderReader === "function") setTimeout(renderReader, 120);
+    if(typeof toast === "function") toast("Tarjeta marcada como enviada");
+  }catch(e){
+    console.error("markCurrentVerseCardSentDirect", e);
+  }
+}
+
+function getThematicCardTextLayoutV2220(txt){
+  const n=String(txt||"").length;
+  // V3.1.239 — tamaño inicial generoso. El ajuste definitivo se calcula
+  // con la anchura y la altura reales disponibles, sin cortar el versículo.
+  if(n<=150) return {font:57,y:1285};
+  if(n<=240) return {font:51,y:1285};
+  if(n<=340) return {font:45,y:1275};
+  if(n<=480) return {font:40,y:1265};
+  return {font:36,y:1255};
+}
+
+function getNewJerusalemCardTextLayoutV2217(txt){
+  const n=String(txt||"").length;
+  // V2.218 — cuerpo del versículo algo mayor y comienzo más bajo
+  // para que respire respecto a la línea decorativa con la cruz.
+  if(n<=150) return {font:52,line:73,max:7,y:1190};
+  if(n<=240) return {font:48,line:67,max:9,y:1180};
+  if(n<=340) return {font:41,line:60,max:11,y:1170};
+  if(n<=480) return {font:39,line:54,max:13,y:1160};
+  return {font:34,line:47,max:15,y:1150};
+}
+
+const CARD_CATEGORY_CATALOG_V31282=[
+  {id:'sabiduria',label:'Sabiduría',designs:[{style:'classic',src:'card-sabiduria-v2240.jpg'},{style:'sabiduria-2',src:'card-sabiduria-2-v31282.png'}]},
+  {id:'vida-eterna',label:'Vida eterna',designs:[{style:'jerusalem',src:'shared-card-new-jerusalem-v2217.png'},{style:'vida-eterna-2',src:'card-vida-eterna-2-v31282.png'},{style:'vida-eterna-3',src:'card-vida-eterna-3-v2287.png'}]},
+  {id:'alabanza',label:'Alabanza',designs:[{style:'salvacion',src:'card-salvacion-v2219.jpg'},{style:'alabanza-2',src:'card-alabanza-2-v31282.png'}]},
+  {id:'amor',label:'Amor',designs:[{style:'oracion',src:'card-oracion-v2219.jpg'},{style:'amor-2',src:'card-amor-2-v31282.png'},{style:'amor-3',src:'card-amor-3-v2287.png'}]},
+  {id:'juicio',label:'Juicio',designs:[{style:'espiritu-santo',src:'card-espiritu-santo-v2219.jpg'},{style:'juicio-2',src:'card-juicio-2-v31282.png'}]},
+  {id:'esperanza',label:'Esperanza',designs:[{style:'misericordia',src:'card-misericordia-v2219.jpg'},{style:'esperanza-2',src:'card-esperanza-2-v31282.png'}]},
+  {id:'oracion',label:'Oración',designs:[{style:'alabanza',src:'card-alabanza-v2219.jpg'},{style:'oracion-2',src:'card-oracion-2-v31282.png'}]},
+  {id:'descanso',label:'Descanso',designs:[{style:'fortaleza',src:'card-fortaleza-v2219.jpg'},{style:'descanso-2',src:'card-descanso-2-v31282.png'}]},
+  {id:'fortaleza',label:'Fortaleza',designs:[{style:'amor',src:'card-amor-v2219.jpg'},{style:'fortaleza-2',src:'card-fortaleza-2-v31282.png'}]},
+  {id:'misericordia',label:'Misericordia',designs:[{style:'esperanza',src:'card-esperanza-v2219.jpg'},{style:'misericordia-2',src:'card-misericordia-2-v31282.png'}]},
+  {id:'espiritu-santo',label:'Espíritu Santo',designs:[{style:'juicio',src:'card-juicio-v2219.jpg'},{style:'espiritu-santo-2',src:'card-espiritu-santo-2-v31282.png'}]},
+  {id:'salvacion',label:'Salvación',designs:[{style:'fe',src:'card-fe-v2219.jpg'},{style:'salvacion-2',src:'card-salvacion-2-v31282.png'},{style:'salvacion-3',src:'card-salvacion-3-v2287.png'}]},
+  {id:'segunda-venida',label:'Segunda venida',designs:[{style:'segunda-venida',src:'card-segunda-venida-v2219.jpg'},{style:'segunda-venida-2',src:'card-segunda-venida-2-v31282.png'}]},
+  {id:'reino-dios',label:'Reino de Dios',designs:[{style:'reino-dios',src:'card-reino-dios-v2230.jpg'},{style:'reino-dios-2',src:'card-reino-dios-2-v31282.png'}]},
+  {id:'santidad',label:'Santidad',designs:[{style:'santidad',src:'card-santidad-v2230.jpg'},{style:'santidad-2',src:'card-santidad-2-v31282.png'}]},
+  {id:'cristo-es-dios',label:'Cristo Jesús es Dios',designs:[{style:'cristo-es-dios',src:'card-cristo-es-dios-v2230.jpg'},{style:'cristo-es-dios-2',src:'card-cristo-es-dios-2-v31282.png'}]},
+  {id:'fe',label:'Fe',designs:[{style:'fe-nueva',src:'card-fe-nueva-v3261.png'},{style:'fe-2',src:'card-fe-2-v31282.png'}]},
+  {id:'dios',label:'Dios',designs:[{style:'dios',src:'card-dios-v3261.png'},{style:'dios-2',src:'card-dios-2-v31282.png'}]}
+];
+const CARD_STYLE_BACKGROUNDS_V31282=Object.fromEntries(CARD_CATEGORY_CATALOG_V31282.flatMap(category=>category.designs.map(design=>[design.style,design.src])));
+const CARD_STYLE_CATEGORY_LABELS_V31283=Object.fromEntries(CARD_CATEGORY_CATALOG_V31282.flatMap(category=>category.designs.map(design=>[design.style,category.label])));
+let activeCardCategoryV31282=null;
+
+function cardCategoryEscapeV31282(value){
+  return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function renderCardCategoriesV31282(){
+  activeCardCategoryV31282=null;
+  const grid=document.getElementById('cardStyleGridV2217');
+  const title=document.getElementById('cardStyleTitleV2217');
+  const sub=document.getElementById('cardStyleSubV2217');
+  const back=document.getElementById('cardStyleBackV31282');
+  if(title)title.textContent='🖼️ Elegir categoría de tarjeta';
+  if(sub)sub.textContent='Abra una categoría para ver sus diseños disponibles.';
+  if(back)back.hidden=true;
+  if(!grid)return;
+  grid.classList.remove('card-design-grid-v31282');
+  grid.classList.add('card-category-grid-v31282');
+  grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
+    const first=category.designs[0];
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=2.290" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+  }).join('');
+}
+function openCardCategoryV31282(categoryId){
+  const category=CARD_CATEGORY_CATALOG_V31282.find(item=>item.id===categoryId);
+  if(!category)return;
+  activeCardCategoryV31282=categoryId;
+  const grid=document.getElementById('cardStyleGridV2217');
+  const title=document.getElementById('cardStyleTitleV2217');
+  const sub=document.getElementById('cardStyleSubV2217');
+  const back=document.getElementById('cardStyleBackV31282');
+  if(title)title.textContent=category.label;
+  if(sub)sub.textContent='Seleccione la miniatura que desea compartir.';
+  if(back)back.hidden=false;
+  if(!grid)return;
+  grid.classList.remove('card-category-grid-v31282');
+  grid.classList.add('card-design-grid-v31282');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=2.290" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+}
+function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
+
+function openCardStyleSelectorV2217(){
+  renderCardCategoriesV31282();
+  const modal=document.getElementById("cardStyleModalV2217");
+  if(modal) modal.classList.remove("hidden");
+}
+function closeCardStyleSelectorV2217(){
+  const modal=document.getElementById("cardStyleModalV2217");
+  if(modal) modal.classList.add("hidden");
+}
+async function chooseCardStyleV2217(style){
+  closeCardStyleSelectorV2217();
+  markCurrentVerseCardSentDirect();
+  await shareVerseCard(style);
+}
+
+async function shareVerseCard(cardStyle="classic"){
+  try{
+    const cardBackgroundsV2219=CARD_STYLE_BACKGROUNDS_V31282;
+    const isIllustratedV2219 = cardStyle !== "classic";
+    const isThematicV2220 = cardStyle !== "classic" && cardStyle !== "jerusalem";
+    // V2.232 — Nueva Jerusalén usa exactamente el mismo layout completo
+    // que las tarjetas temáticas nuevas: textos y marca de agua.
+    const usesNewTextLayoutV2231 = true; // V2.233 — Sabiduría también usa el layout unificado
+    const selectedBackgroundV2219 = cardBackgroundsV2219[cardStyle] || cardBackgroundsV2219.classic;
+    const item = (typeof currentItem === "function") ? currentItem() : null;
+
+    // Marcamos la tarjeta como enviada al pulsar el botón Tarjeta.
+    // Así queda registrada aunque WhatsApp no devuelva correctamente el resultado del compartir.
+    if(item && typeof section !== "undefined" && section === "verses"){
+      item.shared = true;
+      item.lastCardSentAt = Date.now();
+      if(typeof saveState === "function") saveState();
+      if(typeof renderReader === "function") setTimeout(renderReader, 80);
+    }
+
+    const codeEl = document.getElementById("readerCode");
+    const titleEl = document.getElementById("readerTitle");
+    const textEl = document.getElementById("readerText");
+
+    const code = codeEl ? codeEl.textContent : "";
+    const ref = cleanTextBreaks((item && (item.reference || item.title)) || (titleEl ? titleEl.textContent : "Sin referencia"));
+    const body = cleanTextBreaks((item && (item.text || item.content)) || (textEl ? textEl.textContent : ""));
+    let category = CARD_STYLE_CATEGORY_LABELS_V31283[cardStyle] || "📖 Versículo";
+
+    /* V3.1.285: el rótulo de la tarjeta corresponde siempre a la
+       categoría visual elegida, no a la categoría del versículo abierto. */
+    if(!CARD_STYLE_CATEGORY_LABELS_V31283[cardStyle]){
+      if(typeof verseCategoryLabel === "function" && item){
+        category = verseCategoryLabel(item.category);
+      }else if(code.includes("·")){
+        category = code.split("·").pop().trim();
+      }
+    }
+
+    if(!ref || !body){
+      alert("Abre primero un versículo para crear la tarjeta.");
+      return;
+    }
+
+    function iconFromCategory(c){
+      const s=String(c||"").trim();
+
+      // La tarjeta reutiliza el mismo icono que ya tiene la categoría.
+      // Ej.: "❤️ Salvación" -> "❤️", "🙏🏾 Fe" -> "🙏🏾".
+      const first=s.split(/\s+/)[0] || "";
+      if(first && /[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9]/.test(first)){
+        return first;
+      }
+
+      // Fallback por si alguna categoría antigua quedó guardada sin emoji.
+      if(s.includes("Salvación")) return "❤️";
+      if(s.includes("Fe")) return "🙏🏾";
+      if(s.includes("Esperanza")) return "🕊️";
+      if(s.includes("Fortaleza")) return "💪";
+      if(s.includes("Amor")) return "❤️";
+      if(s.includes("Descanso")) return "🌿";
+      if(s.includes("Sabiduría")) return "📚";
+      if(s.includes("Alabanza")) return "🙌🏾";
+      if(s.includes("Santidad")) return "⚖️";
+      if(s.includes("Reino")) return "👑";
+      if(s.includes("Espíritu")) return "🔥";
+      if(s.includes("Segunda")) return "⏳";
+      if(s.includes("Juicio")) return "⚖️";
+      if(s.includes("Matrimonio")) return "🤝";
+      if(s.includes("Misericordia")) return "🤲🏾";
+      if(s.includes("Vida Eterna")) return "✨";
+      return "📖";
+    }
+
+    function wrapText(ctx, t, x, y, maxWidth, lineHeight, maxLines){
+      const words=String(t||"").replace(/\s+/g," ").trim().split(" ");
+      let line="";
+      let lines=[];
+      for(let i=0;i<words.length;i++){
+        const test=line ? line+" "+words[i] : words[i];
+        if(ctx.measureText(test).width > maxWidth && line){
+          lines.push(line);
+          line=words[i];
+          if(lines.length>=maxLines) break;
+        }else{
+          line=test;
+        }
+      }
+      if(lines.length<maxLines && line) lines.push(line);
+      if(words.join(" ").length > lines.join(" ").length && lines.length){
+        lines[lines.length-1]=lines[lines.length-1].replace(/[.,;:]*$/,"")+"...";
+      }
+      lines.forEach(l=>{
+        ctx.fillText(l,x,y);
+        y += lineHeight;
+      });
+    }
+
+    const canvas=document.createElement("canvas");
+    canvas.width=1080;
+    canvas.height=1920;
+    const ctx=canvas.getContext("2d");
+
+    // V3.1.197 — fondo completo corregido: el azul continúa hasta el borde inferior, sin franja gris.
+    // La app conserva por encima todos los elementos dinámicos: borde, marca de agua, textos y pie.
+    try{
+      const cardBackground=await new Promise((resolve,reject)=>{
+        const im=new Image();
+        im.onload=()=>resolve(im);
+        im.onerror=reject;
+        im.src=selectedBackgroundV2219+"?v=v3-1-243-revision-final-409";
+      });
+      ctx.drawImage(cardBackground,0,0,1080,1920);
+    }catch(e){
+      // Fondo de respaldo si el recurso no pudiera cargarse.
+      const grad=ctx.createLinearGradient(0,0,0,1920);
+      grad.addColorStop(0,"#168fd2");
+      grad.addColorStop(0.45,"#24b8d5");
+      grad.addColorStop(1,"#1596c5");
+      ctx.fillStyle=grad;
+      ctx.fillRect(0,0,1080,1920);
+    }
+
+    // Borde interior sutil para dar aspecto de tarjeta cuidada
+    ctx.save();
+    ctx.strokeStyle="rgba(255,255,255,0.34)";
+    ctx.lineWidth=3;
+    if(ctx.roundRect){
+      ctx.beginPath();
+      ctx.roundRect(54,54,972,1812,34);
+      ctx.stroke();
+    }else{
+      ctx.strokeRect(54,54,972,1812);
+    }
+    ctx.restore();
+
+    // Marca de agua real de Oraciones V2.
+    // Usa el icono original de la app como máscara: conserva la cruz etíope y el libro,
+    // pero elimina el fondo azul para que quede integrado en la tarjeta.
+    async function loadCardLogoImage(src){
+      return await new Promise((resolve,reject)=>{
+        const img=new Image();
+        img.onload=()=>resolve(img);
+        img.onerror=reject;
+        img.src=src;
+      });
+    }
+
+    async function drawExactLogoWatermark(ctx, cx, cy, size){
+      try{
+        const img = await loadCardLogoImage("icon-512.png");
+        const w = 512, h = 512;
+        const off = document.createElement("canvas");
+        off.width = w;
+        off.height = h;
+        const octx = off.getContext("2d");
+        octx.drawImage(img,0,0,w,h);
+        const data = octx.getImageData(0,0,w,h);
+        const px = data.data;
+
+        // Máscara basada en los blancos del logo. El fondo azul queda descartado.
+        for(let i=0;i<px.length;i+=4){
+          const r=px[i], g=px[i+1], b=px[i+2], a=px[i+3];
+          const light = Math.min(r,g,b);
+          const whiteness = Math.max(0, Math.min(1, (light-132)/95));
+          const blueBgPenalty = (b > r+28 && b > g+8) ? 0.42 : 1;
+          const mask = Math.pow(whiteness * blueBgPenalty, 1.18);
+          px[i]=255;
+          px[i+1]=255;
+          px[i+2]=255;
+          px[i+3]=Math.round(a * mask * 0.12);
+        }
+        octx.putImageData(data,0,0);
+
+        ctx.save();
+        ctx.globalCompositeOperation="source-over";
+        ctx.filter="blur(0.35px)";
+        ctx.drawImage(off, cx-size/2, cy-size/2, size, size);
+        ctx.restore();
+      }catch(e){
+        // Fallback mínimo si el icono no cargara por caché/navegador.
+        ctx.save();
+        ctx.globalAlpha=0.050;
+        ctx.fillStyle="#ffffff";
+        ctx.font="360px Georgia, serif";
+        ctx.textAlign="center";
+        ctx.fillText("✝",cx,cy+120);
+        ctx.restore();
+      }
+    }
+    await drawExactLogoWatermark(ctx,540,usesNewTextLayoutV2231?1335:1168,usesNewTextLayoutV2231?870:780);
+
+    ctx.textAlign="center";
+    ctx.fillStyle="#ffffff";
+    ctx.shadowColor="rgba(0,0,0,0.25)";
+    ctx.shadowBlur=10;
+    ctx.shadowOffsetY=3;
+
+    // La cabecera visual (sol, nubes y Biblia) ya forma parte del fondo.
+    // No se dibuja ningún icono superpuesto, evitando el efecto de pegatina.
+    ctx.font="italic 56px Georgia, serif";
+    ctx.fillText("Versículo del día",540,usesNewTextLayoutV2231?920:610);
+    ctx.font="34px Georgia, serif";
+    const ds=new Date();
+    const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const fecha=ds.getDate()+" de "+meses[ds.getMonth()]+" de "+ds.getFullYear();
+    ctx.fillText(fecha,540,usesNewTextLayoutV2231?975:665);
+
+    // V3.1.200 — categoría sin icono, en mayúsculas y centrada.
+    const categoryTextV3200=String(category||"")
+      .replace(/^[^\p{L}\p{N}]+\s*/u,"")
+      .toLocaleUpperCase("es-ES");
+    ctx.font="44px Georgia, serif";
+    ctx.textAlign="center";
+    ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1044:741);
+
+    // V3.1.243 — referencia bíblica fija.
+    // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.
+    const REFERENCE_FONT_SIZE_V3241=74;
+    ctx.font="bold "+REFERENCE_FONT_SIZE_V3241+"px Georgia, serif";
+    ctx.fillText(ref,540,usesNewTextLayoutV2231?1145:865);
+
+    // Línea decorativa azul tenue con cruz central
+    ctx.save();
+    ctx.shadowColor="rgba(0,0,0,0)";
+    ctx.shadowBlur=0;
+    ctx.shadowOffsetY=0;
+    ctx.strokeStyle="rgba(190,238,248,0.58)";
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(180,usesNewTextLayoutV2231?1200:925); ctx.lineTo(500,usesNewTextLayoutV2231?1200:925); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(580,usesNewTextLayoutV2231?1200:925); ctx.lineTo(900,usesNewTextLayoutV2231?1200:925); ctx.stroke();
+    ctx.fillStyle="rgba(214,249,255,0.78)";
+    ctx.font="34px Georgia, serif";
+    ctx.fillText("✝",540,usesNewTextLayoutV2231?1212:937);
+    ctx.restore();
+
+    const textLayout=usesNewTextLayoutV2231 ? getThematicCardTextLayoutV2220(body) : getCardTextLayout(body);
+
+    // V3.1.241 — ajuste dinámico real del versículo conservado desde V3.1.240.
+    // Se mide el texto completo con el ancho disponible y se reduce la fuente
+    // solo lo necesario hasta que la última línea quede sobre la bendición.
+    function splitTextIntoLinesV2241(ctx,text,maxWidth){
+      const words=String(text||"").replace(/\s+/g," ").trim().split(" ").filter(Boolean);
+      const lines=[];
+      let line="";
+      for(const word of words){
+        const test=line ? line+" "+word : word;
+        if(line && ctx.measureText(test).width>maxWidth){
+          lines.push(line);
+          line=word;
+        }else{
+          line=test;
+        }
+      }
+      if(line) lines.push(line);
+      return lines;
+    }
+
+    function fitVerseTextV2241(ctx,text,initialFont,startY,maxWidth,maxBottomY){
+      let font=Math.max(28,Math.round(initialFont));
+      let lineHeight=0;
+      let lines=[];
+      while(font>=28){
+        lineHeight=Math.round(font*1.39);
+        ctx.font="italic "+font+"px Georgia, serif";
+        lines=splitTextIntoLinesV2241(ctx,text,maxWidth);
+        const lastBaseline=startY+Math.max(0,lines.length-1)*lineHeight;
+        if(lastBaseline<=maxBottomY) break;
+        font--;
+      }
+      return {font,line:lineHeight,lines};
+    }
+
+    if(usesNewTextLayoutV2231){
+      const fitted=fitVerseTextV2241(ctx,body,textLayout.font,textLayout.y,930,1640);
+      ctx.font="italic "+fitted.font+"px Georgia, serif";
+      let verseY=textLayout.y;
+      fitted.lines.forEach(line=>{
+        ctx.fillText(line,540,verseY);
+        verseY+=fitted.line;
+      });
+    }else{
+      ctx.font="italic "+textLayout.font+"px Georgia, serif";
+      wrapText(ctx,body,540,textLayout.y,930,textLayout.line,textLayout.max);
+    }
+
+    // Bendición del día: una frase estable durante toda la fecha local.
+    // No altera el versículo ni el flujo de compartir; solo se dibuja en el pie de la tarjeta.
+    const dailyBlessingsV3175=[
+      "Que el amor de Cristo te acompañe hoy.",
+      "Que Dios ilumine tu camino y fortalezca tu corazón.",
+      "Que la paz del Señor permanezca contigo durante este día.",
+      "Que estas palabras fortalezcan tu fe y llenen tu corazón de esperanza.",
+      "Que la Palabra de Dios sea luz en cada paso que des hoy.",
+      "Que la gracia de Cristo te sostenga en todo momento.",
+      "Que Dios bendiga tu hogar y a quienes amas.",
+      "Que el Espíritu Santo guíe tus pensamientos y decisiones.",
+      "Que hoy encuentres descanso y confianza en la presencia de Dios.",
+      "Que la esperanza en Cristo renueve tus fuerzas en este nuevo día.",
+      "Que el Señor llene tu corazón de serenidad y confianza.",
+      "Que Cristo sea tu refugio y tu fortaleza durante este día.",
+      "Que Dios dirija tus pasos por caminos de paz y de bien.",
+      "Que la luz de Cristo brille hoy en tu vida.",
+      "Que el Señor te conceda sabiduría en cada decisión.",
+      "Que la misericordia de Dios te abrace y te sostenga.",
+      "Que hoy camines bajo la bendición y el cuidado del Señor.",
+      "Que la presencia de Dios llene de paz tu hogar.",
+      "Que Cristo renueve tu ánimo y afirme tu esperanza.",
+      "Que el Señor guarde tu corazón y proteja tu camino.",
+      "Que la Palabra de Dios te dé consuelo y fortaleza.",
+      "Que la gracia del Señor te acompañe en cada momento.",
+      "Que Dios te conceda un corazón agradecido y lleno de paz.",
+      "Que Cristo ilumine tus pensamientos y guíe tus palabras.",
+      "Que hoy encuentres alegría en las bendiciones de Dios.",
+      "Que el Señor fortalezca tu fe ante cada dificultad.",
+      "Que el amor de Dios transforme todo cuanto hagas hoy.",
+      "Que Cristo te conceda paciencia, humildad y sabiduría.",
+      "Que la paz de Dios gobierne hoy tu mente y tu corazón.",
+      "Que el Señor te recuerde que nunca caminas a solas.",
+      "Que la esperanza del Evangelio ilumine tu jornada.",
+      "Que Dios bendiga tus pensamientos, palabras y acciones.",
+      "Que Cristo te sostenga cuando te sientas débil.",
+      "Que hoy puedas reconocer la bondad de Dios a tu alrededor.",
+      "Que el Espíritu Santo te conceda discernimiento y paz.",
+      "Que el Señor renueve tus fuerzas y afirme tus pasos.",
+      "Que la fidelidad de Dios sea hoy tu seguridad.",
+      "Que Cristo llene tu día de propósito y esperanza.",
+      "Que Dios te enseñe a descansar plenamente en sus promesas.",
+      "Que la paz de Cristo te acompañe en todo lugar.",
+      "Que el Señor bendiga el trabajo de tus manos.",
+      "Que hoy tu corazón permanezca firme en el amor de Dios.",
+      "Que Cristo te dé valor para hacer el bien.",
+      "Que la luz del Señor disipe toda preocupación.",
+      "Que Dios te conceda fortaleza para superar cada prueba.",
+      "Que la Palabra de Cristo habite abundantemente en ti.",
+      "Que hoy vivas bajo la gracia, la paz y el amor de Dios.",
+      "Que el Señor te guíe con ternura y sabiduría.",
+      "Que Cristo sea la alegría y la esperanza de tu corazón.",
+      "Que Dios proteja a tu familia y mantenga vuestro hogar en paz.",
+      "Que la presencia del Señor haga ligero tu camino.",
+      "Que hoy encuentres fuerzas nuevas al confiar en Dios.",
+      "Que Cristo te conceda un espíritu sereno y agradecido.",
+      "Que la bondad del Señor te acompañe durante toda la jornada.",
+      "Que Dios te ayude a sembrar paz allí donde estés.",
+      "Que el amor de Cristo inspire cada una de tus acciones.",
+      "Que el Señor te conceda claridad, paciencia y confianza.",
+      "Que hoy la Palabra de Dios alimente tu alma.",
+      "Que Cristo te cubra con su paz y te guarde de todo mal.",
+      "Que Dios te fortalezca para caminar conforme a su voluntad.",
+      "Que el Espíritu Santo renueve hoy tu interior.",
+      "Que el Señor bendiga cada encuentro y cada conversación.",
+      "Que Cristo te recuerde cuánto te ama Dios.",
+      "Que hoy puedas descansar en la fidelidad del Señor.",
+      "Que Dios ponga en tu corazón palabras de vida y de esperanza.",
+      "Que la gracia de Cristo te ayude a afrontar este día con fe.",
+      "Que el Señor te conceda paz en lo que no puedes controlar.",
+      "Que hoy tu vida refleje el amor y la bondad de Dios.",
+      "Que Cristo guíe tus pasos y sostenga tus decisiones.",
+      "Que Dios haga florecer la esperanza en tu corazón.",
+      "Que la paz del Señor sea más grande que tus preocupaciones.",
+      "Que hoy encuentres refugio bajo el cuidado de Dios.",
+      "Que Cristo fortalezca tus manos para servir con amor.",
+      "Que el Señor te conceda alegría en las cosas sencillas.",
+      "Que Dios ilumine tu mente y serene tu corazón.",
+      "Que la misericordia de Cristo te acompañe durante este día.",
+      "Que hoy puedas confiar en que Dios obra para tu bien.",
+      "Que el Señor te dé fuerzas para perseverar con esperanza.",
+      "Que Cristo haga de tu corazón un lugar de paz.",
+      "Que Dios bendiga tus proyectos y dirija tus caminos.",
+      "Que la Palabra del Señor sea lámpara para tus pasos.",
+      "Que hoy el amor de Cristo renueve tu manera de mirar.",
+      "Que Dios te conceda la calma de quien confía en sus manos.",
+      "Que el Señor proteja tu salida y tu entrada.",
+      "Que Cristo te ayude a vivir este día con gratitud.",
+      "Que hoy puedas llevar consuelo y esperanza a los demás.",
+      "Que la presencia de Dios te dé seguridad y descanso.",
+      "Que el Señor te sostenga con su mano y te conduzca en paz.",
+      "Que Cristo fortalezca tu corazón y avive tu fe.",
+      "Que Dios te conceda sabiduría para hablar y humildad para escuchar.",
+      "Que hoy la gracia del Señor sea suficiente para ti.",
+      "Que la paz de Cristo permanezca en tu hogar y en tu corazón.",
+      "Que Dios te recuerde hoy que sus promesas son fieles.",
+      "Que el Señor llene tu camino de luz, esperanza y amor.",
+      "Que Cristo te dé un corazón dispuesto a perdonar y servir.",
+      "Que hoy encuentres en Dios la fuerza que necesitas.",
+      "Que el Espíritu Santo te guíe por el camino de la verdad.",
+      "Que el Señor bendiga este nuevo día y todo cuanto vivas en él.",
+      "Que Cristo permanezca a tu lado y te conceda su paz.",
+      "Que Dios ilumine tu día y haga firme tu esperanza."
+    ];
+    const blessingDateKey=ds.getFullYear()+"-"+(ds.getMonth()+1)+"-"+ds.getDate();
+    let blessingHash=0;
+    for(let i=0;i<blessingDateKey.length;i++) blessingHash=((blessingHash*31)+blessingDateKey.charCodeAt(i))>>>0;
+    const dailyBlessing=dailyBlessingsV3175[blessingHash % dailyBlessingsV3175.length];
+
+    // Remate inferior, elevado ligeramente para dejar una zona limpia a la bendición.
+    ctx.save();
+    ctx.shadowColor="rgba(0,0,0,0)";
+    ctx.shadowBlur=0;
+    ctx.shadowOffsetY=0;
+    ctx.strokeStyle="rgba(220,250,255,0.55)";
+    ctx.fillStyle="rgba(235,253,255,0.75)";
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(150,1688); ctx.lineTo(455,1688); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(625,1688); ctx.lineTo(930,1688); ctx.stroke();
+    ctx.font="34px Georgia, serif";
+    ctx.fillText("✧",498,1700);
+    ctx.fillText("✝",540,1700);
+    ctx.fillText("✧",582,1700);
+    ctx.restore();
+
+    // Frase final discreta, centrada y limitada a dos líneas para no competir con el versículo.
+    ctx.save();
+    ctx.fillStyle="rgba(245,254,255,0.92)";
+    ctx.shadowColor="rgba(0,0,0,0.18)";
+    ctx.shadowBlur=5;
+    ctx.shadowOffsetY=2;
+    ctx.font="italic 34px Georgia, serif";
+    ctx.textAlign="center";
+    wrapText(ctx,dailyBlessing,540,1752,840,44,2);
+    ctx.restore();
+
+    const blob = await new Promise(resolve=>canvas.toBlob(resolve,"image/png",0.95));
+    if(!blob){
+      alert("No se pudo crear la tarjeta.");
+      return;
+    }
+
+    const file = new File([blob],"versiculo-del-dia.png",{type:"image/png"});
+
+    if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+      await navigator.share({
+        files:[file],
+        title:"Versículo del día",
+        text:category+"\n"+ref
+      });
+      if(item){
+        item.shared=true;
+        item.lastCardSentAt=Date.now();
+        if(typeof recordVerseShareV3162 === "function") recordVerseShareV3162(item);
+        saveState();
+        renderReader();
+      }
+      toast("Tarjeta compartida");
+    }else{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a");
+      a.href=url;
+      a.download="versiculo-del-dia.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+      if(item){
+        item.shared=true;
+        item.lastCardSentAt=Date.now();
+        if(typeof recordVerseShareV3162 === "function") recordVerseShareV3162(item);
+        saveState();
+        renderReader();
+      }
+      toast("Tarjeta descargada");
+    }
+  }catch(e){
+    console.error(e);
+    alert("Error creando la tarjeta: "+(e && e.message ? e.message : e));
+  }
+}
+
+function getCurrentVerseListForSwipe(){
+  try{
+    if(section !== "verses" || !state || !Array.isArray(state.verses)) return [];
+    if(specialVerseMode === "daily" || specialVerseMode === "random") return [];
+
+    if(verseNavigationMode === "titles"){
+      return state.verses;
+    }
+
+    if(currentVerseCategory === "favoritos"){
+      return state.verses.filter(v => v.favorite);
+    }
+
+    const item = currentItem();
+    const cat = currentVerseCategory || (item && item.category) || "sin_categoria";
+    return state.verses.filter(v => (v.category || "sin_categoria") === cat);
+  }catch(e){
+    return [];
+  }
+}
+
+function swipeVerse(dir){
+  try{
+    if(section !== "verses") return;
+    if(specialVerseMode === "daily" || specialVerseMode === "random") return;
+
+    const item = currentItem();
+    if(!item) return;
+
+    const list = getCurrentVerseListForSwipe();
+    if(!list || list.length <= 1) return;
+
+    const idx = list.findIndex(v => v.id === item.id);
+    if(idx < 0) return;
+
+    const nextIdx = idx + dir;
+
+    if(nextIdx < 0){
+      if(typeof toast === "function") toast("Inicio de la categoría");
+      return;
+    }
+    if(nextIdx >= list.length){
+      if(typeof toast === "function") toast("Fin de la categoría");
+      return;
+    }
+
+    state.currentVerseId = list[nextIdx].id;
+    saveState();
+    renderReader();
+
+    const reader = document.getElementById("readerText") || document.getElementById("readerTitle");
+    if(reader && reader.animate){
+      reader.animate(
+        [
+          {opacity:0.35, transform:"translateX(" + (dir > 0 ? "18px" : "-18px") + ")"},
+          {opacity:1, transform:"translateX(0)"}
+        ],
+        {duration:180, easing:"ease-out"}
+      );
+    }
+  }catch(e){
+    console.error("swipeVerse", e);
+  }
+}
+
+let swipeStartX = 0;
+let swipeStartY = 0;
+let swipeTracking = false;
+
+function installVerseSwipe(){
+  try{
+    const reader = document.getElementById("readerText");
+    if(!reader || reader.dataset.swipeInstalled === "1") return;
+    reader.dataset.swipeInstalled = "1";
+
+    reader.addEventListener("touchstart", function(e){
+      if(!e.touches || e.touches.length !== 1) return;
+      swipeStartX = e.touches[0].clientX;
+      swipeStartY = e.touches[0].clientY;
+      swipeTracking = true;
+    }, {passive:true});
+
+    reader.addEventListener("touchend", function(e){
+      if(!swipeTracking || !e.changedTouches || e.changedTouches.length !== 1) return;
+      swipeTracking = false;
+
+      const dx = e.changedTouches[0].clientX - swipeStartX;
+      const dy = e.changedTouches[0].clientY - swipeStartY;
+
+      if(Math.abs(dx) < 70) return;
+      if(Math.abs(dy) > 55) return;
+
+      if(dx < 0){
+        swipeGeneric(1);
+      }else{
+        swipeGeneric(-1);
+      }
+    }, {passive:true});
+  }catch(e){}
+}
+
+setInterval(installVerseSwipe, 1000);
+
+function swipeGeneric(dir){
+  try{
+    if(section==="verses"){ swipeVerse(dir); return; }
+
+    const list=getItems();
+    const item=currentItem();
+    if(!item || !list || list.length<=1) return;
+
+    const idx=list.findIndex(v=>v.id===item.id);
+    if(idx<0) return;
+
+    const nextIdx=idx+dir;
+    if(nextIdx<0){
+      if(typeof toast==="function") toast("Inicio");
+      return;
+    }
+    if(nextIdx>=list.length){
+      if(typeof toast==="function") toast("Fin");
+      return;
+    }
+
+    setCurrentId(list[nextIdx].id);
+    renderList();
+    renderReader();
+
+    const reader=document.getElementById("readerText")||document.getElementById("readerTitle");
+    if(reader && reader.animate){
+      reader.animate(
+        [
+          {opacity:0.35, transform:"translateX(" + (dir > 0 ? "18px" : "-18px") + ")"},
+          {opacity:1, transform:"translateX(0)"}
+        ],
+        {duration:180, easing:"ease-out"}
+      );
+    }
+  }catch(e){}
+}
+
+function getVersePositionText(){
+  try{
+    const item = currentItem();
+    if(!item) return "";
+
+    if(section !== "verses"){
+      const list=getItems();
+      if(!list || !list.length) return "";
+      const idx=list.findIndex(v => v.id === item.id);
+      if(idx < 0) return "";
+      const prefix=section==="prayers"?"O":section==="notes"?"N":section==="guides"?"G":section==="parables"?"P":"";
+      return prefix + (idx + 1) + " / " + list.length;
+    }
+
+    if(!Array.isArray(state.verses)) return "";
+
+    let list = [];
+    if(verseNavigationMode === "titles"){
+      list = state.verses;
+    }else if(currentVerseCategory === "favoritos"){
+      list = state.verses.filter(v => v.favorite);
+    }else{
+      const cat = currentVerseCategory || item.category || "sin_categoria";
+      list = state.verses.filter(v => (v.category || "sin_categoria") === cat);
+    }
+
+    const idx = list.findIndex(v => v.id === item.id);
+    if(idx < 0) return "";
+
+    return "V" + (idx + 1) + " / " + list.length;
+  }catch(e){
+    return "";
+  }
+}
+
+function updateVersePositionCounter(){
+  try{
+    const existing = document.getElementById("versePositionCounter");
+
+    if(!["verses","prayers","notes","guides","parables","psalms"].includes(section)){
+      if(existing) existing.remove();
+      return;
+    }
+
+    const titleEl = document.getElementById("readerTitle");
+    if(!titleEl) return;
+
+    let counter = document.getElementById("versePositionCounter");
+    if(!counter){
+      counter = document.createElement("div");
+      counter.id = "versePositionCounter";
+      counter.style.opacity = "0.62";
+      counter.style.fontSize = "15px";
+      counter.style.margin = "8px 0 14px 0";
+      counter.style.textAlign = "center";
+      counter.style.width = "100%";
+      counter.style.fontWeight = "600";
+      titleEl.parentNode.insertBefore(counter, titleEl);
+    }
+
+    const txt = getVersePositionText();
+    counter.textContent = txt || "";
+  }catch(e){}
+}
+
+const oldRenderReaderForCounter = renderReader;
+renderReader = function(){
+  oldRenderReaderForCounter();
+  setTimeout(updateVersePositionCounter, 50);
+};
+
+setInterval(updateVersePositionCounter, 1000);
+
+/* v50C - Punto de lectura global con botón Marcar abajo */
+(function(){
+ const STORE_KEY="oraciones_reading_mark_v50";
+ let markingMode=false;
+
+ function allowed(sec){return ["prayers","notes","guides"].includes(sec||section)}
+ function item(){try{return currentItem&&currentItem()}catch(e){return null}}
+ function titleOf(it){try{if(typeof recentTitleFromItem==="function")return recentTitleFromItem(it)}catch(e){} return (it&&(it.reference||it.title))||"Lectura"}
+ function keyFor(sec,id){return sec+"|"+id}
+ function keyOfCurrent(){const it=item(); if(!it||!it.id)return null; return keyFor(section,it.id)}
+ function load(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||"{}")}catch(e){return {}}}
+ function save(data){localStorage.setItem(STORE_KEY,JSON.stringify(data||{}))}
+ function reader(){return document.getElementById("readerText")}
+ function clearVisual(){document.querySelectorAll(".reader-mark-pin-v50,.reader-mark-line-v50").forEach(x=>x.remove())}
+
+ function getGlobalMark(){
+   const data=load();
+   return data.__last || null;
+ }
+ function currentHasMark(){
+   const k=keyOfCurrent();
+   const data=load();
+   return !!(k && data[k]);
+ }
+
+ function closeMenu(){
+   const m=document.getElementById("readingMarkDropdown");
+   if(m)m.remove();
+   setTimeout(()=>document.removeEventListener("click",outsideMenu,true),0);
+ }
+ function outsideMenu(ev){
+   const m=document.getElementById("readingMarkDropdown");
+   if(m && !m.contains(ev.target) && !(ev.target&&ev.target.closest&&ev.target.closest("[data-mark-button]"))) closeMenu();
+ }
+
+ function draw(animate){
+   clearVisual();
+   const el=reader();
+   const k=keyOfCurrent();
+   if(!el||!k||!allowed(section))return;
+   const bm=load()[k];
+   if(!bm||typeof bm.y!=="number")return;
+   const y=Math.max(8,Math.min(bm.y,el.scrollHeight-8));
+
+   const line=document.createElement("div");
+   line.className="reader-mark-line-v50";
+   line.style.top=y+"px";
+
+   const pin=document.createElement("div");
+   pin.className="reader-mark-pin-v50"+(animate?" reader-mark-glow-v50":"");
+   pin.style.top=y+"px";
+   pin.textContent="📍";
+
+   el.appendChild(line);
+   el.appendChild(pin);
+ }
+
+ function showBanner(msg){
+   let b=document.getElementById("readingMarkBanner");
+   if(!b){
+     b=document.createElement("div");
+     b.id="readingMarkBanner";
+     b.className="reading-mark-banner";
+     document.body.appendChild(b);
+   }
+   b.textContent=msg;
+ }
+ function hideBanner(){
+   const b=document.getElementById("readingMarkBanner");
+   if(b)b.remove();
+ }
+
+ function snippetFromPoint(x,y){
+   try{
+     let r=null;
+     if(document.caretRangeFromPoint) r=document.caretRangeFromPoint(x,y);
+     else if(document.caretPositionFromPoint){
+       const p=document.caretPositionFromPoint(x,y);
+       if(p){r=document.createRange();r.setStart(p.offsetNode,p.offset)}
+     }
+     if(!r||!r.startContainer)return "";
+     let raw=r.startContainer.textContent||"";
+     raw=raw.replace(/\s+/g," ").trim();
+     return raw.length>140?raw.slice(0,140):raw;
+   }catch(e){return ""}
+ }
+
+ function startMarking(){
+   closeMenu();
+   if(!allowed(section)){
+     try{toast("Disponible en Oraciones, Notas y Guía")}catch(e){}
+     return;
+   }
+   const el=reader();
+   if(!el)return;
+   markingMode=true;
+   el.classList.add("marking-mode-v50");
+   showBanner("📍 Toca la frase donde deseas continuar");
+ }
+
+ function stopMarking(){
+   markingMode=false;
+   const el=reader();
+   if(el)el.classList.remove("marking-mode-v50");
+   hideBanner();
+ }
+
+ function saveAtEvent(ev){
+   if(!markingMode)return;
+   if(!allowed(section))return stopMarking();
+
+   const el=reader(), it=item(), k=keyOfCurrent();
+   if(!el||!it||!k)return stopMarking();
+
+   const p=(ev.touches&&ev.touches[0])||(ev.changedTouches&&ev.changedTouches[0])||ev;
+   const rect=el.getBoundingClientRect();
+   const y=p.clientY-rect.top+el.scrollTop;
+
+   const data=load();
+   const entry={
+     key:k,
+     section:section,
+     id:it.id,
+     title:titleOf(it),
+     y:y,
+     snippet:snippetFromPoint(p.clientX,p.clientY),
+     time:Date.now()
+   };
+   data[k]=entry;
+   data.__last=entry;
+   save(data);
+   stopMarking();
+   draw(true);
+   try{toast("📍 Punto de lectura guardado")}catch(e){}
+   if(ev.preventDefault)ev.preventDefault();
+   if(ev.stopPropagation)ev.stopPropagation();
+ }
+
+ function setCurrentFromEntry(bm){
+   if(!bm)return false;
+   section=bm.section;
+   if(state)state.section=bm.section;
+   if(bm.section==="prayers")state.currentPrayerId=bm.id;
+   else if(bm.section==="notes")state.currentNoteId=bm.id;
+   else if(bm.section==="guides")state.currentGuideId=bm.id;
+   else return false;
+   try{saveState()}catch(e){}
+   try{syncTabs()}catch(e){}
+   try{setActiveView("read")}catch(e){}
+   try{renderList()}catch(e){}
+   try{renderReader()}catch(e){}
+   try{
+     if(typeof enterFullscreenReading==="function") enterFullscreenReading();
+     else openReader();
+   }catch(e){
+     try{openReader()}catch(_){}
+   }
+   try{document.body.classList.add("fullscreen-reading");document.body.classList.remove("hide-reading-ui","reading-mobile")}catch(e){}
+   return true;
+ }
+
+ function scrollToMark(bm, animate){
+   setTimeout(function(){
+     const el=reader();
+     if(!el||!bm||typeof bm.y!=="number")return;
+     const target=Math.max(0,bm.y-80);
+     const top=el.getBoundingClientRect().top+window.scrollY+target;
+     try{window.scrollTo({top:top,behavior:"smooth"})}catch(e){window.scrollTo(0,top)}
+     setTimeout(function(){draw(animate!==false)},180);
+   },260);
+ }
+
+ function goGlobalMark(){
+   closeMenu();
+   const bm=getGlobalMark();
+   if(!bm){
+     try{toast("No hay punto de lectura guardado")}catch(e){}
+     return;
+   }
+   if(!setCurrentFromEntry(bm)){
+     try{toast("No se pudo abrir la lectura")}catch(e){}
+     return;
+   }
+   scrollToMark(bm,true);
+ }
+
+ function removeGlobalMark(){
+   closeMenu();
+   const bm=getGlobalMark();
+   if(!bm){
+     try{toast("No hay punto de lectura guardado")}catch(e){}
+     return;
+   }
+   const data=load();
+   if(bm.key)delete data[bm.key];
+   delete data.__last;
+   save(data);
+   clearVisual();
+   try{toast("📍 Punto eliminado")}catch(e){}
+ }
+
+ window.openReadingMarkMenu=function(ev){
+   try{ev&&ev.stopPropagation&&ev.stopPropagation()}catch(e){}
+   const existing=document.getElementById("readingMarkDropdown");
+   if(existing){closeMenu();return}
+
+   const menu=document.createElement("div");
+   menu.id="readingMarkDropdown";
+   menu.className="reading-mark-dropdown";
+   const bm=getGlobalMark();
+
+   menu.innerHTML=
+     '<button type="button" onclick="startReadingMarkV50()">📍 Guardar punto de lectura</button>'+
+     (bm?'<button type="button" onclick="goReadingMarkV50()">▶️ Ir al punto de lectura</button>':'')+
+     (bm?'<button type="button" onclick="removeReadingMarkV50()">❌ Quitar punto de lectura</button>':'');
+
+   document.body.appendChild(menu);
+
+   let left=12,top=120;
+   const btn=ev&&ev.currentTarget?ev.currentTarget:null;
+   if(btn){
+     const r=btn.getBoundingClientRect();
+     left=r.left;
+     top=r.bottom+6;
+   }
+   const maxLeft=window.innerWidth-menu.offsetWidth-8;
+   if(left>maxLeft)left=Math.max(8,maxLeft);
+   if(left<8)left=8;
+   menu.style.left=left+"px";
+   menu.style.top=top+"px";
+   setTimeout(()=>document.addEventListener("click",outsideMenu,true),0);
+ };
+
+ window.startReadingMarkV50=startMarking;
+ window.goReadingMarkV50=goGlobalMark;
+ window.removeReadingMarkV50=removeGlobalMark;
+
+ function arm(){
+   const el=reader();
+   if(!el||el.dataset.markArmV50==="1")return;
+   el.dataset.markArmV50="1";
+   el.addEventListener("click",saveAtEvent,true);
+   el.addEventListener("touchend",saveAtEvent,{passive:false,capture:true});
+ }
+
+ const oldRender=window.renderReader||(typeof renderReader!=="undefined"?renderReader:null);
+ if(oldRender&&!window.__readingMarkWrappedV50C){
+   window.__readingMarkWrappedV50C=true;
+   window.renderReader=function(){
+     oldRender.apply(this,arguments);
+     setTimeout(()=>{arm();draw(false)},0);
+   };
+   try{renderReader=window.renderReader}catch(e){}
+ }
+ document.addEventListener("DOMContentLoaded",()=>setTimeout(()=>{arm();draw(false)},300));
 })();
 
 (function(){

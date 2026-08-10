@@ -3616,6 +3616,45 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(appZipBtn) appZipBtn.addEventListener("click",exportInstalledAppZipV31249);
 });
 
+/* V3.1.299 · Restauración del arranque seguro.
+   V3.1.298 perdió accidentalmente este bloque al incorporar Drive y el aviso
+   de actualización. El estado persistido debe cargarse antes de que cualquier
+   migración o módulo automático pueda llamar a saveState(). */
+applyTheme();
+backupTrackingReadyV31268=false;
+loadState();
+syncTabs();
+renderList();
+renderReader();
+applyReaderFont();
+openReader();
+updateSearchForReaderV26();
+renderBackupPendingV31268();
+maybeShowInstall();
+
+/* Las normalizaciones técnicas del arranque no deben marcar el backup como
+   pendiente. Se conserva el mismo seguimiento seguro de la versión estable. */
+setTimeout(function(){
+  try{
+    const wasPending = isBackupPendingV31268();
+    const currentFingerprint = currentBackupFingerprintV31275();
+
+    if(!wasPending){
+      localStorage.setItem(
+        BACKUP_EXPORTED_FINGERPRINT_KEY_V31275,
+        currentFingerprint
+      );
+      localStorage.setItem(BACKUP_PENDING_KEY_V31268, "0");
+    }
+
+    backupTrackingReadyV31268=true;
+    renderBackupPendingV31268();
+  }catch(e){
+    backupTrackingReadyV31268=true;
+    renderBackupPendingV31268();
+  }
+},1800);
+
 // V3.1.296 · Copia directa a Google Drive. El backup tradicional se conserva intacto.
 const DRIVE_CLIENT_ID_V31296='333858553743-4uc2ficqa4842d25d97gina24jgpuqb4.apps.googleusercontent.com';
 const DRIVE_SCOPE_V31296='https://www.googleapis.com/auth/drive.file';
@@ -3701,7 +3740,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.298',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.299',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{

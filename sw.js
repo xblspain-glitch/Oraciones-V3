@@ -1,8 +1,8 @@
-const CACHE_NAME="oraciones-v3-1-301-seis-tarjetas-nuevas";
+const CACHE_NAME="oraciones-v3-1-302-tres-tarjetas-reemplazadas";
 const CORE=["./","./index.html","./manifest.json?v=v3-1-263-sin-calendario","./jszip.min.js?v=v3-1-63-share-history-persist","./jszip.min.js","./styles.css?v=3.1.300","./themes.css?v=v3-1-63-share-history-persist","./welcome.js?v=v3-1-63-share-history-persist","./config.js?v=v3-1-63-share-history-persist","./utils.js?v=v3-1-63-share-history-persist","./recent.js?v=v3-1-63-share-history-persist","./versiculos.js?v=v3-1-64-share-history-persistence-fix","./theme-mode.js?v=v3-1-63-share-history-persist","./app.js?v=3.1.300","./patches.js?v=v3-1-63-share-history-persist","./routines.js?v=v2-215-busqueda-tarjeta-fix-directo","./routines.js","./moments.js?v=v3-1-123-catalogacion-mejorada","./moments.js","./counters-v3183.js?v=v3-1-263-sin-calendario","./counters-v3183.js","./styles.css","./themes.css","./welcome.js","./config.js","./utils.js","./recent.js","./versiculos.js","./theme-mode.js","./app.js","./patches.js","./cross-ethiopian-mask.png","./icon-notas-detallado-v2210.png","./icon-versiculo-dia-v3250.png","./icon-dia-noche-v3255.png","./icon-192.png","./icon-512.png","./bg-morning.webp","./bg-day.webp","./bg-sunset.webp","./bg-night.webp","./card-sabiduria-v2240.jpg?v=v3-1-258-lora-solo-textos-offline","./card-sabiduria-v2240.jpg","./routine-morning-bible-v2216.webp","./routine-night-bible-v2216.webp","./shared-card-new-jerusalem-v2217.png","./card-salvacion-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-oracion-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-espiritu-santo-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-misericordia-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-alabanza-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-fortaleza-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-amor-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-esperanza-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-juicio-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-fe-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-segunda-venida-v2219.jpg?v=v3-1-258-lora-solo-textos-offline","./card-reino-dios-v2230.jpg?v=v3-1-258-lora-solo-textos-offline","./card-santidad-v2230.jpg?v=v3-1-258-lora-solo-textos-offline","./card-cristo-es-dios-v2230.jpg?v=v3-1-258-lora-solo-textos-offline","./card-fe-nueva-v3261.png","./card-dios-v3261.png","./card-sabiduria-2-v31282.png","./card-vida-eterna-2-v31282.png","./card-alabanza-2-v31282.png","./card-amor-2-v31282.png","./card-juicio-2-v31282.png","./card-esperanza-2-v31282.png","./card-oracion-2-v31282.png","./card-descanso-2-v31282.png","./card-fortaleza-2-v31282.png","./card-espiritu-santo-2-v31282.png","./card-misericordia-2-v31282.png","./card-salvacion-2-v31282.png","./card-segunda-venida-2-v31282.png","./card-reino-dios-2-v31282.png","./card-santidad-2-v31282.png","./card-dios-2-v31282.png","./card-cristo-es-dios-2-v31282.png","./card-fe-2-v31282.png","./Lora-Regular.woff2","./Lora-Bold.woff2","./Lora-Italic.woff2","./Lora-BoldItalic.woff2", "./card-amor-3-v2287.png", "./card-salvacion-3-v2287.png", "./card-vida-eterna-3-v2287.png"];
 CORE.push(
-  "./styles.css?v=3.1.301",
-  "./app.js?v=3.1.301",
+  "./styles.css?v=3.1.302",
+  "./app.js?v=3.1.302",
   "./card-segunda-venida-3-v31301.png",
   "./card-segunda-venida-3-v31301.png?v=2.290",
   "./card-fe-3-v31301.png",
@@ -35,7 +35,7 @@ self.addEventListener("fetch",event=>{
     return;
   }
   event.respondWith((async()=>{
-    const cached=await caches.match(event.request);
+    const cached=await caches.match(event.request,{ignoreSearch:true});
     if(cached) return cached;
     try{
       const fresh=await fetch(event.request);

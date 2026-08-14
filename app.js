@@ -1576,8 +1576,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.300";
-const APP_VERSION_ZIP = "Oraciones_V3.1.300_MARCA_Y_PAGINAS_CORREGIDAS.zip";
+const APP_VERSION_LABEL = "v3.1.301";
+const APP_VERSION_ZIP = "Oraciones_V3.1.301_SEIS_TARJETAS_NUEVAS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3248,7 +3248,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.300";
+const APP_VERSION_V31249 = "3.1.301";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3740,7 +3740,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.300',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.301',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3881,18 +3881,18 @@ const CARD_CATEGORY_CATALOG_V31282=[
   {id:'amor',label:'Amor',designs:[{style:'oracion',src:'card-oracion-v2219.jpg'},{style:'amor-2',src:'card-amor-2-v31282.png'},{style:'amor-3',src:'card-amor-3-v2287.png'}]},
   {id:'juicio',label:'Juicio',designs:[{style:'espiritu-santo',src:'card-espiritu-santo-v2219.jpg'},{style:'juicio-2',src:'card-juicio-2-v31282.png'}]},
   {id:'esperanza',label:'Esperanza',designs:[{style:'misericordia',src:'card-misericordia-v2219.jpg'},{style:'esperanza-2',src:'card-esperanza-2-v31282.png'}]},
-  {id:'oracion',label:'Oración',designs:[{style:'alabanza',src:'card-alabanza-v2219.jpg'},{style:'oracion-2',src:'card-oracion-2-v31282.png'}]},
+  {id:'oracion',label:'Oración',designs:[{style:'alabanza',src:'card-alabanza-v2219.jpg'},{style:'oracion-2',src:'card-oracion-2-v31282.png'},{style:'oracion-3',src:'card-oracion-3-v31301.png'}]},
   {id:'descanso',label:'Descanso',designs:[{style:'fortaleza',src:'card-fortaleza-v2219.jpg'},{style:'descanso-2',src:'card-descanso-2-v31282.png'}]},
   {id:'fortaleza',label:'Fortaleza',designs:[{style:'amor',src:'card-amor-v2219.jpg'},{style:'fortaleza-2',src:'card-fortaleza-2-v31282.png'}]},
   {id:'misericordia',label:'Misericordia',designs:[{style:'esperanza',src:'card-esperanza-v2219.jpg'},{style:'misericordia-2',src:'card-misericordia-2-v31282.png'}]},
   {id:'espiritu-santo',label:'Espíritu Santo',designs:[{style:'juicio',src:'card-juicio-v2219.jpg'},{style:'espiritu-santo-2',src:'card-espiritu-santo-2-v31282.png'}]},
-  {id:'salvacion',label:'Salvación',designs:[{style:'fe',src:'card-fe-v2219.jpg'},{style:'salvacion-2',src:'card-salvacion-2-v31282.png'},{style:'salvacion-3',src:'card-salvacion-3-v2287.png'}]},
-  {id:'segunda-venida',label:'Segunda venida',designs:[{style:'segunda-venida',src:'card-segunda-venida-v2219.jpg'},{style:'segunda-venida-2',src:'card-segunda-venida-2-v31282.png'}]},
+  {id:'salvacion',label:'Salvación',designs:[{style:'fe',src:'card-fe-v2219.jpg'},{style:'salvacion-2',src:'card-salvacion-2-v31282.png'},{style:'salvacion-3',src:'card-salvacion-3-v2287.png'},{style:'salvacion-4',src:'card-salvacion-4-v31301.png'}]},
+  {id:'segunda-venida',label:'Segunda venida',designs:[{style:'segunda-venida',src:'card-segunda-venida-v2219.jpg'},{style:'segunda-venida-2',src:'card-segunda-venida-2-v31282.png'},{style:'segunda-venida-3',src:'card-segunda-venida-3-v31301.png'}]},
   {id:'reino-dios',label:'Reino de Dios',designs:[{style:'reino-dios',src:'card-reino-dios-v2230.jpg'},{style:'reino-dios-2',src:'card-reino-dios-2-v31282.png'}]},
   {id:'santidad',label:'Santidad',designs:[{style:'santidad',src:'card-santidad-v2230.jpg'},{style:'santidad-2',src:'card-santidad-2-v31282.png'}]},
-  {id:'cristo-es-dios',label:'Cristo Jesús es Dios',designs:[{style:'cristo-es-dios',src:'card-cristo-es-dios-v2230.jpg'},{style:'cristo-es-dios-2',src:'card-cristo-es-dios-2-v31282.png'}]},
-  {id:'fe',label:'Fe',designs:[{style:'fe-nueva',src:'card-fe-nueva-v3261.png'},{style:'fe-2',src:'card-fe-2-v31282.png'}]},
-  {id:'dios',label:'Dios',designs:[{style:'dios',src:'card-dios-v3261.png'},{style:'dios-2',src:'card-dios-2-v31282.png'}]}
+  {id:'cristo-es-dios',label:'Cristo Jesús es Dios',designs:[{style:'cristo-es-dios',src:'card-cristo-es-dios-v2230.jpg'},{style:'cristo-es-dios-2',src:'card-cristo-es-dios-2-v31282.png'},{style:'cristo-es-dios-3',src:'card-cristo-es-dios-3-v31301.png'}]},
+  {id:'fe',label:'Fe',designs:[{style:'fe-nueva',src:'card-fe-nueva-v3261.png'},{style:'fe-2',src:'card-fe-2-v31282.png'},{style:'fe-3',src:'card-fe-3-v31301.png'}]},
+  {id:'dios',label:'Dios',designs:[{style:'dios',src:'card-dios-v3261.png'},{style:'dios-2',src:'card-dios-2-v31282.png'},{style:'dios-3',src:'card-dios-3-v31301.png'}]}
 ];
 const CARD_STYLE_BACKGROUNDS_V31282=Object.fromEntries(CARD_CATEGORY_CATALOG_V31282.flatMap(category=>category.designs.map(design=>[design.style,design.src])));
 const CARD_STYLE_CATEGORY_LABELS_V31283=Object.fromEntries(CARD_CATEGORY_CATALOG_V31282.flatMap(category=>category.designs.map(design=>[design.style,category.label])));

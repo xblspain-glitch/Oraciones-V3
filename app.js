@@ -1576,8 +1576,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.303";
-const APP_VERSION_ZIP = "Oraciones_V3.1.303_TARJETA_ORACION_REEMPLAZADA.zip";
+const APP_VERSION_LABEL = "v3.1.304";
+const APP_VERSION_ZIP = "Oraciones_V3.1.304_REFERENCIAS_LARGAS_AJUSTADAS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3248,7 +3248,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.303";
+const APP_VERSION_V31249 = "3.1.304";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3740,7 +3740,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.303',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.304',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3915,7 +3915,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.303" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.304" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3932,7 +3932,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.303" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.304" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 
@@ -4167,10 +4167,18 @@ async function shareVerseCard(cardStyle="classic"){
     ctx.textAlign="center";
     ctx.fillText(categoryTextV3200,540,usesNewTextLayoutV2231?1044:741);
 
-    // V3.1.243 — referencia bíblica fija.
-    // No participa en el ajuste dinámico reservado exclusivamente al cuerpo del versículo.
+    // V3.1.304 — la referencia conserva 74 px siempre que tenga margen suficiente.
+    // Si es muy larga, se reduce solo lo necesario para no acercarse al marco.
     const REFERENCE_FONT_SIZE_V3241=74;
-    ctx.font="bold "+REFERENCE_FONT_SIZE_V3241+"px Georgia, serif";
+    const REFERENCE_MIN_FONT_SIZE_V31304=46;
+    const REFERENCE_SAFE_WIDTH_V31304=900;
+    let referenceFontSizeV31304=REFERENCE_FONT_SIZE_V3241;
+    while(referenceFontSizeV31304>REFERENCE_MIN_FONT_SIZE_V31304){
+      ctx.font="bold "+referenceFontSizeV31304+"px Georgia, serif";
+      if(ctx.measureText(ref).width<=REFERENCE_SAFE_WIDTH_V31304)break;
+      referenceFontSizeV31304--;
+    }
+    ctx.font="bold "+referenceFontSizeV31304+"px Georgia, serif";
     ctx.fillText(ref,540,usesNewTextLayoutV2231?1145:865);
 
     // Línea decorativa azul tenue con cruz central

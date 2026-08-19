@@ -1583,8 +1583,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.306";
-const APP_VERSION_ZIP = "Oraciones_V3.1.306_INDEXEDDB_SIN_LIMITE_LOCAL.zip";
+const APP_VERSION_LABEL = "v3.1.307";
+const APP_VERSION_ZIP = "Oraciones_V3.1.307_DRIVE_CORREGIDO.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3255,7 +3255,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.306";
+const APP_VERSION_V31249 = "3.1.307";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3518,7 +3518,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.306",
+    appVersion: "3.1.307",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3712,9 +3712,12 @@ async function findOrCreateDriveFolderV31296(){
   const r=await driveFetchV31296('https://www.googleapis.com/drive/v3/files?fields=id,name,mimeType',{method:'POST',headers:{'Content-Type':'application/json;charset=UTF-8'},body:JSON.stringify({name:DRIVE_BACKUP_FOLDER_V31296,mimeType:'application/vnd.google-apps.folder',appProperties:{app:'oraciones-v3',purpose:'backup'}})});const f=await r.json();localStorage.setItem(DRIVE_FOLDER_ID_KEY_V31296,f.id);return f;
 }
 async function uploadBackupToDriveV31296(folderId,name,backup){const boundary=`oraciones_backup_${Date.now().toString(16)}_${Math.random().toString(16).slice(2)}`;const metadata={name,mimeType:'application/json',parents:[folderId],appProperties:{app:'oraciones-v3',purpose:'complete-backup'}};const body=new Blob([`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`,JSON.stringify(metadata),`\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`,JSON.stringify(backup,null,2),`\r\n--${boundary}--`],{type:`multipart/related; boundary=${boundary}`});const r=await driveFetchV31296('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink',{method:'POST',headers:{'Content-Type':`multipart/related; boundary=${boundary}`},body});return r.json();}
-document.addEventListener('DOMContentLoaded',()=>{
+function initDriveBackupButtonV31296(){
   refreshDriveBackupStatusV31296();
-  document.getElementById('saveDriveBackup')?.addEventListener('click',async()=>{
+  const driveButton=document.getElementById('saveDriveBackup');
+  if(!driveButton||driveButton.dataset.driveReadyV31296==='1')return;
+  driveButton.dataset.driveReadyV31296='1';
+  driveButton.addEventListener('click',async()=>{
     const button=document.getElementById('saveDriveBackup');const originalText=button?.textContent||'Guardar copia en Google Drive';if(button){button.disabled=true;button.textContent='Guardando en Drive…';}setDriveBackupStatusV31296('Conectando con Google Drive…');
     try{
       // Una selección de cuenta por copia; el mismo token se reutiliza hasta terminarla.
@@ -3724,7 +3727,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     }catch(error){console.error('No se pudo guardar la copia en Drive',error);setDriveBackupStatusV31296(error?.message||'No se pudo guardar la copia en Google Drive.',true);toast('No se pudo guardar la copia en Drive');}
     finally{if(button){button.disabled=false;button.textContent=originalText;}}
   });
-});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initDriveBackupButtonV31296,{once:true});
+else initDriveBackupButtonV31296();
 
 // V3.1.297 · Aviso de actualización controlado: la nueva versión espera hasta que el usuario decida.
 let updateNoticeShownV31297=false;
@@ -3759,7 +3764,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.306',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.307',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3934,7 +3939,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.306" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.307" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3951,7 +3956,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.306" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.307" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 

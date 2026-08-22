@@ -1,5 +1,5 @@
 const channel = window.ORACIONES_APP_CHANNEL_V1 || "v3";
-const version = window.ORACIONES_APP_VERSION_V1 || "3.1.309";
+const version = window.ORACIONES_APP_VERSION_V1 || "3.1.310";
 
 function loadClassicScript(source){
   return new Promise(function(resolve,reject){

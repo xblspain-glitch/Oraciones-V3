@@ -1570,8 +1570,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.313";
-const APP_VERSION_ZIP = "Oraciones_V3.1.313_RECUPERACION_CARGA.zip";
+const APP_VERSION_LABEL = "v3.1.314";
+const APP_VERSION_ZIP = "Oraciones_V3.1.314_RECUPERACION_GUIADA.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3242,14 +3242,14 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.313";
+const APP_VERSION_V31249 = "3.1.314";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
 });
 const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "card-sabiduria-2-v31282.png", "card-vida-eterna-2-v31282.png", "card-alabanza-2-v31282.png", "card-amor-2-v31282.png", "card-juicio-2-v31282.png", "card-esperanza-2-v31282.png", "card-oracion-2-v31282.png", "card-descanso-2-v31282.png", "card-fortaleza-2-v31282.png", "card-espiritu-santo-2-v31282.png", "card-misericordia-2-v31282.png", "card-salvacion-2-v31282.png", "card-segunda-venida-2-v31282.png", "card-reino-dios-2-v31282.png", "card-santidad-2-v31282.png", "card-dios-2-v31282.png", "card-cristo-es-dios-2-v31282.png", "card-fe-2-v31282.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2", "card-amor-3-v2287.png", "card-salvacion-3-v2287.png", "card-vida-eterna-3-v2287.png"];
 
-INSTALLED_APP_FILES_V31249.splice(2,0,"app-loader.js","app-loader-recovery-v31313.js","counters-v3183-v31313.js","storage-idb.js");
+INSTALLED_APP_FILES_V31249.splice(2,0,"app-loader.js","app-loader-recovery-v31313.js","app-loader-safe-v31314.js","counters-v3183-v31313.js","storage-idb.js","storage-idb-safe-v31314.js");
 
 async function readInstalledAppFileV31249(fileName){
   const cleanName=String(fileName||"").replace(/^\.\//,"");
@@ -3505,7 +3505,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.313",
+    appVersion: "3.1.314",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3751,7 +3751,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.313',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.314',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3926,7 +3926,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.313" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.314" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3943,7 +3943,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.313" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.314" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 

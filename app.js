@@ -1570,8 +1570,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.315";
-const APP_VERSION_ZIP = "Oraciones_V3.1.315_FRASES_POR_CATEGORIA.zip";
+const APP_VERSION_LABEL = "v3.1.316";
+const APP_VERSION_ZIP = "Oraciones_V3.1.316_FRASES_ANTERIORES_CLASIFICADAS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3242,7 +3242,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.315";
+const APP_VERSION_V31249 = "3.1.316";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3505,7 +3505,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.315",
+    appVersion: "3.1.316",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3751,7 +3751,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.315',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.316',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3927,7 +3927,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.315" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.316" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3944,7 +3944,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.315" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.316" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 
@@ -4585,10 +4585,38 @@ async function shareVerseCard(cardStyle="classic"){
         "Que la bondad del Señor te acompañe durante toda la jornada."
       ]
     };
+    // V3.1.316 — incorpora también las 100 bendiciones originales a las
+    // categorías donde su sentido encaja. Una frase puede acompañar a más de
+    // un tema; si es general, permanece disponible en Dios como respaldo.
+    function legacyBlessingCategoriesV31316(phrase){
+      const value=String(phrase||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("es-ES");
+      const categories=[];
+      const add=id=>{if(!categories.includes(id))categories.push(id);};
+
+      if(/espiritu santo/.test(value)) add("espiritu-santo");
+      if(/misericordia|compasion/.test(value)) add("misericordia");
+      if(/sabiduria|discernimiento|claridad|decision|pensamiento|palabra/.test(value)) add("sabiduria");
+      if(/esperanza|animo|florecer/.test(value)) add("esperanza");
+      if(/\bfe\b|fidelidad|confi|promesa|seguridad/.test(value)) add("fe");
+      if(/descans|seren|calma|preocupacion|paz|refugio|ligero/.test(value)) add("descanso");
+      if(/amor|bondad|perdon|servir|ternura/.test(value)) add("amor");
+      if(/fortal|fuerza|debil|prueba|persever|valor|sosten|afirme|firme/.test(value)) add("fortaleza");
+      if(/gracia|evangelio|cristo te recuerde cuanto te ama/.test(value)) add("salvacion");
+      if(/agradecid|alegria|bendicion de dios/.test(value)) add("alabanza");
+      if(/verdad|voluntad|hacer el bien|caminar conforme/.test(value)) add("santidad");
+      if(/hogar|familia|trabajo de tus manos|proyecto|salida y tu entrada/.test(value)) add("dios");
+      if(/cristo sea|presencia de cristo|luz de cristo|cristo ilumine/.test(value)) add("cristo-es-dios");
+
+      // Las frases completamente generales siguen participando, pero solo en
+      // la categoría Dios para no producir asociaciones temáticas artificiales.
+      if(!categories.length) add("dios");
+      return categories;
+    }
     const blessingCategoryIdV31315=CARD_STYLE_CATEGORY_IDS_V31315[cardStyle]||"";
     const categoryBlessingsV31315=thematicBlessingsV31315[blessingCategoryIdV31315];
+    const legacyCategoryBlessingsV31316=dailyBlessingsV3175.filter(phrase=>legacyBlessingCategoriesV31316(phrase).includes(blessingCategoryIdV31315));
     const blessingPoolV31315=Array.isArray(categoryBlessingsV31315)&&categoryBlessingsV31315.length
-      ? categoryBlessingsV31315
+      ? [...new Set([...categoryBlessingsV31315,...legacyCategoryBlessingsV31316])]
       : dailyBlessingsV3175;
     let categoryHashV31315=0;
     for(let i=0;i<blessingCategoryIdV31315.length;i++) categoryHashV31315=((categoryHashV31315*31)+blessingCategoryIdV31315.charCodeAt(i))>>>0;

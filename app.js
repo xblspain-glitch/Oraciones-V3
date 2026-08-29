@@ -1570,8 +1570,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.316";
-const APP_VERSION_ZIP = "Oraciones_V3.1.316_FRASES_ANTERIORES_CLASIFICADAS.zip";
+const APP_VERSION_LABEL = "v3.1.317";
+const APP_VERSION_ZIP = "Oraciones_V3.1.317_RECORRIDO_DIARIO_SIN_REPETIR.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3242,7 +3242,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.316";
+const APP_VERSION_V31249 = "3.1.317";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3505,7 +3505,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.316",
+    appVersion: "3.1.317",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3751,7 +3751,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.316',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.317',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3927,7 +3927,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.316" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.317" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3944,7 +3944,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.316" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.317" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 
@@ -4361,9 +4361,9 @@ async function shareVerseCard(cardStyle="classic"){
       "Que Cristo permanezca a tu lado y te conceda su paz.",
       "Que Dios ilumine tu día y haga firme tu esperanza."
     ];
-    const blessingDateKey=ds.getFullYear()+"-"+(ds.getMonth()+1)+"-"+ds.getDate();
-    let blessingHash=0;
-    for(let i=0;i<blessingDateKey.length;i++) blessingHash=((blessingHash*31)+blessingDateKey.charCodeAt(i))>>>0;
+    // Número consecutivo del día local. Al aumentar exactamente en uno cada
+    // fecha, permite avanzar por las frases sin repetir hasta completar el grupo.
+    const blessingDayNumberV31317=Math.floor(Date.UTC(ds.getFullYear(),ds.getMonth(),ds.getDate())/86400000);
     // V3.1.315 — la bendición acompaña al tema visual elegido. Las 100 frases
     // generales anteriores se conservan como respaldo para diseños antiguos o
     // categorías que el usuario pueda incorporar en el futuro.
@@ -4620,7 +4620,7 @@ async function shareVerseCard(cardStyle="classic"){
       : dailyBlessingsV3175;
     let categoryHashV31315=0;
     for(let i=0;i<blessingCategoryIdV31315.length;i++) categoryHashV31315=((categoryHashV31315*31)+blessingCategoryIdV31315.charCodeAt(i))>>>0;
-    const dailyBlessing=blessingPoolV31315[(blessingHash+categoryHashV31315)%blessingPoolV31315.length];
+    const dailyBlessing=blessingPoolV31315[(blessingDayNumberV31317+categoryHashV31315)%blessingPoolV31315.length];
 
     // Remate inferior, elevado ligeramente para dejar una zona limpia a la bendición.
     ctx.save();

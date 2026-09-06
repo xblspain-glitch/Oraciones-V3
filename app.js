@@ -1570,8 +1570,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.318";
-const APP_VERSION_ZIP = "Oraciones_V3.1.318_FRASES_CLARAS_Y_SENCILLAS.zip";
+const APP_VERSION_LABEL = "v3.1.319";
+const APP_VERSION_ZIP = "Oraciones_V3.1.319_CATEGORIA_MILAGROS.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3242,7 +3242,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.318";
+const APP_VERSION_V31249 = "3.1.319";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3250,6 +3250,7 @@ const FUTURE_HOME_ICONS_V31249 = Object.freeze({
 const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "card-sabiduria-2-v31282.png", "card-vida-eterna-2-v31282.png", "card-alabanza-2-v31282.png", "card-amor-2-v31282.png", "card-juicio-2-v31282.png", "card-esperanza-2-v31282.png", "card-oracion-2-v31282.png", "card-descanso-2-v31282.png", "card-fortaleza-2-v31282.png", "card-espiritu-santo-2-v31282.png", "card-misericordia-2-v31282.png", "card-salvacion-2-v31282.png", "card-segunda-venida-2-v31282.png", "card-reino-dios-2-v31282.png", "card-santidad-2-v31282.png", "card-dios-2-v31282.png", "card-cristo-es-dios-2-v31282.png", "card-fe-2-v31282.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2", "card-amor-3-v2287.png", "card-salvacion-3-v2287.png", "card-vida-eterna-3-v2287.png"];
 
 INSTALLED_APP_FILES_V31249.splice(2,0,"app-loader.js","app-loader-recovery-v31313.js","app-loader-safe-v31314.js","counters-v3183-v31313.js","storage-idb.js","storage-idb-safe-v31314.js");
+INSTALLED_APP_FILES_V31249.push("card-milagros-1-v31319.png","card-milagros-2-v31319.png","card-milagros-3-v31319.png");
 
 async function readInstalledAppFileV31249(fileName){
   const cleanName=String(fileName||"").replace(/^\.\//,"");
@@ -3505,7 +3506,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.318",
+    appVersion: "3.1.319",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3751,7 +3752,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.318',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.319',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -3893,6 +3894,7 @@ const CARD_CATEGORY_CATALOG_V31282=[
   {id:'juicio',label:'Juicio',designs:[{style:'espiritu-santo',src:'card-espiritu-santo-v2219.jpg'},{style:'juicio-2',src:'card-juicio-2-v31282.png'}]},
   {id:'esperanza',label:'Esperanza',designs:[{style:'misericordia',src:'card-misericordia-v2219.jpg'},{style:'esperanza-2',src:'card-esperanza-2-v31282.png'}]},
   {id:'oracion',label:'Oración',designs:[{style:'alabanza',src:'card-alabanza-v2219.jpg'},{style:'oracion-2',src:'card-oracion-2-v31282.png'},{style:'oracion-3',src:'card-oracion-3-v31301.png'}]},
+  {id:'milagros',label:'Milagros',designs:[{style:'milagros-1',src:'card-milagros-1-v31319.png'},{style:'milagros-2',src:'card-milagros-2-v31319.png'},{style:'milagros-3',src:'card-milagros-3-v31319.png'}]},
   {id:'descanso',label:'Descanso',designs:[{style:'fortaleza',src:'card-fortaleza-v2219.jpg'},{style:'descanso-2',src:'card-descanso-2-v31282.png'}]},
   {id:'fortaleza',label:'Fortaleza',designs:[{style:'amor',src:'card-amor-v2219.jpg'},{style:'fortaleza-2',src:'card-fortaleza-2-v31282.png'}]},
   {id:'misericordia',label:'Misericordia',designs:[{style:'esperanza',src:'card-esperanza-v2219.jpg'},{style:'misericordia-2',src:'card-misericordia-2-v31282.png'}]},
@@ -3927,7 +3929,7 @@ function renderCardCategoriesV31282(){
   grid.classList.add('card-category-grid-v31282');
   grid.innerHTML=CARD_CATEGORY_CATALOG_V31282.map(category=>{
     const first=category.designs[0];
-    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.318" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
+    return `<button class="card-category-option-v31282" type="button" onclick="openCardCategoryV31282('${category.id}')"><strong class="card-category-title-v31285">${cardCategoryEscapeV31282(category.label)}</strong><img src="${first.src}?v=3.1.319" alt="" aria-hidden="true"><span class="card-category-footer-v31285"><small>${category.designs.length} diseños</small><b aria-hidden="true">›</b></span></button>`;
   }).join('');
 }
 function openCardCategoryV31282(categoryId){
@@ -3944,7 +3946,7 @@ function openCardCategoryV31282(categoryId){
   if(!grid)return;
   grid.classList.remove('card-category-grid-v31282');
   grid.classList.add('card-design-grid-v31282');
-  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.318" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
+  grid.innerHTML=category.designs.map((design,index)=>`<button class="card-design-option-v31282" type="button" onclick="chooseCardStyleV2217('${design.style}')"><img src="${design.src}?v=3.1.319" alt="Diseño ${index+1} de ${cardCategoryEscapeV31282(category.label)}"><span><strong>Diseño ${index+1}</strong><small>${cardCategoryEscapeV31282(category.label)}</small></span></button>`).join('');
 }
 function backToCardCategoriesV31282(){renderCardCategoriesV31282();}
 
@@ -4375,6 +4377,7 @@ async function shareVerseCard(cardStyle="classic"){
       juicio:["Que Dios te ayude a ser justo y misericordioso.","Que hoy no juzgues a los demás con dureza.","Que el Señor te ayude a reconocer tus errores.","Que Dios guíe tus decisiones con justicia y amor.","Que hoy trates a los demás como deseas ser tratado.","Que Cristo te enseñe a corregir con bondad.","Que la verdad de Dios guíe tu camino.","Que hoy puedas actuar con honradez.","Que el Señor te dé un corazón justo y humilde.","Que Dios te ayude a hacer siempre lo correcto."],
       esperanza:["Que la esperanza en Cristo renueve tus fuerzas.","Que hoy recuerdes que Dios está contigo.","Que el Señor llene tu corazón de esperanza.","Que Dios te ayude a mirar el futuro con confianza.","Que hoy encuentres una nueva razón para seguir adelante.","Que la fidelidad de Dios mantenga viva tu esperanza.","Que Cristo ilumine aquello que hoy te preocupa.","Que la esperanza del Señor te sostenga.","Que hoy confíes en que Dios sigue obrando.","Que Dios llene tu camino de luz y esperanza."],
       oracion:["Que hoy encuentres paz al hablar con Dios.","Que el Señor escuche tu oración y serene tu corazón.","Que la oración te mantenga cerca de Dios.","Que hoy puedas hablar con Dios con confianza.","Que Cristo fortalezca tu fe mientras oras.","Que el Espíritu Santo guíe tu oración.","Que hoy encuentres consuelo junto a Dios.","Que la oración sea tu lugar de descanso.","Que Dios ponga palabras de esperanza en tu corazón.","Que hoy puedas orar sin perder la esperanza."],
+      milagros:["Que hoy recuerdes que para Dios nada es imposible.","Que tu fe permanezca firme mientras esperas en Dios.","Que puedas reconocer las maravillas de Dios en tu vida.","Que el poder de Dios fortalezca hoy tu esperanza.","Que confíes en Dios aun cuando no veas el camino.","Que hoy descanses en el poder y la bondad de Dios.","Que las obras de Dios renueven tu fe y tu esperanza.","Que recuerdes cuánto puede hacer Dios en un instante.","Que ninguna dificultad sea mayor que tu fe en Dios.","Que hoy esperes con fe lo que solo Dios puede hacer."],
       descanso:["Que hoy puedas descansar en la fidelidad de Dios.","Que encuentres descanso bajo el cuidado del Señor.","Que la paz de Cristo serene tu corazón.","Que hoy puedas dejar tus preocupaciones en manos de Dios.","Que la presencia de Dios te dé calma.","Que hoy tu corazón descanse seguro en Dios.","Que Cristo te conceda paz en cada dificultad.","Que la fidelidad del Señor te dé descanso.","Que hoy encuentres refugio junto a Dios.","Que la paz del Señor acompañe todo tu día."],
       fortaleza:["Que Dios te dé fuerzas para continuar.","Que Cristo sea hoy tu refugio y tu fortaleza.","Que el Señor te sostenga en cada dificultad.","Que Dios te ayude cuando te sientas débil.","Que hoy encuentres valor para seguir adelante.","Que Cristo fortalezca tu corazón.","Que el Señor renueve hoy tus fuerzas.","Que Dios te ayude a superar cada prueba.","Que hoy recuerdes que no caminas solo.","Que la fuerza del Señor te acompañe."],
       misericordia:["Que la misericordia de Dios te abrace hoy.","Que Cristo te ayude a perdonar de corazón.","Que hoy puedas tratar a los demás con compasión.","Que Dios te ayude a comprender el dolor de otros.","Que la bondad del Señor renueve tu corazón.","Que hoy encuentres refugio en la misericordia de Dios.","Que Cristo te enseñe a tener un corazón bondadoso.","Que la compasión guíe hoy tus acciones.","Que Dios te ayude a dar otra oportunidad.","Que la misericordia del Señor acompañe tu camino."],

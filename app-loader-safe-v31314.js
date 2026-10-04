@@ -1,12 +1,12 @@
 const channel = window.ORACIONES_APP_CHANNEL_V1 || "v3";
-const version = window.ORACIONES_APP_VERSION_V1 || "3.1.325";
+const version = window.ORACIONES_APP_VERSION_V1 || "3.1.326";
 
 const startupScriptsV31314 = [
   "app.js?v="+version,
   "patches.js?v=v3-1-63-share-history-persist",
-  "routines.js?v=v2-215-busqueda-tarjeta-fix-directo",
+  "routines.js?v=3.1.326-salmo-al-azar",
   "moments.js?v=v3-1-123-catalogacion-mejorada",
-  "counters-v3183-v31313.js?v=3.1.325"
+  "counters-v3183-v31313.js?v=3.1.326"
 ];
 
 function waitV31314(milliseconds){

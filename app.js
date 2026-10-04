@@ -137,7 +137,13 @@ function renderBackupPendingV31268(){
 function saveState(){
   cleanAllVerseBreaks();
   if(!window.OracionesStorageV1) return false;
-  window.OracionesStorageV1.saveState(state).catch(function(e){
+  /* Los Salmos integrados que se muestran durante una rutina son temporales:
+     se conservan en memoria para el lector, pero nunca se mezclan con los
+     Salmos creados por la persona ni con su JSON guardado. */
+  const stateToPersist = state && Array.isArray(state.psalms) && state.psalms.some(function(item){return item&&item.__routineRandomPsalmV31326;})
+    ? Object.assign({},state,{currentPsalmId:null,psalms:state.psalms.filter(function(item){return !item||!item.__routineRandomPsalmV31326;})})
+    : state;
+  window.OracionesStorageV1.saveState(stateToPersist).catch(function(e){
     console.error("No se pudo guardar en IndexedDB",e);
     try{ toast("No se pudo guardar el último cambio. Conserva tu backup y vuelve a intentarlo"); }catch(_){ }
   });
@@ -1570,8 +1576,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.325";
-const APP_VERSION_ZIP = "Oraciones_V3.1.325_SEGUNDA_VENIDA_DISENO_3.zip";
+const APP_VERSION_LABEL = "v3.1.326";
+const APP_VERSION_ZIP = "Oraciones_V3.1.326_SALMO_AL_AZAR.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -3242,12 +3248,12 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.325";
+const APP_VERSION_V31249 = "3.1.326";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
 });
-const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "card-sabiduria-2-v31282.png", "card-vida-eterna-2-v31282.png", "card-alabanza-2-v31282.png", "card-amor-2-v31282.png", "card-juicio-2-v31282.png", "card-esperanza-2-v31282.png", "card-oracion-2-v31282.png", "card-descanso-2-v31282.png", "card-fortaleza-2-v31282.png", "card-espiritu-santo-2-v31282.png", "card-misericordia-2-v31282.png", "card-salvacion-2-v31282.png", "card-segunda-venida-2-v31282.png", "card-reino-dios-2-v31282.png", "card-santidad-2-v31282.png", "card-dios-2-v31282.png", "card-cristo-es-dios-2-v31282.png", "card-fe-2-v31282.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2", "card-amor-3-v2287.png", "card-salvacion-3-v2287.png", "card-vida-eterna-3-v2287.png"];
+const INSTALLED_APP_FILES_V31249 = ["index.html", "app.js", "styles.css", "themes.css", "welcome.js", "config.js", "utils.js", "recent.js", "versiculos.js", "theme-mode.js", "jszip.min.js", "patches.js", "routines.js", "psalms-rvr1960-v31326.js", "moments.js", "counters-v3183.js", "sw.js", "manifest.json", "biblical-dictionary-v2264.css", "biblical-dictionary-v2264.js", "biblical-dictionary-v2264.json", "cross-ethiopian-mask.png", "icon-notas-detallado-v2210.png", "icon-guia-detallado-v2210.png", "icon-versiculo-dia-v3250.png", "icon-diccionario-v3250.png", "icon-dia-noche-v3255.png", "icon-192.png", "icon-512.png", "bg-morning.webp", "bg-day.webp", "bg-sunset.webp", "bg-night.webp", "card-sabiduria-v2240.jpg", "routine-morning-bible-v2216.webp", "routine-night-bible-v2216.webp", "shared-card-new-jerusalem-v2217.png", "card-salvacion-v2219.jpg", "card-oracion-v2219.jpg", "card-espiritu-santo-v2219.jpg", "card-misericordia-v2219.jpg", "card-alabanza-v2219.jpg", "card-fortaleza-v2219.jpg", "card-amor-v2219.jpg", "card-esperanza-v2219.jpg", "card-juicio-v2219.jpg", "card-fe-v2219.jpg", "card-segunda-venida-v2219.jpg", "card-reino-dios-v2230.jpg", "card-santidad-v2230.jpg", "card-cristo-es-dios-v2230.jpg", "card-fe-nueva-v3261.png", "card-dios-v3261.png", "card-sabiduria-2-v31282.png", "card-vida-eterna-2-v31282.png", "card-alabanza-2-v31282.png", "card-amor-2-v31282.png", "card-juicio-2-v31282.png", "card-esperanza-2-v31282.png", "card-oracion-2-v31282.png", "card-descanso-2-v31282.png", "card-fortaleza-2-v31282.png", "card-espiritu-santo-2-v31282.png", "card-misericordia-2-v31282.png", "card-salvacion-2-v31282.png", "card-segunda-venida-2-v31282.png", "card-reino-dios-2-v31282.png", "card-santidad-2-v31282.png", "card-dios-2-v31282.png", "card-cristo-es-dios-2-v31282.png", "card-fe-2-v31282.png", "Lora-Regular.woff2", "Lora-Bold.woff2", "Lora-Italic.woff2", "Lora-BoldItalic.woff2", "card-amor-3-v2287.png", "card-salvacion-3-v2287.png", "card-vida-eterna-3-v2287.png"];
 
 INSTALLED_APP_FILES_V31249.splice(2,0,"app-loader.js","app-loader-recovery-v31313.js","app-loader-safe-v31314.js","counters-v3183-v31313.js","storage-idb.js","storage-idb-safe-v31314.js");
 INSTALLED_APP_FILES_V31249.push("card-milagros-1-v31319.png","card-milagros-2-v31319.png","card-milagros-3-v31319.png");
@@ -3481,7 +3487,7 @@ async function loadCompleteCatalogsV31247(){
 }
 
 function removeObsoleteCharactersDataV31272(value){
-  if(Array.isArray(value)) return value.map(removeObsoleteCharactersDataV31272);
+  if(Array.isArray(value)) return value.filter(function(item){return !item||!item.__routineRandomPsalmV31326;}).map(removeObsoleteCharactersDataV31272);
   if(!value || typeof value!=="object") return value;
   const clean={};
   Object.keys(value).forEach(function(key){
@@ -3506,7 +3512,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.325",
+    appVersion: "3.1.326",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3752,7 +3758,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.325',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.326',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{

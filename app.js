@@ -1576,8 +1576,8 @@ function openMoreMenu(ev){
   }
 }
 
-const APP_VERSION_LABEL = "v3.1.327";
-const APP_VERSION_ZIP = "Oraciones_V3.1.327_SALMO_AL_AZAR_CACHE_CORREGIDA.zip";
+const APP_VERSION_LABEL = "v3.1.328";
+const APP_VERSION_ZIP = "Oraciones_V3.1.328_TITULO_DINAMICO_VERSICULO_PASAJE.zip";
 const APP_BASE_ZIP = "oraciones_v2_v89_2_tarjeta_ajuste_cabecera.zip";
 function closeAppCredits(){
   const el=document.getElementById("appCreditsOverlay");
@@ -1708,9 +1708,19 @@ function openNeverSentVerse(){
 }
 
 function openRandomVerse(){ openVerseSpecial(pickRandomVerse(),"random"); setActiveView("random"); }
+function isMultiVerseReferenceV31328(reference){
+  const normalized=String(reference||"").replace(/[–—]/g,"-");
+  const colonIndex=normalized.indexOf(":");
+  if(colonIndex<0) return false;
+  const versePart=normalized.slice(colonIndex+1).replace(/\bRVR\s*1960\b/gi,"");
+  return /\d\s*(?:-|,|;|y|al)\s*\d/i.test(versePart);
+}
+function dailyShareHeadingV31328(reference){
+  return isMultiVerseReferenceV31328(reference)?"Pasaje del día":"Versículo del día";
+}
 function buildVerseShareText(item){
   if(!item) return "";
-  const heading=specialVerseMode==="daily"?"🌅 Versículo del día\n\n":specialVerseMode==="random"?"🌿 Versículo aleatorio\n\n":"";
+  const heading=specialVerseMode==="daily"?"🌅 "+dailyShareHeadingV31328(item.reference||item.title)+"\n\n":specialVerseMode==="random"?"🌿 Versículo aleatorio\n\n":"";
   const cat=verseCategoryLabel(item.category);
   return cleanTextBreaks(heading+cat+"\n\n"+(item.reference||item.title||"Versículo")+"\n\n"+(item.text||item.content||""));
 }
@@ -3248,7 +3258,7 @@ async function exportAllZip(){
 
 
 /* ===== V3.1.258 · Descargar copia autosuficiente de la aplicación ===== */
-const APP_VERSION_V31249 = "3.1.327";
+const APP_VERSION_V31249 = "3.1.328";
 const FUTURE_HOME_ICONS_V31249 = Object.freeze({
   dailyVerse:"icon-versiculo-dia-v3250.png",
   dictionary:"icon-diccionario-v3250.png"
@@ -3512,7 +3522,7 @@ async function buildCompleteBackupPayloadV31245(){
     type: COMPLETE_BACKUP_TYPE_V31245,
     version: 31306,
     exportedAt: new Date().toISOString(),
-    appVersion: "3.1.327",
+    appVersion: "3.1.328",
     storageEngine: "indexeddb-v1",
     description: "Copia integral y autosuficiente: datos sin duplicar, ajustes y entradas completas del diccionario bíblico.",
     state: removeObsoleteCharactersDataV31272(JSON.parse(JSON.stringify(state||{}))),
@@ -3758,7 +3768,7 @@ function showUpdateNoticeV31297(worker){
   });
   window.addEventListener('load',async()=>{
     try{
-      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.327',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('sw.js?v=3.1.328',{updateViaCache:'none'});
       const detectWaiting=()=>{if(reg.waiting&&navigator.serviceWorker.controller)showUpdateNoticeV31297(reg.waiting);};
       detectWaiting();
       reg.addEventListener('updatefound',()=>{
@@ -4172,7 +4182,8 @@ async function shareVerseCard(cardStyle="classic"){
     // La cabecera visual (sol, nubes y Biblia) ya forma parte del fondo.
     // No se dibuja ningún icono superpuesto, evitando el efecto de pegatina.
     ctx.font="italic 56px Georgia, serif";
-    ctx.fillText("Versículo del día",540,usesNewTextLayoutV2231?920:610);
+    const dailyCardHeadingV31328=dailyShareHeadingV31328(ref);
+    ctx.fillText(dailyCardHeadingV31328,540,usesNewTextLayoutV2231?920:610);
     ctx.font="34px Georgia, serif";
     const ds=new Date();
     const meses=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
@@ -4466,12 +4477,13 @@ async function shareVerseCard(cardStyle="classic"){
       return;
     }
 
-    const file = new File([blob],"versiculo-del-dia.png",{type:"image/png"});
+    const dailyCardFileNameV31328=isMultiVerseReferenceV31328(ref)?"pasaje-del-dia.png":"versiculo-del-dia.png";
+    const file = new File([blob],dailyCardFileNameV31328,{type:"image/png"});
 
     if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
       await navigator.share({
         files:[file],
-        title:"Versículo del día",
+        title:dailyCardHeadingV31328,
         text:category+"\n"+ref
       });
       if(item){
@@ -4486,7 +4498,7 @@ async function shareVerseCard(cardStyle="classic"){
       const url=URL.createObjectURL(blob);
       const a=document.createElement("a");
       a.href=url;
-      a.download="versiculo-del-dia.png";
+      a.download=dailyCardFileNameV31328;
       document.body.appendChild(a);
       a.click();
       a.remove();
